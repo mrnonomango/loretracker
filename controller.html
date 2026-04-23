@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lorcana Controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+
+<body style="
+  background:#111;
+  color:white;
+  font-family:Arial, sans-serif;
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+">
+
+  <!-- TOP HALF -->
+  <div style="
+    height:50vh;
+    transform:rotate(180deg);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    box-sizing:border-box;
+    padding:6px;
+    border-bottom:2px solid #333;
+  ">
+    <div style="font-size:16px;color:#aaa;line-height:1;">Opponent</div>
+    <div id="p2_top" style="font-size:48px;font-weight:bold;line-height:1;margin:4px 0;">0</div>
+
+    <div style="font-size:24px;line-height:1.1;margin:4px 0;">Player 1: <span id="p1">0</span></div>
+
+    <div style="display:flex;gap:10px;margin-top:6px;">
+      <button onclick="update('p1',1)" style="
+        font-size:48px;
+        width:90px;
+        height:90px;
+        background:green;
+        color:white;
+        border:none;
+        border-radius:16px;
+      ">+</button>
+
+      <button onclick="update('p1',-1)" style="
+        font-size:48px;
+        width:90px;
+        height:90px;
+        background:red;
+        color:white;
+        border:none;
+        border-radius:16px;
+      ">−</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM HALF -->
+  <div style="
+    height:50vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    box-sizing:border-box;
+    padding:6px;
+  ">
+    <div style="font-size:16px;color:#aaa;line-height:1;">Opponent</div>
+    <div id="p1_bottom" style="font-size:48px;font-weight:bold;line-height:1;margin:4px 0;">0</div>
+
+    <div style="font-size:24px;line-height:1.1;margin:4px 0;">Player 2: <span id="p2">0</span></div>
+
+    <div style="display:flex;gap:10px;margin-top:6px;">
+      <button onclick="update('p2',1)" style="
+        font-size:48px;
+        width:90px;
+        height:90px;
+        background:green;
+        color:white;
+        border:none;
+        border-radius:16px;
+      ">+</button>
+
+      <button onclick="update('p2',-1)" style="
+        font-size:48px;
+        width:90px;
+        height:90px;
+        background:red;
+        color:white;
+        border:none;
+        border-radius:16px;
+      ">−</button>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const p1Ref = ref(db, "p1");
+const p2Ref = ref(db, "p2");
+
+onValue(p1Ref, snap => {
+  const val = snap.val() || 0;
+  document.getElementById("p1").innerText = val;
+  document.getElementById("p1_bottom").innerText = val;
+});
+
+onValue(p2Ref, snap => {
+  const val = snap.val() || 0;
+  document.getElementById("p2").innerText = val;
+  document.getElementById("p2_top").innerText = val;
+});
+
+window.update = (player, change) => {
+  const refVar = player === "p1" ? p1Ref : p2Ref;
+  onValue(refVar, snap => {
+    let val = (snap.val() || 0) + change;
+    val = Math.max(0, Math.min(20, val));
+    set(refVar, val);
+  }, { onlyOnce: true });
+};
+</script>
+
+</body>
+</html>

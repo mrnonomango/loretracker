@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timer Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wrap {
+      width: min(95vw, 700px);
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 34px;
+    }
+
+    .live-time {
+      font-size: 72px;
+      font-weight: bold;
+      color: #4fc3ff;
+      text-shadow: 0 0 18px #2196f3;
+      margin-bottom: 20px;
+      line-height: 1;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    button {
+      font-size: 26px;
+      padding: 18px 28px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      min-width: 140px;
+    }
+
+    .green { background: #149c3f; }
+    .orange { background: #cc7a00; }
+    .red { background: #c62828; }
+    .blue { background: #1565c0; }
+    .gray { background: #3a3a3a; }
+
+    input {
+      width: 220px;
+      font-size: 34px;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .label {
+      color: #ccc;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .small {
+      color: #aaa;
+      font-size: 16px;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Round Timer Control</h1>
+    <div id="liveTime" class="live-time">55:00</div>
+
+    <div class="row">
+      <button class="blue" onclick="setPreset(3300)">55 Min</button>
+      <button class="gray" onclick="setPreset(600)">10 Min</button>
+      <button class="gray" onclick="setPreset(300)">5 Min</button>
+    </div>
+
+    <div class="label">Type any time you want</div>
+    <div class="row">
+      <input id="manualTime" type="text" placeholder="55:00" />
+      <button class="blue" onclick="applyManualTime()">Set Time</button>
+    </div>
+
+    <div class="row">
+      <button class="green" onclick="startTimer()">Start</button>
+      <button class="orange" onclick="pauseTimer()">Pause</button>
+      <button class="red" onclick="resetTimer()">Reset 55</button>
+    </div>
+
+    <div class="small">
+      Examples: 55:00, 12:30, 3:15
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const config = {
+      apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+      authDomain: "lore-counter-4e654.firebaseapp.com",
+      databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+      projectId: "lore-counter-4e654"
+    };
+
+    const app = initializeApp(config);
+    const db = getDatabase(app);
+
+    const DEFAULT_RESET = 3300; // 55:00
+    const timerRef = ref(db, "timer");
+
+    function formatTime(totalSeconds) {
+      const safe = Math.max(0, Number(totalSeconds) || 0);
+      const minutes = Math.floor(safe / 60);
+      const seconds = safe % 60;
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function parseTimeString(value) {
+      const trimmed = String(value).trim();
+      const match = trimmed.match(/^(\d+):([0-5]\d)$/);
+      if (!match) return null;
+
+      const minutes = Number(match[1]);
+      const seconds = Number(match[2]);
+      return minutes * 60 + seconds;
+    }
+
+    async function getCurrentRemaining() {
+      const snap = await get(timerRef);
+      const timer = snap.val() || {};
+      const now = Date.now();
+
+      let remaining = Number(timer.remaining ?? DEFAULT_RESET);
+      const running = Boolean(timer.running);
+      const startedAt = Number(timer.startedAt ?? 0);
+
+      if (running && startedAt > 0) {
+        const elapsed = Math.floor((now - startedAt) / 1000);
+        remaining = Math.max(0, remaining - elapsed);
+      }
+
+      return remaining;
+    }
+
+    async function writeTimer(remaining, running) {
+      await set(timerRef, {
+        remaining,
+        running,
+        startedAt: running ? Date.now() : 0
+      });
+    }
+
+    window.setPreset = async (seconds) => {
+      await writeTimer(seconds, false);
+    };
+
+    window.applyManualTime = async () => {
+      const input = document.getElementById("manualTime");
+      const parsed = parseTimeString(input.value);
+
+      if (parsed === null) {
+        alert("Use mm:ss format like 55:00 or 12:30");
+        return;
+      }
+
+      await writeTimer(parsed, false);
+      input.value = "";
+    };
+
+    window.startTimer = async () => {
+      const remaining = await getCurrentRemaining();
+      await writeTimer(remaining, true);
+    };
+
+    window.pauseTimer = async () => {
+      const remaining = await getCurrentRemaining();
+      await writeTimer(remaining, false);
+    };
+
+    window.resetTimer = async () => {
+      await writeTimer(DEFAULT_RESET, false);
+    };
+
+    onValue(timerRef, (snap) => {
+      const timer = snap.val() || {};
+      const now = Date.now();
+
+      let remaining = Number(timer.remaining ?? DEFAULT_RESET);
+      const running = Boolean(timer.running);
+      const startedAt = Number(timer.startedAt ?? 0);
+
+      if (running && startedAt > 0) {
+        const elapsed = Math.floor((now - startedAt) / 1000);
+        remaining = Math.max(0, remaining - elapsed);
+      }
+
+      document.getElementById("liveTime").textContent = formatTime(remaining);
+    });
+
+    setInterval(async () => {
+      const remaining = await getCurrentRemaining();
+      document.getElementById("liveTime").textContent = formatTime(remaining);
+    }, 250);
+
+    get(timerRef).then((snap) => {
+      if (!snap.exists()) {
+        writeTimer(DEFAULT_RESET, false);
+      }
+    });
+  </script>
+</body>
+</html>
