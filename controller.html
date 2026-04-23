@@ -28,31 +28,37 @@
     padding:6px;
     border-bottom:2px solid #333;
   ">
-    <div style="font-size:16px;color:#aaa;line-height:1;">Opponent</div>
-    <div id="p2_top" style="font-size:48px;font-weight:bold;line-height:1;margin:4px 0;">0</div>
+    <div style="font-size:16px;color:#aaa;">Opponent</div>
+    <div id="p2_top" style="font-size:48px;font-weight:bold;margin:4px 0;">0</div>
 
-    <div style="font-size:24px;line-height:1.1;margin:4px 0;">Player 1: <span id="p1">0</span></div>
+    <div style="font-size:24px;margin:4px 0;">Player 1: <span id="p1">0</span></div>
 
+    <!-- GAME DOTS -->
+    <div style="display:flex;gap:8px;margin:6px 0;">
+      <div id="p1g1" style="width:12px;height:12px;border:2px solid gold;border-radius:50%;"></div>
+      <div id="p1g2" style="width:12px;height:12px;border:2px solid gold;border-radius:50%;"></div>
+    </div>
+
+    <!-- SCORE BUTTONS -->
     <div style="display:flex;gap:10px;margin-top:6px;">
-      <button onclick="update('p1',1)" style="
-        font-size:48px;
-        width:90px;
-        height:90px;
-        background:green;
-        color:white;
-        border:none;
-        border-radius:16px;
+      <button onclick="updateLore('p1',1)" style="
+        font-size:48px;width:90px;height:90px;background:green;color:white;border:none;border-radius:16px;
       ">+</button>
 
-      <button onclick="update('p1',-1)" style="
-        font-size:48px;
-        width:90px;
-        height:90px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:16px;
+      <button onclick="updateLore('p1',-1)" style="
+        font-size:48px;width:90px;height:90px;background:red;color:white;border:none;border-radius:16px;
       ">−</button>
+    </div>
+
+    <!-- GAME + RESET -->
+    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="addGameWin('p1')" style="
+        font-size:22px;width:140px;height:56px;background:#d4af37;color:black;border:none;border-radius:14px;font-weight:bold;
+      ">+ Game P1</button>
+
+      <button onclick="resetGames()" style="
+        font-size:20px;width:150px;height:56px;background:#444;color:white;border:none;border-radius:14px;font-weight:bold;
+      ">Reset Games</button>
     </div>
   </div>
 
@@ -66,37 +72,43 @@
     box-sizing:border-box;
     padding:6px;
   ">
-    <div style="font-size:16px;color:#aaa;line-height:1;">Opponent</div>
-    <div id="p1_bottom" style="font-size:48px;font-weight:bold;line-height:1;margin:4px 0;">0</div>
+    <div style="font-size:16px;color:#aaa;">Opponent</div>
+    <div id="p1_bottom" style="font-size:48px;font-weight:bold;margin:4px 0;">0</div>
 
-    <div style="font-size:24px;line-height:1.1;margin:4px 0;">Player 2: <span id="p2">0</span></div>
+    <div style="font-size:24px;margin:4px 0;">Player 2: <span id="p2">0</span></div>
 
+    <!-- GAME DOTS -->
+    <div style="display:flex;gap:8px;margin:6px 0;">
+      <div id="p2g1" style="width:12px;height:12px;border:2px solid gold;border-radius:50%;"></div>
+      <div id="p2g2" style="width:12px;height:12px;border:2px solid gold;border-radius:50%;"></div>
+    </div>
+
+    <!-- SCORE BUTTONS -->
     <div style="display:flex;gap:10px;margin-top:6px;">
-      <button onclick="update('p2',1)" style="
-        font-size:48px;
-        width:90px;
-        height:90px;
-        background:green;
-        color:white;
-        border:none;
-        border-radius:16px;
+      <button onclick="updateLore('p2',1)" style="
+        font-size:48px;width:90px;height:90px;background:green;color:white;border:none;border-radius:16px;
       ">+</button>
 
-      <button onclick="update('p2',-1)" style="
-        font-size:48px;
-        width:90px;
-        height:90px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:16px;
+      <button onclick="updateLore('p2',-1)" style="
+        font-size:48px;width:90px;height:90px;background:red;color:white;border:none;border-radius:16px;
       ">−</button>
+    </div>
+
+    <!-- GAME + RESET -->
+    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="addGameWin('p2')" style="
+        font-size:22px;width:140px;height:56px;background:#d4af37;color:black;border:none;border-radius:14px;font-weight:bold;
+      ">+ Game P2</button>
+
+      <button onclick="resetGames()" style="
+        font-size:20px;width:150px;height:56px;background:#444;color:white;border:none;border-radius:14px;font-weight:bold;
+      ">Reset Games</button>
     </div>
   </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
@@ -110,6 +122,13 @@ const db = getDatabase(app);
 
 const p1Ref = ref(db, "p1");
 const p2Ref = ref(db, "p2");
+const p1GamesRef = ref(db, "p1Games");
+const p2GamesRef = ref(db, "p2Games");
+
+function renderDots(player, wins) {
+  document.getElementById(player + "g1").style.background = wins >= 1 ? "gold" : "transparent";
+  document.getElementById(player + "g2").style.background = wins >= 2 ? "gold" : "transparent";
+}
 
 onValue(p1Ref, snap => {
   const val = snap.val() || 0;
@@ -123,13 +142,33 @@ onValue(p2Ref, snap => {
   document.getElementById("p2_top").innerText = val;
 });
 
-window.update = (player, change) => {
+onValue(p1GamesRef, snap => {
+  renderDots("p1", snap.val() || 0);
+});
+
+onValue(p2GamesRef, snap => {
+  renderDots("p2", snap.val() || 0);
+});
+
+window.updateLore = async (player, change) => {
   const refVar = player === "p1" ? p1Ref : p2Ref;
-  onValue(refVar, snap => {
-    let val = (snap.val() || 0) + change;
-    val = Math.max(0, Math.min(20, val));
-    set(refVar, val);
-  }, { onlyOnce: true });
+  const snap = await get(refVar);
+  let val = (snap.val() || 0) + change;
+  val = Math.max(0, Math.min(20, val));
+  await set(refVar, val);
+};
+
+window.addGameWin = async (player) => {
+  const refVar = player === "p1" ? p1GamesRef : p2GamesRef;
+  const snap = await get(refVar);
+  let wins = (snap.val() || 0) + 1;
+  wins = Math.min(2, wins);
+  await set(refVar, wins);
+};
+
+window.resetGames = async () => {
+  await set(p1GamesRef, 0);
+  await set(p2GamesRef, 0);
 };
 </script>
 
