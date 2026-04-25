@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .name {
+      position: absolute;
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+
+      /* 🔥 makes it readable on any background */
+      text-shadow:
+        0 0 4px rgba(0,0,0,0.9),
+        0 0 8px rgba(0,0,0,0.7),
+        0 2px 4px rgba(0,0,0,0.9);
+    }
+
+    /* positions don't matter much (you'll crop in OBS) */
+    #p1Name {
+      top: 40%;
+      left: 25%;
+      transform: translate(-50%, -50%);
+    }
+
+    #p2Name {
+      top: 40%;
+      right: 25%;
+      transform: translate(50%, -50%);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Player 1 -->
+  <div id="p1Name" class="name">Player 1</div>
+
+  <!-- Player 2 -->
+  <div id="p2Name" class="name">Player 2</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const p1NameRef = ref(db, "p1Name");
+const p2NameRef = ref(db, "p2Name");
+
+onValue(p1NameRef, snap => {
+  document.getElementById("p1Name").innerText = snap.val() || "Player 1";
+});
+
+onValue(p2NameRef, snap => {
+  document.getElementById("p2Name").innerText = snap.val() || "Player 2";
+});
+</script>
+
+</body>
+</html>
