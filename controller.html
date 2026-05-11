@@ -127,19 +127,27 @@
       </button>
     </div>
 
-    <!-- LORE RESET -->
-    <button onclick="resetLore()" style="
-      margin-top:4px;
-      font-size:13px;
-      width:145px;
-      height:30px;
-      background:#555;
-      color:white;
-      border:none;
-      border-radius:10px;
-      font-weight:bold;
-    ">
-      Lore Reset
+    <!-- HOLD RESET -->
+    <button
+      id="loreResetBtn1"
+      ontouchstart="startLoreReset('loreResetBtn1')"
+      ontouchend="cancelLoreReset('loreResetBtn1')"
+      onmousedown="startLoreReset('loreResetBtn1')"
+      onmouseup="cancelLoreReset('loreResetBtn1')"
+      onmouseleave="cancelLoreReset('loreResetBtn1')"
+      style="
+        margin-top:4px;
+        font-size:12px;
+        width:145px;
+        height:30px;
+        background:#555;
+        color:white;
+        border:none;
+        border-radius:10px;
+        font-weight:bold;
+        transition:0.2s;
+      ">
+      Hold To Reset Lore
     </button>
 
     <!-- GAME BUTTONS -->
@@ -283,19 +291,27 @@
       </button>
     </div>
 
-    <!-- LORE RESET -->
-    <button onclick="resetLore()" style="
-      margin-top:4px;
-      font-size:13px;
-      width:145px;
-      height:30px;
-      background:#555;
-      color:white;
-      border:none;
-      border-radius:10px;
-      font-weight:bold;
-    ">
-      Lore Reset
+    <!-- HOLD RESET -->
+    <button
+      id="loreResetBtn2"
+      ontouchstart="startLoreReset('loreResetBtn2')"
+      ontouchend="cancelLoreReset('loreResetBtn2')"
+      onmousedown="startLoreReset('loreResetBtn2')"
+      onmouseup="cancelLoreReset('loreResetBtn2')"
+      onmouseleave="cancelLoreReset('loreResetBtn2')"
+      style="
+        margin-top:4px;
+        font-size:12px;
+        width:145px;
+        height:30px;
+        background:#555;
+        color:white;
+        border:none;
+        border-radius:10px;
+        font-weight:bold;
+        transition:0.2s;
+      ">
+      Hold To Reset Lore
     </button>
 
     <!-- GAME BUTTONS -->
@@ -377,6 +393,8 @@ const p2GamesRef = ref(db, "p2Games");
 const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
 
+let loreResetTimer;
+
 function renderDots(player, wins) {
   document.getElementById(player + "g1").style.background =
     wins >= 1 ? "gold" : "transparent";
@@ -444,9 +462,37 @@ window.resetGames = () => {
   set(p2GamesRef, 0);
 };
 
-window.resetLore = () => {
-  set(p1Ref, 0);
-  set(p2Ref, 0);
+window.startLoreReset = (buttonId) => {
+
+  const btn = document.getElementById(buttonId);
+
+  btn.innerText = "Resetting...";
+  btn.style.background = "#b22222";
+
+  loreResetTimer = setTimeout(() => {
+
+    set(p1Ref, 0);
+    set(p2Ref, 0);
+
+    btn.innerText = "Lore Reset";
+    btn.style.background = "#2e8b57";
+
+    setTimeout(() => {
+      btn.innerText = "Hold To Reset Lore";
+      btn.style.background = "#555";
+    }, 1000);
+
+  }, 1500);
+};
+
+window.cancelLoreReset = (buttonId) => {
+
+  clearTimeout(loreResetTimer);
+
+  const btn = document.getElementById(buttonId);
+
+  btn.innerText = "Hold To Reset Lore";
+  btn.style.background = "#555";
 };
 
 window.saveNames = () => {
