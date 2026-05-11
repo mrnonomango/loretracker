@@ -8,69 +8,69 @@
 <body style="background:#111;color:white;font-family:Arial,sans-serif;margin:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;">
 
   <!-- TOP HALF / PLAYER 1 -->
-  <div style="height:50vh;transform:rotate(180deg);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6px;border-bottom:2px solid #333;">
-    <div style="font-size:14px;color:#aaa;">Opponent Lore</div>
-    <div id="p2_top" style="font-size:48px;font-weight:bold;">0</div>
+  <div style="height:50vh;transform:rotate(180deg);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:3px;border-bottom:2px solid #333;box-sizing:border-box;">
+    <div style="font-size:12px;color:#aaa;line-height:1;">Opponent Lore</div>
+    <div id="p2_top" style="font-size:34px;font-weight:bold;line-height:1;">0</div>
 
-    <div style="text-align:center;margin:4px 0;">
-      <div style="font-size:13px;color:#aaa;">Player 1</div>
-      <div style="font-size:14px;color:#aaa;">YOUR LORE</div>
-      <div id="p1" style="font-size:56px;font-weight:bold;">0</div>
+    <div style="text-align:center;margin:2px 0;">
+      <div style="font-size:12px;color:#aaa;line-height:1;">Player 1</div>
+      <div style="font-size:12px;color:#aaa;line-height:1;">YOUR LORE</div>
+      <div id="p1" style="font-size:44px;font-weight:bold;line-height:1;">0</div>
     </div>
 
     <div style="transform:rotate(180deg);">
-      <input id="p1NameInput" placeholder="Player 1 Name" style="padding:4px;font-size:14px;border-radius:8px;border:none;text-align:center;width:160px;">
+      <input id="p1NameInput" placeholder="Player 1 Name" style="padding:3px;font-size:12px;border-radius:7px;border:none;text-align:center;width:145px;height:22px;box-sizing:border-box;">
     </div>
 
-    <div style="display:flex;gap:6px;margin:5px 0;">
-      <div id="p1g1" style="width:10px;height:10px;border:2px solid gold;border-radius:50%;"></div>
-      <div id="p1g2" style="width:10px;height:10px;border:2px solid gold;border-radius:50%;"></div>
+    <div style="display:flex;gap:5px;margin:3px 0;">
+      <div id="p1g1" style="width:9px;height:9px;border:2px solid gold;border-radius:50%;"></div>
+      <div id="p1g2" style="width:9px;height:9px;border:2px solid gold;border-radius:50%;"></div>
     </div>
 
     <div style="display:flex;gap:8px;">
-      <button onclick="updateLore('p1',1)" style="font-size:40px;width:80px;height:80px;background:green;color:white;border:none;border-radius:16px;">+</button>
-      <button onclick="updateLore('p1',-1)" style="font-size:40px;width:80px;height:80px;background:red;color:white;border:none;border-radius:16px;">−</button>
+      <button onclick="updateLore('p1',1)" style="font-size:36px;width:68px;height:68px;background:green;color:white;border:none;border-radius:14px;">+</button>
+      <button onclick="updateLore('p1',-1)" style="font-size:36px;width:68px;height:68px;background:red;color:white;border:none;border-radius:14px;">−</button>
     </div>
 
-    <button onclick="resetLore()" style="margin-top:6px;font-size:15px;width:160px;height:40px;background:#555;color:white;border:none;border-radius:12px;font-weight:bold;">Lore Reset</button>
+    <button onclick="resetLore()" style="margin-top:4px;font-size:13px;width:145px;height:30px;background:#555;color:white;border:none;border-radius:10px;font-weight:bold;">Lore Reset</button>
 
-    <div style="display:flex;gap:8px;margin-top:6px;">
-      <button onclick="addGameWin('p1')" style="font-size:18px;width:130px;height:42px;background:#d4af37;color:black;border:none;border-radius:12px;font-weight:bold;">+ Game P1</button>
-      <button onclick="resetGames()" style="font-size:15px;width:130px;height:42px;background:#444;color:white;border:none;border-radius:12px;font-weight:bold;">Game Reset</button>
+    <div style="display:flex;gap:6px;margin-top:4px;">
+      <button onclick="addGameWin('p1')" style="font-size:14px;width:112px;height:34px;background:#d4af37;color:black;border:none;border-radius:10px;font-weight:bold;">+ Game P1</button>
+      <button onclick="resetGames()" style="font-size:13px;width:112px;height:34px;background:#444;color:white;border:none;border-radius:10px;font-weight:bold;">Game Reset</button>
     </div>
   </div>
 
   <!-- BOTTOM HALF / PLAYER 2 -->
-  <div style="height:50vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6px;">
-    <div style="font-size:14px;color:#aaa;">Opponent Lore</div>
-    <div id="p1_bottom" style="font-size:48px;font-weight:bold;">0</div>
+  <div style="height:50vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:3px;box-sizing:border-box;">
+    <div style="font-size:12px;color:#aaa;line-height:1;">Opponent Lore</div>
+    <div id="p1_bottom" style="font-size:34px;font-weight:bold;line-height:1;">0</div>
 
-    <div style="text-align:center;margin:4px 0;">
-      <div style="font-size:13px;color:#aaa;">Player 2</div>
-      <div style="font-size:14px;color:#aaa;">YOUR LORE</div>
-      <div id="p2" style="font-size:56px;font-weight:bold;">0</div>
+    <div style="text-align:center;margin:2px 0;">
+      <div style="font-size:12px;color:#aaa;line-height:1;">Player 2</div>
+      <div style="font-size:12px;color:#aaa;line-height:1;">YOUR LORE</div>
+      <div id="p2" style="font-size:44px;font-weight:bold;line-height:1;">0</div>
     </div>
 
-    <input id="p2NameInput" placeholder="Player 2 Name" style="padding:4px;font-size:14px;border-radius:8px;border:none;text-align:center;width:160px;">
+    <input id="p2NameInput" placeholder="Player 2 Name" style="padding:3px;font-size:12px;border-radius:7px;border:none;text-align:center;width:145px;height:22px;box-sizing:border-box;">
 
-    <div style="display:flex;gap:6px;margin:5px 0;">
-      <div id="p2g1" style="width:10px;height:10px;border:2px solid gold;border-radius:50%;"></div>
-      <div id="p2g2" style="width:10px;height:10px;border:2px solid gold;border-radius:50%;"></div>
+    <div style="display:flex;gap:5px;margin:3px 0;">
+      <div id="p2g1" style="width:9px;height:9px;border:2px solid gold;border-radius:50%;"></div>
+      <div id="p2g2" style="width:9px;height:9px;border:2px solid gold;border-radius:50%;"></div>
     </div>
 
     <div style="display:flex;gap:8px;">
-      <button onclick="updateLore('p2',1)" style="font-size:40px;width:80px;height:80px;background:green;color:white;border:none;border-radius:16px;">+</button>
-      <button onclick="updateLore('p2',-1)" style="font-size:40px;width:80px;height:80px;background:red;color:white;border:none;border-radius:16px;">−</button>
+      <button onclick="updateLore('p2',1)" style="font-size:36px;width:68px;height:68px;background:green;color:white;border:none;border-radius:14px;">+</button>
+      <button onclick="updateLore('p2',-1)" style="font-size:36px;width:68px;height:68px;background:red;color:white;border:none;border-radius:14px;">−</button>
     </div>
 
-    <button onclick="resetLore()" style="margin-top:6px;font-size:15px;width:160px;height:40px;background:#555;color:white;border:none;border-radius:12px;font-weight:bold;">Lore Reset</button>
+    <button onclick="resetLore()" style="margin-top:4px;font-size:13px;width:145px;height:30px;background:#555;color:white;border:none;border-radius:10px;font-weight:bold;">Lore Reset</button>
 
-    <div style="display:flex;gap:8px;margin-top:6px;">
-      <button onclick="addGameWin('p2')" style="font-size:18px;width:130px;height:42px;background:#d4af37;color:black;border:none;border-radius:12px;font-weight:bold;">+ Game P2</button>
-      <button onclick="resetGames()" style="font-size:15px;width:130px;height:42px;background:#444;color:white;border:none;border-radius:12px;font-weight:bold;">Game Reset</button>
+    <div style="display:flex;gap:6px;margin-top:4px;">
+      <button onclick="addGameWin('p2')" style="font-size:14px;width:112px;height:34px;background:#d4af37;color:black;border:none;border-radius:10px;font-weight:bold;">+ Game P2</button>
+      <button onclick="resetGames()" style="font-size:13px;width:112px;height:34px;background:#444;color:white;border:none;border-radius:10px;font-weight:bold;">Game Reset</button>
     </div>
 
-    <button onclick="saveNames()" style="margin-top:12px;font-size:18px;width:180px;height:42px;background:#2f8f6b;color:white;border:none;border-radius:12px;font-weight:bold;">Save Names</button>
+    <button onclick="saveNames()" style="margin-top:5px;font-size:14px;width:155px;height:32px;background:#2f8f6b;color:white;border:none;border-radius:10px;font-weight:bold;">Save Names</button>
   </div>
 
 <script type="module">
