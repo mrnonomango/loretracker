@@ -1,273 +1,135 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Round Timer Controller</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Round Timer Overlay</title>
 
   <style>
     body {
       margin: 0;
-      background: #111;
-      color: white;
+      background: transparent;
+      overflow: hidden;
       font-family: Arial, Helvetica, sans-serif;
-      padding: 20px;
+    }
+
+    .overlay {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 30px;
       box-sizing: border-box;
-      max-width: 480px;
     }
 
-    h1 {
+    .timer-box {
+      background: rgba(20, 20, 20, 0.95);
+      border: 3px solid #c9161d;
+      border-radius: 20px;
+      padding: 18px 55px 20px;
+      min-width: 470px;
       text-align: center;
-      margin-top: 0;
+      box-shadow: 0 0 28px rgba(201, 22, 29, 0.45);
     }
 
-    .preview {
-      background: #1c1c1c;
-      border: 2px solid #c9161d;
-      border-radius: 18px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 18px;
-    }
-
-    .preview-round {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 4px;
-      margin-bottom: 8px;
+    .round {
+      color: white;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 8px;
       text-transform: uppercase;
+      margin-bottom: 10px;
     }
 
-    .preview-time {
-      font-size: 56px;
+    .time {
+      color: white;
+      font-size: 78px;
       font-weight: 900;
+      line-height: 1;
+      letter-spacing: 2px;
     }
 
-    input, button {
-      width: 100%;
-      font-size: 22px;
-      padding: 14px;
-      margin: 7px 0;
-      border-radius: 12px;
-      box-sizing: border-box;
-      border: none;
+    .warning {
+      color: #ff3333;
+      animation: pulse 1s infinite;
     }
 
-    input {
-      background: #222;
-      color: white;
-      border: 1px solid #555;
-      text-align: center;
-    }
-
-    button {
-      background: #c9161d;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .gray {
-      background: #333;
-    }
-
-    .green {
-      background: #16883a;
-    }
-
-    .orange {
-      background: #c46612;
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.45; }
+      100% { opacity: 1; }
     }
   </style>
 </head>
 
 <body>
-  <h1>Timer Controller</h1>
-
-  <div class="preview">
-    <div class="preview-round" id="previewRound">ROUND 1</div>
-    <div class="preview-time" id="previewTime">50:00</div>
+  <div class="overlay">
+    <div class="timer-box">
+      <div class="round" id="roundText">ROUND 1</div>
+      <div class="time" id="timerText">50:00</div>
+    </div>
   </div>
 
-  <input id="roundInput" type="text" placeholder="ROUND 1 / TOP 8 / FINALS">
-  <button onclick="setRound()">Set Round</button>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <div class="row">
-    <button class="green" onclick="startTimer()">Start</button>
-    <button class="orange" onclick="pauseTimer()">Pause</button>
-  </div>
-
-  <button onclick="resetTimer()">Reset 50:00</button>
-
-  <div class="row">
-    <button class="gray" onclick="addMinute()">+1 Min</button>
-    <button class="gray" onclick="subtractMinute()">-1 Min</button>
-  </div>
-
-  <input id="minutesInput" type="number" placeholder="Set minutes">
-  <button class="gray" onclick="setMinutes()">Set Time</button>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue, set, update, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+  <script>
     const firebaseConfig = {
-      apiKey: "PASTE_YOURS_HERE",
-      authDomain: "PASTE_YOURS_HERE",
-      databaseURL: "PASTE_YOURS_HERE",
-      projectId: "PASTE_YOURS_HERE",
-      storageBucket: "PASTE_YOURS_HERE",
-      messagingSenderId: "PASTE_YOURS_HERE",
-      appId: "PASTE_YOURS_HERE"
+      apiKey: "PASTE_YOUR_API_KEY_HERE",
+      authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
+      databaseURL: "PASTE_YOUR_DATABASE_URL_HERE",
+      projectId: "PASTE_YOUR_PROJECT_ID_HERE",
+      storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
+      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
+      appId: "PASTE_YOUR_APP_ID_HERE"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const timerRef = ref(db, "roundTimer");
+    firebase.initializeApp(firebaseConfig);
 
-    const previewRound = document.getElementById("previewRound");
-    const previewTime = document.getElementById("previewTime");
+    const db = firebase.database();
+    const timerRef = db.ref("roundTimer");
 
-    let state = {
-      round: "ROUND 1",
-      timeLeft: 3000,
-      running: false,
-      lastUpdated: Date.now()
-    };
-
-    let localTimer = null;
+    const roundText = document.getElementById("roundText");
+    const timerText = document.getElementById("timerText");
 
     function formatTime(seconds) {
+      seconds = Number(seconds) || 0;
+
       const minutes = Math.floor(seconds / 60);
       const secs = seconds % 60;
+
       return minutes + ":" + secs.toString().padStart(2, "0");
     }
 
-    function draw() {
-      previewRound.textContent = state.round || "ROUND 1";
-      previewTime.textContent = formatTime(Number(state.timeLeft || 0));
+    function draw(state) {
+      if (!state) return;
+
+      const round = state.round || "ROUND 1";
+      const timeLeft = Number(state.timeLeft || 0);
+
+      roundText.textContent = round;
+      timerText.textContent = formatTime(timeLeft);
+
+      if (timeLeft <= 300) {
+        timerText.classList.add("warning");
+      } else {
+        timerText.classList.remove("warning");
+      }
     }
 
-    async function saveState(newState) {
-      state = {
-        ...state,
-        ...newState,
-        lastUpdated: Date.now()
-      };
+    timerRef.on("value", function(snapshot) {
+      const state = snapshot.val();
 
-      await update(timerRef, state);
-      draw();
-    }
-
-    function startLocalTimer() {
-      clearInterval(localTimer);
-
-      localTimer = setInterval(async () => {
-        if (!state.running) {
-          clearInterval(localTimer);
-          localTimer = null;
-          return;
-        }
-
-        if (state.timeLeft > 0) {
-          state.timeLeft--;
-          await update(timerRef, {
-            timeLeft: state.timeLeft,
-            running: true,
-            lastUpdated: Date.now()
-          });
-          draw();
-        } else {
-          await saveState({ running: false, timeLeft: 0 });
-          clearInterval(localTimer);
-          localTimer = null;
-        }
-      }, 1000);
-    }
-
-    onValue(timerRef, (snapshot) => {
-      const data = snapshot.val();
-
-      if (!data) {
-        set(timerRef, state);
+      if (!state) {
+        timerRef.set({
+          round: "ROUND 1",
+          timeLeft: 3000,
+          running: false
+        });
         return;
       }
 
-      state = data;
-      draw();
-
-      if (state.running && !localTimer) {
-        startLocalTimer();
-      }
-
-      if (!state.running && localTimer) {
-        clearInterval(localTimer);
-        localTimer = null;
-      }
+      draw(state);
     });
-
-    window.startTimer = async function () {
-      await saveState({ running: true });
-      startLocalTimer();
-    };
-
-    window.pauseTimer = async function () {
-      await saveState({ running: false });
-      clearInterval(localTimer);
-      localTimer = null;
-    };
-
-    window.resetTimer = async function () {
-      await saveState({
-        timeLeft: 50 * 60,
-        running: false
-      });
-
-      clearInterval(localTimer);
-      localTimer = null;
-    };
-
-    window.addMinute = async function () {
-      await saveState({
-        timeLeft: Number(state.timeLeft || 0) + 60
-      });
-    };
-
-    window.subtractMinute = async function () {
-      await saveState({
-        timeLeft: Math.max(0, Number(state.timeLeft || 0) - 60)
-      });
-    };
-
-    window.setMinutes = async function () {
-      const mins = document.getElementById("minutesInput").value;
-
-      if (mins !== "") {
-        await saveState({
-          timeLeft: Number(mins) * 60,
-          running: false
-        });
-
-        clearInterval(localTimer);
-        localTimer = null;
-      }
-    };
-
-    window.setRound = async function () {
-      const value = document.getElementById("roundInput").value.trim();
-
-      if (value !== "") {
-        await saveState({
-          round: value.toUpperCase()
-        });
-      }
-    };
   </script>
 </body>
 </html>
