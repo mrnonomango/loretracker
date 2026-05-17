@@ -11,13 +11,14 @@
       background: transparent;
       overflow: hidden;
       font-family: Arial, sans-serif;
+      width: 100%;
+      height: 100%;
     }
 
     body {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
     #overlayBox {
@@ -25,30 +26,32 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-
-      background: rgba(0, 0, 0, 0.92);
-      border-radius: 18px;
-      padding: 28px 50px;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-
       text-align: center;
+
+      width: 700px;
+      height: 260px;
+
+      background: #000;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.15);
       box-sizing: border-box;
+      padding: 20px 30px;
     }
 
     #roundName {
-      font-size: 64px;
+      font-size: 52px;
       font-weight: bold;
       color: white;
       text-shadow:
         0 0 12px #4fc3ff,
         0 0 25px #2196f3;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       line-height: 1;
       white-space: nowrap;
     }
 
     #time {
-      font-size: 170px;
+      font-size: 140px;
       font-weight: bold;
       color: white;
       text-shadow:
