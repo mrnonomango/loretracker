@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Timer Controller</title>
+  <title>Round Timer Controller</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
@@ -11,7 +13,7 @@
       font-family: Arial, Helvetica, sans-serif;
       padding: 20px;
       box-sizing: border-box;
-      max-width: 440px;
+      max-width: 480px;
     }
 
     h1 {
@@ -33,6 +35,7 @@
       font-weight: bold;
       letter-spacing: 4px;
       margin-bottom: 8px;
+      text-transform: uppercase;
     }
 
     .preview-time {
@@ -110,16 +113,35 @@
   <input id="minutesInput" type="number" placeholder="Set minutes">
   <button class="gray" onclick="setMinutes()">Set Time</button>
 
-  <script>
-    let timeLeft = Number(localStorage.getItem("obsTimeLeft") || 3000);
-    let timer = null;
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue, set, update, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "PASTE_YOURS_HERE",
+      authDomain: "PASTE_YOURS_HERE",
+      databaseURL: "PASTE_YOURS_HERE",
+      projectId: "PASTE_YOURS_HERE",
+      storageBucket: "PASTE_YOURS_HERE",
+      messagingSenderId: "PASTE_YOURS_HERE",
+      appId: "PASTE_YOURS_HERE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const timerRef = ref(db, "roundTimer");
 
     const previewRound = document.getElementById("previewRound");
     const previewTime = document.getElementById("previewTime");
 
-    function saveState() {
-      localStorage.setItem("obsTimeLeft", timeLeft);
-    }
+    let state = {
+      round: "ROUND 1",
+      timeLeft: 3000,
+      running: false,
+      lastUpdated: Date.now()
+    };
+
+    let localTimer = null;
 
     function formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -127,67 +149,125 @@
       return minutes + ":" + secs.toString().padStart(2, "0");
     }
 
-    function updatePreview() {
-      const round = localStorage.getItem("obsRound") || "ROUND 1";
-      previewRound.textContent = round;
-      previewTime.textContent = formatTime(timeLeft);
-      saveState();
+    function draw() {
+      previewRound.textContent = state.round || "ROUND 1";
+      previewTime.textContent = formatTime(Number(state.timeLeft || 0));
     }
 
-    function startTimer() {
-      if (timer) return;
+    async function saveState(newState) {
+      state = {
+        ...state,
+        ...newState,
+        lastUpdated: Date.now()
+      };
 
-      timer = setInterval(() => {
-        if (timeLeft > 0) {
-          timeLeft--;
-          updatePreview();
+      await update(timerRef, state);
+      draw();
+    }
+
+    function startLocalTimer() {
+      clearInterval(localTimer);
+
+      localTimer = setInterval(async () => {
+        if (!state.running) {
+          clearInterval(localTimer);
+          localTimer = null;
+          return;
+        }
+
+        if (state.timeLeft > 0) {
+          state.timeLeft--;
+          await update(timerRef, {
+            timeLeft: state.timeLeft,
+            running: true,
+            lastUpdated: Date.now()
+          });
+          draw();
         } else {
-          pauseTimer();
+          await saveState({ running: false, timeLeft: 0 });
+          clearInterval(localTimer);
+          localTimer = null;
         }
       }, 1000);
     }
 
-    function pauseTimer() {
-      clearInterval(timer);
-      timer = null;
-    }
+    onValue(timerRef, (snapshot) => {
+      const data = snapshot.val();
 
-    function resetTimer() {
-      pauseTimer();
-      timeLeft = 50 * 60;
-      updatePreview();
-    }
+      if (!data) {
+        set(timerRef, state);
+        return;
+      }
 
-    function addMinute() {
-      timeLeft += 60;
-      updatePreview();
-    }
+      state = data;
+      draw();
 
-    function subtractMinute() {
-      timeLeft = Math.max(0, timeLeft - 60);
-      updatePreview();
-    }
+      if (state.running && !localTimer) {
+        startLocalTimer();
+      }
 
-    function setMinutes() {
+      if (!state.running && localTimer) {
+        clearInterval(localTimer);
+        localTimer = null;
+      }
+    });
+
+    window.startTimer = async function () {
+      await saveState({ running: true });
+      startLocalTimer();
+    };
+
+    window.pauseTimer = async function () {
+      await saveState({ running: false });
+      clearInterval(localTimer);
+      localTimer = null;
+    };
+
+    window.resetTimer = async function () {
+      await saveState({
+        timeLeft: 50 * 60,
+        running: false
+      });
+
+      clearInterval(localTimer);
+      localTimer = null;
+    };
+
+    window.addMinute = async function () {
+      await saveState({
+        timeLeft: Number(state.timeLeft || 0) + 60
+      });
+    };
+
+    window.subtractMinute = async function () {
+      await saveState({
+        timeLeft: Math.max(0, Number(state.timeLeft || 0) - 60)
+      });
+    };
+
+    window.setMinutes = async function () {
       const mins = document.getElementById("minutesInput").value;
 
       if (mins !== "") {
-        pauseTimer();
-        timeLeft = Number(mins) * 60;
-        updatePreview();
-      }
-    }
+        await saveState({
+          timeLeft: Number(mins) * 60,
+          running: false
+        });
 
-    function setRound() {
+        clearInterval(localTimer);
+        localTimer = null;
+      }
+    };
+
+    window.setRound = async function () {
       const value = document.getElementById("roundInput").value.trim();
 
       if (value !== "") {
-        localStorage.setItem("obsRound", value.toUpperCase());
-        updatePreview();
+        await saveState({
+          round: value.toUpperCase()
+        });
       }
-    }
-
-    updatePreview();
+    };
   </script>
 </body>
 </html>
