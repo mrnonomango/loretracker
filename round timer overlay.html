@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>OBS Timer Overlay</title>
+  <title>Round Timer Overlay</title>
 
   <style>
     body {
@@ -69,7 +69,24 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "PASTE_YOURS_HERE",
+      authDomain: "PASTE_YOURS_HERE",
+      databaseURL: "PASTE_YOURS_HERE",
+      projectId: "PASTE_YOURS_HERE",
+      storageBucket: "PASTE_YOURS_HERE",
+      messagingSenderId: "PASTE_YOURS_HERE",
+      appId: "PASTE_YOURS_HERE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const timerRef = ref(db, "roundTimer");
+
     const roundText = document.getElementById("roundText");
     const timerText = document.getElementById("timerText");
 
@@ -79,9 +96,9 @@
       return minutes + ":" + secs.toString().padStart(2, "0");
     }
 
-    function updateOverlay() {
-      const round = localStorage.getItem("obsRound") || "ROUND 1";
-      const timeLeft = Number(localStorage.getItem("obsTimeLeft") || 3000);
+    function updateScreen(state) {
+      const round = state?.round || "ROUND 1";
+      const timeLeft = Number(state?.timeLeft ?? 3000);
 
       roundText.textContent = round;
       timerText.textContent = formatTime(timeLeft);
@@ -93,8 +110,21 @@
       }
     }
 
-    setInterval(updateOverlay, 250);
-    updateOverlay();
+    onValue(timerRef, (snapshot) => {
+      const state = snapshot.val();
+
+      if (!state) {
+        set(timerRef, {
+          round: "ROUND 1",
+          timeLeft: 3000,
+          running: false,
+          lastUpdated: Date.now()
+        });
+        return;
+      }
+
+      updateScreen(state);
+    });
   </script>
 </body>
 </html>
