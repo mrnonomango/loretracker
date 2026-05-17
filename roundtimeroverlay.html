@@ -25,28 +25,35 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
+      background: rgba(0, 0, 0, 0.92);
+      border-radius: 18px;
+      padding: 28px 50px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+
       text-align: center;
+      box-sizing: border-box;
     }
 
     #roundName {
-      font-size: 70px;
+      font-size: 64px;
       font-weight: bold;
       color: white;
       text-shadow:
-        0 0 18px #4fc3ff,
-        0 0 35px #2196f3;
-      margin-bottom: 10px;
+        0 0 12px #4fc3ff,
+        0 0 25px #2196f3;
+      margin-bottom: 12px;
       line-height: 1;
       white-space: nowrap;
     }
 
     #time {
-      font-size: 180px;
+      font-size: 170px;
       font-weight: bold;
       color: white;
       text-shadow:
-        0 0 25px #4fc3ff,
-        0 0 60px #2196f3;
+        0 0 20px #4fc3ff,
+        0 0 45px #2196f3;
       line-height: 1;
       white-space: nowrap;
     }
@@ -104,9 +111,7 @@
     }
 
     function render() {
-      const roundName = timerState.roundName || "Round 1";
-
-      document.getElementById("roundName").textContent = roundName;
+      document.getElementById("roundName").textContent = timerState.roundName || "Round 1";
       document.getElementById("time").textContent = formatTime(computeRemaining());
     }
 
