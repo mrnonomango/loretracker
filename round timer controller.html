@@ -1,135 +1,413 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Round Timer Overlay</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>OBS Overlay Controller</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
 
   <style>
-    body {
+    html, body {
       margin: 0;
-      background: transparent;
-      overflow: hidden;
+      padding: 0;
+      background: #111;
+      color: white;
       font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
     }
 
-    .overlay {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 30px;
+    body {
+      padding: 18px;
       box-sizing: border-box;
     }
 
-    .timer-box {
-      background: rgba(20, 20, 20, 0.95);
-      border: 3px solid #c9161d;
-      border-radius: 20px;
-      padding: 18px 55px 20px;
-      min-width: 470px;
+    h1 {
+      font-size: 24px;
+      margin: 0 0 16px;
       text-align: center;
-      box-shadow: 0 0 28px rgba(201, 22, 29, 0.45);
     }
 
-    .round {
-      color: white;
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: 8px;
+    .card {
+      background: #1c1c24;
+      border: 1px solid #333;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      color: #bbb;
+      font-size: 14px;
+      margin-bottom: 8px;
       text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 28px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 0;
       margin-bottom: 10px;
-    }
-
-    .time {
+      background: #2a2a35;
       color: white;
-      font-size: 78px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .timerDisplay {
+      font-size: 58px;
       font-weight: 900;
-      line-height: 1;
-      letter-spacing: 2px;
+      text-align: center;
+      margin: 8px 0 14px;
+      color: #ff3030;
     }
 
-    .warning {
-      color: #ff3333;
-      animation: pulse 1s infinite;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.45; }
-      100% { opacity: 1; }
+    .grid3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 16px 10px;
+      font-size: 18px;
+      font-weight: 900;
+      color: white;
+      background: #333341;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .green {
+      background: #10883c;
+    }
+
+    .red {
+      background: #a51d1d;
+    }
+
+    .blue {
+      background: #1f5fd1;
+    }
+
+    .orange {
+      background: #b65f10;
+    }
+
+    .gray {
+      background: #3a3a46;
+    }
+
+    .small {
+      font-size: 15px;
+      padding: 13px 8px;
+    }
+
+    #status {
+      font-size: 13px;
+      color: #aaa;
+      text-align: center;
+      margin-top: 12px;
     }
   </style>
 </head>
 
 <body>
-  <div class="overlay">
-    <div class="timer-box">
-      <div class="round" id="roundText">ROUND 1</div>
-      <div class="time" id="timerText">50:00</div>
+  <h1>OBS Overlay Controller</h1>
+
+  <div class="card">
+    <label>Overlay Text</label>
+
+    <input id="overlayTextInput" value="Round 1" placeholder="Round 1, Top 16, Finals, etc." />
+
+    <button class="blue" style="width:100%;" onclick="updateOverlayText()">
+      Update Overlay Text
+    </button>
+  </div>
+
+  <div class="card">
+    <label>Timer</label>
+
+    <div id="timerDisplay" class="timerDisplay">50:00</div>
+
+    <div class="grid">
+      <button class="green" onclick="startTimer()">Start</button>
+      <button class="orange" onclick="pauseTimer()">Pause</button>
+    </div>
+
+    <br />
+
+    <label>Set Custom Time</label>
+    <input id="customTimeInput" value="50:00" placeholder="54:30" />
+
+    <div class="grid">
+      <button class="blue" onclick="setCustomTime()">Set Time</button>
+      <button class="red" onclick="resetTimer()">Reset 50:00</button>
+    </div>
+
+    <br />
+
+    <div class="grid3">
+      <button class="small gray" onclick="adjustTime(-60)">-1 min</button>
+      <button class="small gray" onclick="adjustTime(60)">+1 min</button>
+      <button class="small gray" onclick="adjustTime(300)">+5 min</button>
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <div class="card">
+    <div class="grid">
+      <button class="blue" onclick="showOverlay()">Show Overlay</button>
+      <button class="red" onclick="hideOverlay()">Hide Overlay</button>
+    </div>
+
+    <div id="status">Connecting...</div>
+  </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "PASTE_YOUR_API_KEY_HERE",
-      authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
-      databaseURL: "PASTE_YOUR_DATABASE_URL_HERE",
-      projectId: "PASTE_YOUR_PROJECT_ID_HERE",
-      storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
-      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
-      appId: "PASTE_YOUR_APP_ID_HERE"
+    const ROOM_ID = "red-saber-main-timer";
+
+    const gun = Gun({
+      peers: ["https://gun-manhattan.herokuapp.com/gun"]
+    });
+
+    const db = gun.get("obs-overlay-room").get(ROOM_ID);
+
+    const overlayTextInput = document.getElementById("overlayTextInput");
+    const customTimeInput = document.getElementById("customTimeInput");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const statusEl = document.getElementById("status");
+
+    let state = {
+      overlayText: "Round 1",
+      seconds: 3000,
+      running: false,
+      lastUpdate: Date.now(),
+      showOverlay: true
     };
 
-    firebase.initializeApp(firebaseConfig);
+    let hasLoadedOnce = false;
 
-    const db = firebase.database();
-    const timerRef = db.ref("roundTimer");
-
-    const roundText = document.getElementById("roundText");
-    const timerText = document.getElementById("timerText");
-
-    function formatTime(seconds) {
-      seconds = Number(seconds) || 0;
-
-      const minutes = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-
-      return minutes + ":" + secs.toString().padStart(2, "0");
+    function saveState() {
+      db.put({
+        overlayText: state.overlayText,
+        seconds: state.seconds,
+        running: state.running,
+        lastUpdate: state.lastUpdate,
+        showOverlay: state.showOverlay
+      });
     }
 
-    function draw(state) {
-      if (!state) return;
+    function formatTime(totalSeconds) {
+      totalSeconds = Math.max(0, Math.floor(totalSeconds));
 
-      const round = state.round || "ROUND 1";
-      const timeLeft = Number(state.timeLeft || 0);
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = totalSeconds % 60;
 
-      roundText.textContent = round;
-      timerText.textContent = formatTime(timeLeft);
+      return `${mins}:${secs.toString().padStart(2, "0")}`;
+    }
 
-      if (timeLeft <= 300) {
-        timerText.classList.add("warning");
-      } else {
-        timerText.classList.remove("warning");
+    function parseTimeToSeconds(value) {
+      value = value.trim();
+
+      if (!value.includes(":")) {
+        const minutesOnly = parseInt(value, 10);
+
+        if (isNaN(minutesOnly)) {
+          return null;
+        }
+
+        return minutesOnly * 60;
+      }
+
+      const parts = value.split(":");
+
+      if (parts.length !== 2) {
+        return null;
+      }
+
+      const minutes = parseInt(parts[0], 10);
+      const seconds = parseInt(parts[1], 10);
+
+      if (isNaN(minutes) || isNaN(seconds)) {
+        return null;
+      }
+
+      if (seconds < 0 || seconds > 59) {
+        return null;
+      }
+
+      return minutes * 60 + seconds;
+    }
+
+    function getCurrentSeconds() {
+      if (!state.running) {
+        return state.seconds;
+      }
+
+      const now = Date.now();
+      const elapsed = Math.floor((now - state.lastUpdate) / 1000);
+
+      return Math.max(0, state.seconds - elapsed);
+    }
+
+    function lockCurrentTime() {
+      state.seconds = getCurrentSeconds();
+      state.lastUpdate = Date.now();
+
+      if (state.seconds <= 0) {
+        state.seconds = 0;
+        state.running = false;
       }
     }
 
-    timerRef.on("value", function(snapshot) {
-      const state = snapshot.val();
+    function render() {
+      timerDisplay.textContent = formatTime(getCurrentSeconds());
 
-      if (!state) {
-        timerRef.set({
-          round: "ROUND 1",
-          timeLeft: 3000,
-          running: false
-        });
+      // IMPORTANT FIX:
+      // Do not overwrite the text boxes while you are typing.
+      if (document.activeElement !== overlayTextInput) {
+        overlayTextInput.value = state.overlayText || "Round 1";
+      }
+
+      if (document.activeElement !== customTimeInput) {
+        customTimeInput.value = formatTime(getCurrentSeconds());
+      }
+
+      statusEl.textContent = "Connected";
+    }
+
+    db.on(data => {
+      if (!data) return;
+
+      state = {
+        overlayText: data.overlayText || "Round 1",
+        seconds: typeof data.seconds === "number" ? data.seconds : 3000,
+        running: !!data.running,
+        lastUpdate: typeof data.lastUpdate === "number" ? data.lastUpdate : Date.now(),
+        showOverlay: data.showOverlay !== false
+      };
+
+      hasLoadedOnce = true;
+      render();
+    });
+
+    function updateOverlayText() {
+      lockCurrentTime();
+
+      state.overlayText = overlayTextInput.value.trim() || "Round 1";
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+
+      overlayTextInput.blur();
+    }
+
+    function startTimer() {
+      lockCurrentTime();
+
+      state.running = true;
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+    }
+
+    function pauseTimer() {
+      lockCurrentTime();
+
+      state.running = false;
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+    }
+
+    function setCustomTime() {
+      const seconds = parseTimeToSeconds(customTimeInput.value);
+
+      if (seconds === null) {
+        alert("Use time like 54:30 or 50:00");
         return;
       }
 
-      draw(state);
-    });
+      state.seconds = seconds;
+      state.running = false;
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+
+      customTimeInput.blur();
+    }
+
+    function resetTimer() {
+      state.seconds = 3000;
+      state.running = false;
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+    }
+
+    function adjustTime(amount) {
+      lockCurrentTime();
+
+      state.seconds = Math.max(0, state.seconds + amount);
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+    }
+
+    function showOverlay() {
+      lockCurrentTime();
+
+      state.showOverlay = true;
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+    }
+
+    function hideOverlay() {
+      lockCurrentTime();
+
+      state.showOverlay = false;
+      state.lastUpdate = Date.now();
+
+      saveState();
+      render();
+    }
+
+    setInterval(() => {
+      if (state.running && getCurrentSeconds() <= 0) {
+        lockCurrentTime();
+        saveState();
+      }
+
+      render();
+    }, 500);
+
+    render();
   </script>
 </body>
 </html>
