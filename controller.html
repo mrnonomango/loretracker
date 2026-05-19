@@ -109,8 +109,8 @@
     }
 
     .resetLoreBtn{
-      width:170px;
-      height:38px;
+      width:190px;
+      height:42px;
       border:none;
       border-radius:10px;
       background:#7a2020;
@@ -118,6 +118,24 @@
       font-size:13px;
       font-weight:bold;
       margin-top:2px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .resetFill{
+      position:absolute;
+      left:0;
+      top:0;
+      height:100%;
+      width:0%;
+      background:rgba(255,255,255,0.25);
+      transition:none;
+      z-index:1;
+    }
+
+    .resetText{
+      position:relative;
+      z-index:2;
     }
 
     .gameButtonRow{
@@ -212,7 +230,10 @@
       ontouchstart="startResetHold()"
       ontouchend="cancelResetHold()"
     >
-      Hold 1.5s To Reset Lore
+      <div class="resetFill" id="resetFill1"></div>
+      <span class="resetText" id="resetText1">
+        Hold To Reset Lore
+      </span>
     </button>
 
     <div class="gameButtonRow">
@@ -292,7 +313,10 @@
       ontouchstart="startResetHold()"
       ontouchend="cancelResetHold()"
     >
-      Hold 1.5s To Reset Lore
+      <div class="resetFill" id="resetFill2"></div>
+      <span class="resetText" id="resetText2">
+        Hold To Reset Lore
+      </span>
     </button>
 
     <div class="gameButtonRow">
@@ -355,6 +379,7 @@ const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
 
 let resetTimer;
+let fillInterval;
 
 function renderDots(player, wins){
 
@@ -410,10 +435,26 @@ window.updateLore = async (p,c)=>{
 
 window.startResetHold = ()=>{
 
+  let progress = 0;
+
+  document.getElementById("resetText1").innerText = "Resetting...";
+  document.getElementById("resetText2").innerText = "Resetting...";
+
+  fillInterval = setInterval(()=>{
+
+    progress += 2;
+
+    document.getElementById("resetFill1").style.width = progress + "%";
+    document.getElementById("resetFill2").style.width = progress + "%";
+
+  }, 30);
+
   resetTimer = setTimeout(()=>{
 
     set(p1Ref, 0);
     set(p2Ref, 0);
+
+    resetButtons();
 
   }, 1500);
 };
@@ -421,7 +462,22 @@ window.startResetHold = ()=>{
 window.cancelResetHold = ()=>{
 
   clearTimeout(resetTimer);
+  clearInterval(fillInterval);
+
+  resetButtons();
 };
+
+function resetButtons(){
+
+  document.getElementById("resetFill1").style.width = "0%";
+  document.getElementById("resetFill2").style.width = "0%";
+
+  document.getElementById("resetText1").innerText =
+    "Hold To Reset Lore";
+
+  document.getElementById("resetText2").innerText =
+    "Hold To Reset Lore";
+}
 
 window.addGameWin = async p=>{
 
