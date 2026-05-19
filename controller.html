@@ -109,13 +109,13 @@
     }
 
     .resetLoreBtn{
-      width:150px;
-      height:36px;
+      width:170px;
+      height:38px;
       border:none;
       border-radius:10px;
       background:#7a2020;
       color:white;
-      font-size:14px;
+      font-size:13px;
       font-weight:bold;
       margin-top:2px;
     }
@@ -206,9 +206,13 @@
 
     <button
       class="resetLoreBtn"
-      onclick="resetLore()"
+      onmousedown="startResetHold()"
+      onmouseup="cancelResetHold()"
+      onmouseleave="cancelResetHold()"
+      ontouchstart="startResetHold()"
+      ontouchend="cancelResetHold()"
     >
-      Reset Lore
+      Hold 1.5s To Reset Lore
     </button>
 
     <div class="gameButtonRow">
@@ -282,9 +286,13 @@
 
     <button
       class="resetLoreBtn"
-      onclick="resetLore()"
+      onmousedown="startResetHold()"
+      onmouseup="cancelResetHold()"
+      onmouseleave="cancelResetHold()"
+      ontouchstart="startResetHold()"
+      ontouchend="cancelResetHold()"
     >
-      Reset Lore
+      Hold 1.5s To Reset Lore
     </button>
 
     <div class="gameButtonRow">
@@ -346,6 +354,8 @@ const p2GamesRef = ref(db, "p2Games");
 const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
 
+let resetTimer;
+
 function renderDots(player, wins){
 
   document.getElementById(player + "g1").style.background =
@@ -398,10 +408,19 @@ window.updateLore = async (p,c)=>{
   set(r, v);
 };
 
-window.resetLore = ()=>{
+window.startResetHold = ()=>{
 
-  set(p1Ref, 0);
-  set(p2Ref, 0);
+  resetTimer = setTimeout(()=>{
+
+    set(p1Ref, 0);
+    set(p2Ref, 0);
+
+  }, 1500);
+};
+
+window.cancelResetHold = ()=>{
+
+  clearTimeout(resetTimer);
 };
 
 window.addGameWin = async p=>{
