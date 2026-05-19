@@ -56,7 +56,7 @@
     }
 
     .loreNumber{
-      font-size:52px;
+      font-size:62px;
       font-weight:bold;
       line-height:1;
     }
@@ -108,16 +108,22 @@
       background:red;
     }
 
-    .resetLoreText{
-      font-size:10px;
-      color:#888;
-      margin-top:-1px;
+    .resetLoreBtn{
+      width:150px;
+      height:36px;
+      border:none;
+      border-radius:10px;
+      background:#7a2020;
+      color:white;
+      font-size:14px;
+      font-weight:bold;
+      margin-top:2px;
     }
 
     .gameButtonRow{
       display:flex;
       gap:6px;
-      margin-top:1px;
+      margin-top:2px;
     }
 
     .gameBtn{
@@ -149,7 +155,7 @@
       color:white;
       font-size:15px;
       font-weight:bold;
-      margin-top:1px;
+      margin-top:2px;
     }
   </style>
 </head>
@@ -185,10 +191,6 @@
       <button
         class="loreButton plusBtn"
         onclick="updateLore('p1',1)"
-        onmousedown="startHold('p1')"
-        onmouseup="cancelHold()"
-        ontouchstart="startHold('p1')"
-        ontouchend="cancelHold()"
       >
         +
       </button>
@@ -196,19 +198,18 @@
       <button
         class="loreButton minusBtn"
         onclick="updateLore('p1',-1)"
-        onmousedown="startHold('p1')"
-        onmouseup="cancelHold()"
-        ontouchstart="startHold('p1')"
-        ontouchend="cancelHold()"
       >
         −
       </button>
 
     </div>
 
-    <div class="resetLoreText">
-      Hold button to reset lore
-    </div>
+    <button
+      class="resetLoreBtn"
+      onclick="resetLore()"
+    >
+      Reset Lore
+    </button>
 
     <div class="gameButtonRow">
 
@@ -223,7 +224,7 @@
         class="gameBtn resetBtn"
         onclick="resetGames()"
       >
-        Reset
+        Reset Games
       </button>
 
     </div>
@@ -266,10 +267,6 @@
       <button
         class="loreButton plusBtn"
         onclick="updateLore('p2',1)"
-        onmousedown="startHold('p2')"
-        onmouseup="cancelHold()"
-        ontouchstart="startHold('p2')"
-        ontouchend="cancelHold()"
       >
         +
       </button>
@@ -277,19 +274,18 @@
       <button
         class="loreButton minusBtn"
         onclick="updateLore('p2',-1)"
-        onmousedown="startHold('p2')"
-        onmouseup="cancelHold()"
-        ontouchstart="startHold('p2')"
-        ontouchend="cancelHold()"
       >
         −
       </button>
 
     </div>
 
-    <div class="resetLoreText">
-      Hold button to reset lore
-    </div>
+    <button
+      class="resetLoreBtn"
+      onclick="resetLore()"
+    >
+      Reset Lore
+    </button>
 
     <div class="gameButtonRow">
 
@@ -304,7 +300,7 @@
         class="gameBtn resetBtn"
         onclick="resetGames()"
       >
-        Reset
+        Reset Games
       </button>
 
     </div>
@@ -349,8 +345,6 @@ const p2GamesRef = ref(db, "p2Games");
 
 const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
-
-let holdTimer;
 
 function renderDots(player, wins){
 
@@ -404,22 +398,10 @@ window.updateLore = async (p,c)=>{
   set(r, v);
 };
 
-window.startHold = (player)=>{
+window.resetLore = ()=>{
 
-  holdTimer = setTimeout(()=>{
-
-    let r = player === "p1"
-      ? p1Ref
-      : p2Ref;
-
-    set(r, 0);
-
-  }, 1000);
-};
-
-window.cancelHold = ()=>{
-
-  clearTimeout(holdTimer);
+  set(p1Ref, 0);
+  set(p2Ref, 0);
 };
 
 window.addGameWin = async p=>{
