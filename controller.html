@@ -36,8 +36,8 @@
       flex-direction:column;
       justify-content:center;
       align-items:center;
-      padding:8px;
-      gap:4px;
+      padding:6px;
+      gap:2px;
     }
 
     .topHalf{
@@ -46,40 +46,40 @@
     }
 
     .smallText{
-      font-size:14px;
+      font-size:12px;
       color:#aaa;
     }
 
     .playerLabel{
-      font-size:14px;
+      font-size:12px;
       color:#aaa;
     }
 
     .loreNumber{
-      font-size:62px;
+      font-size:52px;
       font-weight:bold;
       line-height:1;
     }
 
     .nameInput{
-      width:210px;
-      padding:6px;
-      font-size:18px;
+      width:190px;
+      padding:5px;
+      font-size:16px;
       border:none;
-      border-radius:10px;
+      border-radius:8px;
       text-align:center;
       background:white;
     }
 
     .gameDots{
       display:flex;
-      gap:6px;
+      gap:5px;
       margin:1px 0;
     }
 
     .dot{
-      width:14px;
-      height:14px;
+      width:12px;
+      height:12px;
       border:2px solid gold;
       border-radius:50%;
       background:transparent;
@@ -87,15 +87,15 @@
 
     .buttonRow{
       display:flex;
-      gap:10px;
+      gap:8px;
     }
 
     .loreButton{
-      width:100px;
-      height:100px;
+      width:84px;
+      height:84px;
       border:none;
-      border-radius:18px;
-      font-size:44px;
+      border-radius:16px;
+      font-size:38px;
       color:white;
       font-weight:bold;
     }
@@ -109,23 +109,23 @@
     }
 
     .resetLoreText{
-      font-size:12px;
+      font-size:10px;
       color:#888;
-      margin-top:-2px;
+      margin-top:-1px;
     }
 
     .gameButtonRow{
       display:flex;
-      gap:8px;
+      gap:6px;
       margin-top:1px;
     }
 
     .gameBtn{
-      width:160px;
-      height:56px;
+      width:135px;
+      height:46px;
       border:none;
-      border-radius:14px;
-      font-size:18px;
+      border-radius:12px;
+      font-size:15px;
       font-weight:bold;
       color:white;
     }
@@ -141,13 +141,13 @@
     }
 
     .saveBtn{
-      width:180px;
-      height:48px;
+      width:155px;
+      height:40px;
       border:none;
-      border-radius:12px;
+      border-radius:10px;
       background:#2f8f6b;
       color:white;
-      font-size:18px;
+      font-size:15px;
       font-weight:bold;
       margin-top:1px;
     }
@@ -185,7 +185,10 @@
       <button
         class="loreButton plusBtn"
         onclick="updateLore('p1',1)"
-        oncontextmenu="resetLore(event,'p1')"
+        onmousedown="startHold('p1')"
+        onmouseup="cancelHold()"
+        ontouchstart="startHold('p1')"
+        ontouchend="cancelHold()"
       >
         +
       </button>
@@ -193,7 +196,10 @@
       <button
         class="loreButton minusBtn"
         onclick="updateLore('p1',-1)"
-        oncontextmenu="resetLore(event,'p1')"
+        onmousedown="startHold('p1')"
+        onmouseup="cancelHold()"
+        ontouchstart="startHold('p1')"
+        ontouchend="cancelHold()"
       >
         −
       </button>
@@ -260,7 +266,10 @@
       <button
         class="loreButton plusBtn"
         onclick="updateLore('p2',1)"
-        oncontextmenu="resetLore(event,'p2')"
+        onmousedown="startHold('p2')"
+        onmouseup="cancelHold()"
+        ontouchstart="startHold('p2')"
+        ontouchend="cancelHold()"
       >
         +
       </button>
@@ -268,7 +277,10 @@
       <button
         class="loreButton minusBtn"
         onclick="updateLore('p2',-1)"
-        oncontextmenu="resetLore(event,'p2')"
+        onmousedown="startHold('p2')"
+        onmouseup="cancelHold()"
+        ontouchstart="startHold('p2')"
+        ontouchend="cancelHold()"
       >
         −
       </button>
@@ -338,6 +350,8 @@ const p2GamesRef = ref(db, "p2Games");
 const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
 
+let holdTimer;
+
 function renderDots(player, wins){
 
   document.getElementById(player + "g1").style.background =
@@ -390,15 +404,22 @@ window.updateLore = async (p,c)=>{
   set(r, v);
 };
 
-window.resetLore = (event, player)=>{
+window.startHold = (player)=>{
 
-  event.preventDefault();
+  holdTimer = setTimeout(()=>{
 
-  let r = player === "p1"
-    ? p1Ref
-    : p2Ref;
+    let r = player === "p1"
+      ? p1Ref
+      : p2Ref;
 
-  set(r, 0);
+    set(r, 0);
+
+  }, 1000);
+};
+
+window.cancelHold = ()=>{
+
+  clearTimeout(holdTimer);
 };
 
 window.addGameWin = async p=>{
