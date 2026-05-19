@@ -2,368 +2,285 @@
 <html>
 <head>
   <title>Lorcana Controller</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
 
-<body style="
-  background:#111;
-  color:white;
-  font-family:Arial,sans-serif;
-  margin:0;
-  height:100vh;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-">
-
-  <!-- TOP HALF / PLAYER 1 -->
-  <div style="
-    height:50vh;
-    transform:rotate(180deg);
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:center;
-    padding-top:8px;
-    box-sizing:border-box;
-    border-bottom:2px solid #333;
+  <meta name="viewport" content="
+    width=device-width,
+    initial-scale=1.0,
+    maximum-scale=1.0,
+    user-scalable=no
   ">
 
-    <div style="font-size:12px;color:#aaa;line-height:1;">
-      Opponent Lore
-    </div>
+  <style>
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    <div id="p2_top" style="
-      font-size:34px;
+    body{
+      margin:0;
+      width:100vw;
+      height:100vh;
+      overflow:hidden;
+      background:#111;
+      color:white;
+      font-family:Arial, sans-serif;
+      display:flex;
+      flex-direction:column;
+      touch-action:manipulation;
+    }
+
+    .playerHalf{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      padding:14px;
+      gap:10px;
+    }
+
+    .topHalf{
+      transform:rotate(180deg);
+      border-bottom:3px solid #333;
+    }
+
+    .smallText{
+      font-size:24px;
+      color:#aaa;
+    }
+
+    .playerLabel{
+      font-size:22px;
+      color:#aaa;
+    }
+
+    .loreNumber{
+      font-size:110px;
       font-weight:bold;
       line-height:1;
-      margin-top:2px;
-    ">
-      0
-    </div>
+    }
 
-    <div style="text-align:center;margin:2px 0;">
-      <div style="font-size:12px;color:#aaa;line-height:1;">
-        Player 1
-      </div>
+    .nameInput{
+      width:320px;
+      padding:12px;
+      font-size:26px;
+      border:none;
+      border-radius:16px;
+      text-align:center;
+      background:white;
+    }
 
-      <div style="font-size:12px;color:#aaa;line-height:1;">
-        YOUR LORE
-      </div>
-
-      <div id="p1" style="
-        font-size:44px;
-        font-weight:bold;
-        line-height:1;
-      ">
-        0
-      </div>
-    </div>
-
-    <!-- NAME -->
-    <div style="transform:rotate(180deg);margin-top:2px;">
-      <input id="p1NameInput"
-        placeholder="Player 1 Name"
-        style="
-          padding:3px;
-          font-size:12px;
-          border-radius:7px;
-          border:none;
-          text-align:center;
-          width:145px;
-          height:22px;
-          box-sizing:border-box;
-        ">
-    </div>
-
-    <!-- GAME DOTS -->
-    <div style="
+    .gameDots{
       display:flex;
-      gap:5px;
-      margin:4px 0;
-    ">
-      <div id="p1g1" style="
-        width:9px;
-        height:9px;
-        border:2px solid gold;
-        border-radius:50%;
-      "></div>
+      gap:14px;
+      margin:6px 0;
+    }
 
-      <div id="p1g2" style="
-        width:9px;
-        height:9px;
-        border:2px solid gold;
-        border-radius:50%;
-      "></div>
+    .dot{
+      width:24px;
+      height:24px;
+      border:3px solid gold;
+      border-radius:50%;
+      background:transparent;
+    }
+
+    .buttonRow{
+      display:flex;
+      gap:18px;
+    }
+
+    .loreButton{
+      width:170px;
+      height:170px;
+      border:none;
+      border-radius:28px;
+      font-size:70px;
+      color:white;
+      font-weight:bold;
+    }
+
+    .plusBtn{
+      background:green;
+    }
+
+    .minusBtn{
+      background:red;
+    }
+
+    .gameButtonRow{
+      display:flex;
+      gap:14px;
+      margin-top:6px;
+    }
+
+    .gameBtn{
+      width:260px;
+      height:90px;
+      border:none;
+      border-radius:20px;
+      font-size:30px;
+      font-weight:bold;
+      color:white;
+    }
+
+    .goldBtn{
+      background:#d4af37;
+      color:black;
+    }
+
+    .resetBtn{
+      background:#444;
+      color:white;
+    }
+
+    .saveBtn{
+      width:280px;
+      height:72px;
+      border:none;
+      border-radius:18px;
+      background:#2f8f6b;
+      color:white;
+      font-size:26px;
+      font-weight:bold;
+      margin-top:6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP PLAYER -->
+  <div class="playerHalf topHalf">
+
+    <div class="smallText">Opponent Lore</div>
+
+    <div id="p2_top" class="loreNumber">0</div>
+
+    <div style="text-align:center;">
+      <div class="playerLabel">Player 1</div>
+      <div class="smallText">YOUR LORE</div>
+      <div id="p1" class="loreNumber">0</div>
     </div>
 
-    <!-- + - -->
-    <div style="
-      display:flex;
-      gap:8px;
-    ">
-      <button onclick="updateLore('p1',1)" style="
-        font-size:36px;
-        width:68px;
-        height:68px;
-        background:green;
-        color:white;
-        border:none;
-        border-radius:14px;
-      ">
+    <input
+      id="p1NameInput"
+      class="nameInput"
+      placeholder="Player 1 Name"
+    >
+
+    <div class="gameDots">
+      <div id="p1g1" class="dot"></div>
+      <div id="p1g2" class="dot"></div>
+    </div>
+
+    <div class="buttonRow">
+      <button
+        class="loreButton plusBtn"
+        onclick="updateLore('p1',1)"
+      >
         +
       </button>
 
-      <button onclick="updateLore('p1',-1)" style="
-        font-size:36px;
-        width:68px;
-        height:68px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:14px;
-      ">
+      <button
+        class="loreButton minusBtn"
+        onclick="updateLore('p1',-1)"
+      >
         −
       </button>
     </div>
 
-    <!-- HOLD RESET -->
-    <button
-      id="loreResetBtn1"
-      ontouchstart="startLoreReset('loreResetBtn1')"
-      ontouchend="cancelLoreReset('loreResetBtn1')"
-      onmousedown="startLoreReset('loreResetBtn1')"
-      onmouseup="cancelLoreReset('loreResetBtn1')"
-      onmouseleave="cancelLoreReset('loreResetBtn1')"
-      style="
-        margin-top:4px;
-        font-size:12px;
-        width:145px;
-        height:30px;
-        background:#555;
-        color:white;
-        border:none;
-        border-radius:10px;
-        font-weight:bold;
-        transition:0.2s;
-      ">
-      Hold To Reset Lore
-    </button>
-
-    <!-- GAME BUTTONS -->
-    <div style="
-      display:flex;
-      gap:6px;
-      margin-top:4px;
-    ">
-      <button onclick="addGameWin('p1')" style="
-        font-size:14px;
-        width:112px;
-        height:34px;
-        background:#d4af37;
-        color:black;
-        border:none;
-        border-radius:10px;
-        font-weight:bold;
-      ">
+    <div class="gameButtonRow">
+      <button
+        class="gameBtn goldBtn"
+        onclick="addGameWin('p1')"
+      >
         + Game P1
       </button>
 
-      <button onclick="resetGames()" style="
-        font-size:13px;
-        width:112px;
-        height:34px;
-        background:#444;
-        color:white;
-        border:none;
-        border-radius:10px;
-        font-weight:bold;
-      ">
-        Game Reset
+      <button
+        class="gameBtn resetBtn"
+        onclick="resetGames()"
+      >
+        Reset
       </button>
     </div>
+
+    <button
+      class="saveBtn"
+      onclick="saveNames()"
+    >
+      Save Names
+    </button>
+
   </div>
 
-  <!-- BOTTOM HALF / PLAYER 2 -->
-  <div style="
-    height:50vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:center;
-    padding-top:8px;
-    box-sizing:border-box;
-  ">
+  <!-- BOTTOM PLAYER -->
+  <div class="playerHalf">
 
-    <div style="font-size:12px;color:#aaa;line-height:1;">
-      Opponent Lore
+    <div class="smallText">Opponent Lore</div>
+
+    <div id="p1_bottom" class="loreNumber">0</div>
+
+    <div style="text-align:center;">
+      <div class="playerLabel">Player 2</div>
+      <div class="smallText">YOUR LORE</div>
+      <div id="p2" class="loreNumber">0</div>
     </div>
 
-    <div id="p1_bottom" style="
-      font-size:34px;
-      font-weight:bold;
-      line-height:1;
-      margin-top:2px;
-    ">
-      0
-    </div>
-
-    <div style="text-align:center;margin:2px 0;">
-      <div style="font-size:12px;color:#aaa;line-height:1;">
-        Player 2
-      </div>
-
-      <div style="font-size:12px;color:#aaa;line-height:1;">
-        YOUR LORE
-      </div>
-
-      <div id="p2" style="
-        font-size:44px;
-        font-weight:bold;
-        line-height:1;
-      ">
-        0
-      </div>
-    </div>
-
-    <!-- NAME -->
-    <input id="p2NameInput"
+    <input
+      id="p2NameInput"
+      class="nameInput"
       placeholder="Player 2 Name"
-      style="
-        padding:3px;
-        font-size:12px;
-        border-radius:7px;
-        border:none;
-        text-align:center;
-        width:145px;
-        height:22px;
-        box-sizing:border-box;
-      ">
+    >
 
-    <!-- GAME DOTS -->
-    <div style="
-      display:flex;
-      gap:5px;
-      margin:4px 0;
-    ">
-      <div id="p2g1" style="
-        width:9px;
-        height:9px;
-        border:2px solid gold;
-        border-radius:50%;
-      "></div>
-
-      <div id="p2g2" style="
-        width:9px;
-        height:9px;
-        border:2px solid gold;
-        border-radius:50%;
-      "></div>
+    <div class="gameDots">
+      <div id="p2g1" class="dot"></div>
+      <div id="p2g2" class="dot"></div>
     </div>
 
-    <!-- + - -->
-    <div style="
-      display:flex;
-      gap:8px;
-    ">
-      <button onclick="updateLore('p2',1)" style="
-        font-size:36px;
-        width:68px;
-        height:68px;
-        background:green;
-        color:white;
-        border:none;
-        border-radius:14px;
-      ">
+    <div class="buttonRow">
+      <button
+        class="loreButton plusBtn"
+        onclick="updateLore('p2',1)"
+      >
         +
       </button>
 
-      <button onclick="updateLore('p2',-1)" style="
-        font-size:36px;
-        width:68px;
-        height:68px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:14px;
-      ">
+      <button
+        class="loreButton minusBtn"
+        onclick="updateLore('p2',-1)"
+      >
         −
       </button>
     </div>
 
-    <!-- HOLD RESET -->
-    <button
-      id="loreResetBtn2"
-      ontouchstart="startLoreReset('loreResetBtn2')"
-      ontouchend="cancelLoreReset('loreResetBtn2')"
-      onmousedown="startLoreReset('loreResetBtn2')"
-      onmouseup="cancelLoreReset('loreResetBtn2')"
-      onmouseleave="cancelLoreReset('loreResetBtn2')"
-      style="
-        margin-top:4px;
-        font-size:12px;
-        width:145px;
-        height:30px;
-        background:#555;
-        color:white;
-        border:none;
-        border-radius:10px;
-        font-weight:bold;
-        transition:0.2s;
-      ">
-      Hold To Reset Lore
-    </button>
-
-    <!-- GAME BUTTONS -->
-    <div style="
-      display:flex;
-      gap:6px;
-      margin-top:4px;
-    ">
-      <button onclick="addGameWin('p2')" style="
-        font-size:14px;
-        width:112px;
-        height:34px;
-        background:#d4af37;
-        color:black;
-        border:none;
-        border-radius:10px;
-        font-weight:bold;
-      ">
+    <div class="gameButtonRow">
+      <button
+        class="gameBtn goldBtn"
+        onclick="addGameWin('p2')"
+      >
         + Game P2
       </button>
 
-      <button onclick="resetGames()" style="
-        font-size:13px;
-        width:112px;
-        height:34px;
-        background:#444;
-        color:white;
-        border:none;
-        border-radius:10px;
-        font-weight:bold;
-      ">
-        Game Reset
+      <button
+        class="gameBtn resetBtn"
+        onclick="resetGames()"
+      >
+        Reset
       </button>
     </div>
 
-    <!-- SAVE -->
-    <button onclick="saveNames()" style="
-      margin-top:5px;
-      font-size:14px;
-      width:155px;
-      height:32px;
-      background:#2f8f6b;
-      color:white;
-      border:none;
-      border-radius:10px;
-      font-weight:bold;
-    ">
+    <button
+      class="saveBtn"
+      onclick="saveNames()"
+    >
       Save Names
     </button>
+
   </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
@@ -382,6 +299,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
 const p1Ref = ref(db, "p1");
@@ -393,9 +311,8 @@ const p2GamesRef = ref(db, "p2Games");
 const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
 
-let loreResetTimer;
+function renderDots(player, wins){
 
-function renderDots(player, wins) {
   document.getElementById(player + "g1").style.background =
     wins >= 1 ? "gold" : "transparent";
 
@@ -404,17 +321,19 @@ function renderDots(player, wins) {
 }
 
 onValue(p1Ref, snap => {
-  const v = snap.val() || 0;
 
-  document.getElementById("p1").innerText = v;
-  document.getElementById("p1_bottom").innerText = v;
+  let v = snap.val() || 0;
+
+  p1.innerText = v;
+  p1_bottom.innerText = v;
 });
 
 onValue(p2Ref, snap => {
-  const v = snap.val() || 0;
 
-  document.getElementById("p2").innerText = v;
-  document.getElementById("p2_top").innerText = v;
+  let v = snap.val() || 0;
+
+  p2.innerText = v;
+  p2_top.innerText = v;
 });
 
 onValue(p1GamesRef, snap => {
@@ -425,30 +344,28 @@ onValue(p2GamesRef, snap => {
   renderDots("p2", snap.val() || 0);
 });
 
-onValue(p1NameRef, snap => {
-  document.getElementById("p1NameInput").value =
-    snap.val() || "";
+onValue(p1NameRef, s => {
+  p1NameInput.value = s.val() || "";
 });
 
-onValue(p2NameRef, snap => {
-  document.getElementById("p2NameInput").value =
-    snap.val() || "";
+onValue(p2NameRef, s => {
+  p2NameInput.value = s.val() || "";
 });
 
-window.updateLore = async (player, change) => {
-  const r = player === "p1"
-    ? p1Ref
-    : p2Ref;
+window.updateLore = async (p,c)=>{
+
+  let r = p === "p1" ? p1Ref : p2Ref;
 
   let v = (await get(r)).val() || 0;
 
-  v = Math.max(0, Math.min(20, v + change));
+  v = Math.max(0, Math.min(20, v + c));
 
   set(r, v);
 };
 
-window.addGameWin = async player => {
-  const r = player === "p1"
+window.addGameWin = async p=>{
+
+  let r = p === "p1"
     ? p1GamesRef
     : p2GamesRef;
 
@@ -457,55 +374,18 @@ window.addGameWin = async player => {
   set(r, Math.min(2, v + 1));
 };
 
-window.resetGames = () => {
+window.resetGames = ()=>{
+
   set(p1GamesRef, 0);
   set(p2GamesRef, 0);
 };
 
-window.startLoreReset = (buttonId) => {
+window.saveNames = ()=>{
 
-  const btn = document.getElementById(buttonId);
-
-  btn.innerText = "Resetting...";
-  btn.style.background = "#b22222";
-
-  loreResetTimer = setTimeout(() => {
-
-    set(p1Ref, 0);
-    set(p2Ref, 0);
-
-    btn.innerText = "Lore Reset";
-    btn.style.background = "#2e8b57";
-
-    setTimeout(() => {
-      btn.innerText = "Hold To Reset Lore";
-      btn.style.background = "#555";
-    }, 1000);
-
-  }, 1500);
+  set(p1NameRef, p1NameInput.value);
+  set(p2NameRef, p2NameInput.value);
 };
 
-window.cancelLoreReset = (buttonId) => {
-
-  clearTimeout(loreResetTimer);
-
-  const btn = document.getElementById(buttonId);
-
-  btn.innerText = "Hold To Reset Lore";
-  btn.style.background = "#555";
-};
-
-window.saveNames = () => {
-  set(
-    p1NameRef,
-    document.getElementById("p1NameInput").value
-  );
-
-  set(
-    p2NameRef,
-    document.getElementById("p2NameInput").value
-  );
-};
 </script>
 
 </body>
