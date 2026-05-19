@@ -55,8 +55,9 @@
       color:#aaa;
     }
 
+    /* BIGGER LORE NUMBERS */
     .loreNumber{
-      font-size:62px;
+      font-size:74px;
       font-weight:bold;
       line-height:1;
     }
@@ -189,10 +190,14 @@
     <div id="p1_top" class="loreNumber">0</div>
 
     <div style="text-align:center;">
+
       <!-- TOP IS PLAYER 2 -->
       <div class="playerLabel">Player 2</div>
+
       <div class="smallText">YOUR LORE</div>
+
       <div id="p2" class="loreNumber">0</div>
+
     </div>
 
     <input
@@ -202,8 +207,11 @@
     >
 
     <div class="gameDots">
+
       <div id="p2g1" class="dot"></div>
+
       <div id="p2g2" class="dot"></div>
+
     </div>
 
     <div class="buttonRow">
@@ -232,11 +240,13 @@
       ontouchstart="startResetHold()"
       ontouchend="cancelResetHold()"
     >
+
       <div class="resetFill" id="resetFill1"></div>
 
       <span class="resetText" id="resetText1">
         Hold To Reset Lore
       </span>
+
     </button>
 
     <div class="gameButtonRow">
@@ -275,10 +285,14 @@
     <div id="p2_bottom" class="loreNumber">0</div>
 
     <div style="text-align:center;">
+
       <!-- BOTTOM IS PLAYER 1 -->
       <div class="playerLabel">Player 1</div>
+
       <div class="smallText">YOUR LORE</div>
+
       <div id="p1" class="loreNumber">0</div>
+
     </div>
 
     <input
@@ -288,8 +302,11 @@
     >
 
     <div class="gameDots">
+
       <div id="p1g1" class="dot"></div>
+
       <div id="p1g2" class="dot"></div>
+
     </div>
 
     <div class="buttonRow">
@@ -318,11 +335,13 @@
       ontouchstart="startResetHold()"
       ontouchend="cancelResetHold()"
     >
+
       <div class="resetFill" id="resetFill2"></div>
 
       <span class="resetText" id="resetText2">
         Hold To Reset Lore
       </span>
+
     </button>
 
     <div class="gameButtonRow">
@@ -413,24 +432,34 @@ onValue(p2Ref, snap => {
 });
 
 onValue(p1GamesRef, snap => {
+
   renderDots("p1", snap.val() || 0);
+
 });
 
 onValue(p2GamesRef, snap => {
+
   renderDots("p2", snap.val() || 0);
+
 });
 
 onValue(p1NameRef, s => {
+
   p1NameInput.value = s.val() || "";
+
 });
 
 onValue(p2NameRef, s => {
+
   p2NameInput.value = s.val() || "";
+
 });
 
 window.updateLore = async (p,c)=>{
 
-  let r = p === "p1" ? p1Ref : p2Ref;
+  let r = p === "p1"
+    ? p1Ref
+    : p2Ref;
 
   let v = (await get(r)).val() || 0;
 
@@ -443,8 +472,11 @@ window.startResetHold = ()=>{
 
   let progress = 0;
 
-  document.getElementById("resetText1").innerText = "Resetting...";
-  document.getElementById("resetText2").innerText = "Resetting...";
+  document.getElementById("resetText1").innerText =
+    "Resetting...";
+
+  document.getElementById("resetText2").innerText =
+    "Resetting...";
 
   fillInterval = setInterval(()=>{
 
@@ -471,6 +503,7 @@ window.startResetHold = ()=>{
 window.cancelResetHold = ()=>{
 
   clearTimeout(resetTimer);
+
   clearInterval(fillInterval);
 
   resetButtons();
@@ -478,8 +511,11 @@ window.cancelResetHold = ()=>{
 
 function resetButtons(){
 
-  document.getElementById("resetFill1").style.width = "0%";
-  document.getElementById("resetFill2").style.width = "0%";
+  document.getElementById("resetFill1").style.width =
+    "0%";
+
+  document.getElementById("resetFill2").style.width =
+    "0%";
 
   document.getElementById("resetText1").innerText =
     "Hold To Reset Lore";
@@ -502,12 +538,14 @@ window.addGameWin = async p=>{
 window.resetGames = ()=>{
 
   set(p1GamesRef, 0);
+
   set(p2GamesRef, 0);
 };
 
 window.saveNames = ()=>{
 
   set(p1NameRef, p1NameInput.value);
+
   set(p2NameRef, p2NameInput.value);
 };
 
