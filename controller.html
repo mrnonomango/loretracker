@@ -185,92 +185,11 @@
 
     <div class="smallText">Opponent Lore</div>
 
-    <div id="p2_top" class="loreNumber">0</div>
+    <!-- PLAYER 1 OPPONENT LORE -->
+    <div id="p1_top" class="loreNumber">0</div>
 
     <div style="text-align:center;">
-      <div class="playerLabel">Player 1</div>
-      <div class="smallText">YOUR LORE</div>
-      <div id="p1" class="loreNumber">0</div>
-    </div>
-
-    <input
-      id="p1NameInput"
-      class="nameInput"
-      placeholder="Player 1 Name"
-    >
-
-    <div class="gameDots">
-      <div id="p1g1" class="dot"></div>
-      <div id="p1g2" class="dot"></div>
-    </div>
-
-    <div class="buttonRow">
-
-      <button
-        class="loreButton plusBtn"
-        onclick="updateLore('p1',1)"
-      >
-        +
-      </button>
-
-      <button
-        class="loreButton minusBtn"
-        onclick="updateLore('p1',-1)"
-      >
-        −
-      </button>
-
-    </div>
-
-    <button
-      class="resetLoreBtn"
-      onmousedown="startResetHold()"
-      onmouseup="cancelResetHold()"
-      onmouseleave="cancelResetHold()"
-      ontouchstart="startResetHold()"
-      ontouchend="cancelResetHold()"
-    >
-      <div class="resetFill" id="resetFill1"></div>
-      <span class="resetText" id="resetText1">
-        Hold To Reset Lore
-      </span>
-    </button>
-
-    <div class="gameButtonRow">
-
-      <button
-        class="gameBtn goldBtn"
-        onclick="addGameWin('p1')"
-      >
-        + Game P1
-      </button>
-
-      <button
-        class="gameBtn resetBtn"
-        onclick="resetGames()"
-      >
-        Reset Games
-      </button>
-
-    </div>
-
-    <button
-      class="saveBtn"
-      onclick="saveNames()"
-    >
-      Save Names
-    </button>
-
-  </div>
-
-  <!-- BOTTOM PLAYER -->
-  <div class="playerHalf">
-
-    <div class="smallText">Opponent Lore</div>
-
-    <div id="p1_bottom" class="loreNumber">0</div>
-
-    <div style="text-align:center;">
+      <!-- TOP IS PLAYER 2 -->
       <div class="playerLabel">Player 2</div>
       <div class="smallText">YOUR LORE</div>
       <div id="p2" class="loreNumber">0</div>
@@ -313,8 +232,9 @@
       ontouchstart="startResetHold()"
       ontouchend="cancelResetHold()"
     >
-      <div class="resetFill" id="resetFill2"></div>
-      <span class="resetText" id="resetText2">
+      <div class="resetFill" id="resetFill1"></div>
+
+      <span class="resetText" id="resetText1">
         Hold To Reset Lore
       </span>
     </button>
@@ -326,6 +246,92 @@
         onclick="addGameWin('p2')"
       >
         + Game P2
+      </button>
+
+      <button
+        class="gameBtn resetBtn"
+        onclick="resetGames()"
+      >
+        Reset Games
+      </button>
+
+    </div>
+
+    <button
+      class="saveBtn"
+      onclick="saveNames()"
+    >
+      Save Names
+    </button>
+
+  </div>
+
+  <!-- BOTTOM PLAYER -->
+  <div class="playerHalf">
+
+    <div class="smallText">Opponent Lore</div>
+
+    <!-- PLAYER 2 OPPONENT LORE -->
+    <div id="p2_bottom" class="loreNumber">0</div>
+
+    <div style="text-align:center;">
+      <!-- BOTTOM IS PLAYER 1 -->
+      <div class="playerLabel">Player 1</div>
+      <div class="smallText">YOUR LORE</div>
+      <div id="p1" class="loreNumber">0</div>
+    </div>
+
+    <input
+      id="p1NameInput"
+      class="nameInput"
+      placeholder="Player 1 Name"
+    >
+
+    <div class="gameDots">
+      <div id="p1g1" class="dot"></div>
+      <div id="p1g2" class="dot"></div>
+    </div>
+
+    <div class="buttonRow">
+
+      <button
+        class="loreButton plusBtn"
+        onclick="updateLore('p1',1)"
+      >
+        +
+      </button>
+
+      <button
+        class="loreButton minusBtn"
+        onclick="updateLore('p1',-1)"
+      >
+        −
+      </button>
+
+    </div>
+
+    <button
+      class="resetLoreBtn"
+      onmousedown="startResetHold()"
+      onmouseup="cancelResetHold()"
+      onmouseleave="cancelResetHold()"
+      ontouchstart="startResetHold()"
+      ontouchend="cancelResetHold()"
+    >
+      <div class="resetFill" id="resetFill2"></div>
+
+      <span class="resetText" id="resetText2">
+        Hold To Reset Lore
+      </span>
+    </button>
+
+    <div class="gameButtonRow">
+
+      <button
+        class="gameBtn goldBtn"
+        onclick="addGameWin('p1')"
+      >
+        + Game P1
       </button>
 
       <button
@@ -395,7 +401,7 @@ onValue(p1Ref, snap => {
   let v = snap.val() || 0;
 
   p1.innerText = v;
-  p1_bottom.innerText = v;
+  p1_top.innerText = v;
 });
 
 onValue(p2Ref, snap => {
@@ -403,7 +409,7 @@ onValue(p2Ref, snap => {
   let v = snap.val() || 0;
 
   p2.innerText = v;
-  p2_top.innerText = v;
+  p2_bottom.innerText = v;
 });
 
 onValue(p1GamesRef, snap => {
@@ -444,8 +450,11 @@ window.startResetHold = ()=>{
 
     progress += 2;
 
-    document.getElementById("resetFill1").style.width = progress + "%";
-    document.getElementById("resetFill2").style.width = progress + "%";
+    document.getElementById("resetFill1").style.width =
+      progress + "%";
+
+    document.getElementById("resetFill2").style.width =
+      progress + "%";
 
   }, 30);
 
