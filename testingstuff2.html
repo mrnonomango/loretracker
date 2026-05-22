@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lorcana Overlay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      font-family: Arial, sans-serif;
+    }
+
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      background: transparent;
+    }
+
+    .side {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 420px;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .left {
+      left: 0;
+    }
+
+    .right {
+      right: 0;
+      justify-content: flex-end;
+    }
+
+    /* =========================
+       PANELS
+    ========================== */
+
+    .panel {
+      width: 300px;
+      height: 100%;
+      position: relative;
+
+      background:
+        radial-gradient(circle at 50% 82%, rgba(255,145,64,0.22), rgba(255,145,64,0) 24%),
+        radial-gradient(circle at 50% 95%, rgba(255,122,61,0.38), rgba(255,122,61,0) 35%),
+        linear-gradient(
+          180deg,
+          #03071c 0%,
+          #06123c 42%,
+          #23134e 72%,
+          #5b1f5a 88%,
+          #ff9347 100%
+        );
+
+      border: 2px solid #d29b36;
+
+      box-shadow:
+        inset 0 0 0 2px rgba(255,220,140,.20),
+        inset 0 0 40px rgba(0,0,0,.65);
+
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+
+      border: 1px solid rgba(255,190,100,.35);
+
+      pointer-events: none;
+    }
+
+    /* =========================
+       LORE TRACK
+    ========================== */
+
+    .track {
+
+      width: 92px;
+      height: 100%;
+
+      position: relative;
+
+      background:
+        linear-gradient(
+          180deg,
+          #06103d 0%,
+          #01081f 100%
+        );
+
+      overflow: hidden;
+
+      border-left: 2px solid #d29b36;
+      border-right: 2px solid #d29b36;
+
+      box-shadow:
+        0 0 12px rgba(0,120,255,.55),
+        inset 0 0 0 2px rgba(255,220,140,.14),
+        inset 0 0 20px rgba(0,0,0,.85);
+    }
+
+    /* INNER DOUBLE BORDER */
+
+    .track::before {
+
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+      bottom: 0;
+
+      left: 8px;
+      right: 8px;
+
+      border-left: 1px solid rgba(255,210,120,.75);
+      border-right: 1px solid rgba(255,210,120,.75);
+
+      pointer-events: none;
+    }
+
+    /* REMOVE CENTER BLUE LINE */
+
+    .track::after {
+      display: none;
+    }
+
+    /* =========================
+       DIAMONDS
+    ========================== */
+
+    .capTop,
+    .capBottom {
+
+      position: absolute;
+
+      left: 50%;
+
+      width: 16px;
+      height: 16px;
+
+      transform:
+        translateX(-50%)
+        rotate(45deg);
+
+      background:
+        radial-gradient(circle, #ffd27a 0%, #c78622 70%);
+
+      border: 1px solid #ffcf70;
+
+      z-index: 10;
+
+      box-shadow:
+        0 0 8px rgba(255,180,50,.6);
+    }
+
+    /* MOVED SO THEY DON'T COVER 20/1 */
+
+    .capTop {
+      top: 2px;
+    }
+
+    .capBottom {
+      bottom: 2px;
+    }
+
+    /* =========================
+       MARKERS
+    ========================== */
+
+    .markers {
+
+      position: absolute;
+
+      /* EXTRA SPACE SO 20 AND 1 ARE FULLY VISIBLE */
+
+      top: 34px;
+      bottom: 34px;
+
+      left: 0;
+      right: 0;
+    }
+
+    .marker {
+
+      position: absolute;
+
+      left: 50%;
+
+      transform:
+        translateX(-50%);
+
+      width: 52px;
+      height: 52px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle at 30% 30%,
+          #132f85 0%,
+          #06154f 60%,
+          #020a2a 100%
+        );
+
+      border: 2px solid #d29b36;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #fff2c6;
+      font-weight: bold;
+      font-size: 18px;
+
+      box-sizing: border-box;
+
+      text-shadow:
+        0 1px 2px rgba(0,0,0,.7);
+
+      transition: .2s ease;
+    }
+
+    .marker.lit {
+
+      box-shadow:
+        0 0 10px rgba(70,120,255,.12);
+    }
+
+    .marker.current {
+
+      background:
+        radial-gradient(
+          circle at 30% 30%,
+          #58c4ff 0%,
+          #1366ff 45%,
+          #041f7c 100%
+        );
+
+      transform:
+        translateX(-50%)
+        scale(1.10);
+
+      box-shadow:
+        0 0 12px rgba(79,195,255,.95),
+        0 0 25px rgba(33,150,243,.75),
+        0 0 40px rgba(0,140,255,.45);
+
+      animation: pulse 1.6s infinite;
+
+      color: white;
+    }
+
+    @keyframes pulse {
+
+      0%,100% {
+
+        box-shadow:
+          0 0 12px rgba(79,195,255,.95),
+          0 0 25px rgba(33,150,243,.75),
+          0 0 40px rgba(0,140,255,.45);
+      }
+
+      50% {
+
+        box-shadow:
+          0 0 20px rgba(141,224,255,1),
+          0 0 35px rgba(33,150,243,.95),
+          0 0 55px rgba(0,140,255,.60);
+      }
+    }
+
+    /* =========================
+       LOGO
+    ========================== */
+
+    .lorcana {
+
+      position: absolute;
+
+      bottom: 58px;
+
+      width: 100%;
+
+      text-align: center;
+
+      color: #f5dfae;
+
+      text-shadow:
+        0 0 10px rgba(255,200,100,.25);
+
+      letter-spacing: 1px;
+    }
+
+    .lorcana .disney {
+      font-size: 24px;
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+
+    .lorcana .main {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: .95;
+    }
+
+    .lorcana .sub {
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin-top: 6px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <!-- LEFT -->
+
+  <div class="side left">
+
+    <div class="panel">
+
+      <div class="lorcana">
+        <div class="disney">Disney</div>
+        <div class="main">LORCANA</div>
+        <div class="sub">TRADING CARD GAME</div>
+      </div>
+
+    </div>
+
+    <div class="track">
+
+      <div class="capTop"></div>
+      <div class="capBottom"></div>
+
+      <div class="markers" id="leftTrack"></div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+
+  <div class="side right">
+
+    <div class="track">
+
+      <div class="capTop"></div>
+      <div class="capBottom"></div>
+
+      <div class="markers" id="rightTrack"></div>
+
+    </div>
+
+    <div class="panel">
+
+      <div class="lorcana">
+        <div class="disney">Disney</div>
+        <div class="main">LORCANA</div>
+        <div class="sub">TRADING CARD GAME</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+const leftTrack = document.getElementById("leftTrack");
+const rightTrack = document.getElementById("rightTrack");
+
+const MAX = 20;
+
+function render(el, val) {
+
+  el.innerHTML = "";
+
+  for (let i = MAX; i >= 1; i--) {
+
+    const m = document.createElement("div");
+
+    m.className = "marker";
+
+    if (i <= val) {
+      m.classList.add("lit");
+    }
+
+    if (i === val) {
+      m.classList.add("current");
+    }
+
+    m.textContent = String(i);
+
+    const pos =
+      ((MAX - i) / (MAX - 1)) * 100;
+
+    m.style.top =
+      `calc(${pos}% - 26px)`;
+
+    el.appendChild(m);
+  }
+}
+
+onValue(ref(db, "p1"), (s) => {
+  render(leftTrack, Number(s.val()) || 0);
+});
+
+onValue(ref(db, "p2"), (s) => {
+  render(rightTrack, Number(s.val()) || 0);
+});
+
+</script>
+
+</body>
+</html>
