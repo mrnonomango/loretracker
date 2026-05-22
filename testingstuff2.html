@@ -137,53 +137,12 @@
     }
 
     /* =========================
-       DIAMONDS
-    ========================== */
-
-    .capTop,
-    .capBottom {
-
-      position: absolute;
-
-      left: 50%;
-
-      width: 16px;
-      height: 16px;
-
-      transform:
-        translateX(-50%)
-        rotate(45deg);
-
-      background:
-        radial-gradient(circle, #ffd27a 0%, #c78622 70%);
-
-      border: 1px solid #ffcf70;
-
-      z-index: 10;
-
-      box-shadow:
-        0 0 8px rgba(255,180,50,.6);
-    }
-
-    /* MOVED SO THEY DON'T COVER 20/1 */
-
-    .capTop {
-      top: 2px;
-    }
-
-    .capBottom {
-      bottom: 2px;
-    }
-
-    /* =========================
        MARKERS
     ========================== */
 
     .markers {
 
       position: absolute;
-
-      /* EXTRA SPACE SO 20 AND 1 ARE FULLY VISIBLE */
 
       top: 34px;
       bottom: 34px;
@@ -344,9 +303,6 @@
 
     <div class="track">
 
-      <div class="capTop"></div>
-      <div class="capBottom"></div>
-
       <div class="markers" id="leftTrack"></div>
 
     </div>
@@ -358,9 +314,6 @@
   <div class="side right">
 
     <div class="track">
-
-      <div class="capTop"></div>
-      <div class="capBottom"></div>
 
       <div class="markers" id="rightTrack"></div>
 
