@@ -1,562 +1,369 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lorcana Controller</title>
-
-  <meta name="viewport" content="
-    width=device-width,
-    initial-scale=1.0,
-    maximum-scale=1.0,
-    user-scalable=no
-  ">
+  <title>Lorcana Overlay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color: transparent;
-      user-select:none;
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      font-family: Arial, sans-serif;
     }
 
-    body{
-      margin:0;
-      width:100vw;
-      height:100vh;
-      overflow:hidden;
-      background:#111;
-      color:white;
-      font-family:Arial, sans-serif;
-      display:flex;
-      flex-direction:column;
-      touch-action:manipulation;
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      background: transparent;
     }
 
-    .playerHalf{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      padding:6px;
-      gap:2px;
-      transform:translateY(-18px);
+    .side {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 420px;
+      display: flex;
     }
 
-    .topHalf{
-      transform:rotate(180deg) translateY(-32px);
-      border-bottom:2px solid #333;
+    .left {
+      left: 0;
     }
 
-    .smallText{
-      font-size:12px;
-      color:#aaa;
+    .right {
+      right: 0;
+      justify-content: flex-end;
     }
 
-    .playerLabel{
-      font-size:12px;
-      color:#aaa;
+    .panel {
+      width: 300px;
+      height: 100%;
+      position: relative;
+
+      background:
+        radial-gradient(circle at 50% 82%,
+        rgba(255,145,64,0.22),
+        rgba(255,145,64,0) 24%),
+
+        radial-gradient(circle at 50% 95%,
+        rgba(255,122,61,0.38),
+        rgba(255,122,61,0) 35%),
+
+        linear-gradient(
+          180deg,
+          #03071c 0%,
+          #06123c 42%,
+          #23134e 72%,
+          #5b1f5a 88%,
+          #ff9347 100%
+        );
+
+      border: 3px solid #b8842f;
+      box-shadow: inset 0 0 40px rgba(0,0,0,.6);
+      overflow: hidden;
     }
 
-    .loreNumber{
-      font-size:74px;
-      font-weight:bold;
-      line-height:1;
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      background:
+        radial-gradient(circle at 18% 18%,
+        rgba(255,188,74,0.28) 0 2px,
+        transparent 3px),
+
+        radial-gradient(circle at 72% 28%,
+        rgba(255,188,74,0.18) 0 2px,
+        transparent 3px),
+
+        radial-gradient(circle at 30% 62%,
+        rgba(255,188,74,0.18) 0 2px,
+        transparent 3px),
+
+        linear-gradient(
+          160deg,
+          transparent 0 15%,
+          rgba(255,179,63,0.2) 16%,
+          transparent 18%,
+          transparent 100%
+        );
+
+      pointer-events: none;
     }
 
-    .myLore{
-      text-shadow:
-        0 0 8px rgba(0,150,255,0.9),
-        0 0 16px rgba(0,150,255,0.7);
+    .lorcana {
+      position: absolute;
+      bottom: 58px;
+      width: 100%;
+      text-align: center;
+      color: #f5dfae;
+      text-shadow: 0 0 10px rgba(255,200,100,.25);
+      letter-spacing: 1px;
     }
 
-    .opponentLore{
-      text-shadow:
-        0 0 8px rgba(255,60,60,0.9),
-        0 0 16px rgba(255,60,60,0.7);
+    .lorcana .disney {
+      font-size: 24px;
+      font-style: italic;
+      margin-bottom: 4px;
     }
 
-    .nameInput{
-      width:190px;
-      padding:5px;
-      font-size:16px;
-      border:none;
-      border-radius:8px;
-      text-align:center;
-      background:white;
+    .lorcana .main {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: .95;
     }
 
-    .gameDots{
-      display:flex;
-      gap:5px;
-      margin:1px 0;
+    .lorcana .sub {
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin-top: 6px;
     }
 
-    .dot{
-      width:12px;
-      height:12px;
-      border:2px solid gold;
-      border-radius:50%;
-      background:transparent;
+    /* TRACK AREA */
+    .track {
+      width: 90px;
+      height: 100%;
+      position: relative;
+
+      /* OUTER BLUE REMOVED */
+      background: transparent;
+
+      overflow: hidden;
     }
 
-    .buttonRow{
-      display:flex;
-      gap:8px;
+    /* REMOVE BLUE LINE */
+    .track::before {
+      display: none;
     }
 
-    .loreButton{
-      width:84px;
-      height:84px;
-      border:none;
-      border-radius:16px;
-      font-size:38px;
-      color:white;
-      font-weight:bold;
+    .markers {
+      position: absolute;
+      top: 40px;
+      bottom: 40px;
+      left: 0;
+      right: 0;
     }
 
-    .plusBtn{
-      background:green;
+    /* LORE CIRCLES */
+    .marker {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+
+      width: 52px;
+      height: 52px;
+
+      border-radius: 50%;
+
+      /* KEEP BLUE INSIDE CIRCLES */
+      background:
+        radial-gradient(circle,#102d7a,#020a2a);
+
+      border: 2px solid #c68c33;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #fff2c6;
+
+      font-weight: bold;
+      font-size: 18px;
+
+      box-sizing: border-box;
+      transition: .2s ease;
+
+      text-shadow: 0 1px 2px rgba(0,0,0,.7);
     }
 
-    .minusBtn{
-      background:red;
+    /* ACTIVE LORE */
+    .marker.lit {
+      box-shadow:
+        0 0 12px rgba(80,160,255,.45);
     }
 
-    .resetLoreBtn{
-      width:190px;
-      height:42px;
-      border:none;
-      border-radius:10px;
-      background:#7a2020;
-      color:white;
-      font-size:13px;
-      font-weight:bold;
-      margin-top:2px;
-      position:relative;
-      overflow:hidden;
+    .marker.current {
+
+      /* KEEP INNER BLUE */
+      background:
+        radial-gradient(circle,#38a4ff,#051c6f);
+
+      box-shadow:
+        0 0 20px #4fc3ff,
+        0 0 40px #2196f3;
+
+      transform:
+        translateX(-50%)
+        scale(1.12);
+
+      animation: pulse 1.5s infinite;
+
+      color: white;
     }
 
-    .resetFill{
-      position:absolute;
-      left:0;
-      top:0;
-      height:100%;
-      width:0%;
-      background:rgba(255,255,255,0.25);
-      transition:none;
-      z-index:1;
+    @keyframes pulse {
+
+      0%,100% {
+        box-shadow:
+          0 0 20px #4fc3ff,
+          0 0 40px #2196f3;
+      }
+
+      50% {
+        box-shadow:
+          0 0 30px #8de0ff,
+          0 0 60px #2196f3;
+      }
     }
 
-    .resetText{
-      position:relative;
-      z-index:2;
-    }
-
-    .gameButtonRow{
-      display:flex;
-      gap:6px;
-      margin-top:2px;
-    }
-
-    .gameBtn{
-      width:135px;
-      height:46px;
-      border:none;
-      border-radius:12px;
-      font-size:15px;
-      font-weight:bold;
-      color:white;
-    }
-
-    .goldBtn{
-      background:#d4af37;
-      color:black;
-    }
-
-    .resetBtn{
-      background:#444;
-      color:white;
-    }
-
-    .saveBtn{
-      width:155px;
-      height:40px;
-      border:none;
-      border-radius:10px;
-      background:#2f8f6b;
-      color:white;
-      font-size:15px;
-      font-weight:bold;
-      margin-top:2px;
-    }
   </style>
 </head>
 
 <body>
 
-  <!-- TOP PLAYER -->
-  <div class="playerHalf topHalf">
+<div class="overlay">
 
-    <div class="smallText">Opponent Lore</div>
+  <!-- LEFT SIDE -->
+  <div class="side left">
 
-    <div id="p1_top" class="loreNumber opponentLore">0</div>
+    <div class="panel">
 
-    <div style="text-align:center;">
+      <div class="lorcana">
 
-      <div class="playerLabel">Player 2</div>
+        <div class="disney">
+          Disney
+        </div>
 
-      <div class="smallText">YOUR LORE</div>
+        <div class="main">
+          LORCANA
+        </div>
 
-      <div id="p2" class="loreNumber myLore">0</div>
+        <div class="sub">
+          TRADING CARD GAME
+        </div>
 
-    </div>
-
-    <input
-      id="p2NameInput"
-      class="nameInput"
-      placeholder="Player 2 Name"
-      style="transform:rotate(180deg);"
-    >
-
-    <div class="gameDots">
-
-      <div id="p2g1" class="dot"></div>
-
-      <div id="p2g2" class="dot"></div>
+      </div>
 
     </div>
 
-    <div class="buttonRow">
-
-      <button
-        class="loreButton plusBtn"
-        onclick="updateLore('p2',1)"
-      >
-        +
-      </button>
-
-      <button
-        class="loreButton minusBtn"
-        onclick="updateLore('p2',-1)"
-      >
-        −
-      </button>
-
+    <div class="track">
+      <div class="markers" id="leftTrack"></div>
     </div>
-
-    <button
-      class="resetLoreBtn"
-      onmousedown="startResetHold()"
-      onmouseup="cancelResetHold()"
-      onmouseleave="cancelResetHold()"
-      ontouchstart="startResetHold()"
-      ontouchend="cancelResetHold()"
-    >
-
-      <div class="resetFill" id="resetFill1"></div>
-
-      <span class="resetText" id="resetText1">
-        Hold To Reset Lore
-      </span>
-
-    </button>
-
-    <div class="gameButtonRow">
-
-      <button
-        class="gameBtn goldBtn"
-        onclick="addGameWin('p2')"
-      >
-        + Game P2
-      </button>
-
-      <button
-        class="gameBtn resetBtn"
-        onclick="resetGames()"
-      >
-        Reset Games
-      </button>
-
-    </div>
-
-    <button
-      class="saveBtn"
-      onclick="saveNames()"
-    >
-      Save Names
-    </button>
 
   </div>
 
-  <!-- BOTTOM PLAYER -->
-  <div class="playerHalf">
+  <!-- RIGHT SIDE -->
+  <div class="side right">
 
-    <div class="smallText">Opponent Lore</div>
-
-    <div id="p2_bottom" class="loreNumber opponentLore">0</div>
-
-    <div style="text-align:center;">
-
-      <div class="playerLabel">Player 1</div>
-
-      <div class="smallText">YOUR LORE</div>
-
-      <div id="p1" class="loreNumber myLore">0</div>
-
+    <div class="track">
+      <div class="markers" id="rightTrack"></div>
     </div>
 
-    <input
-      id="p1NameInput"
-      class="nameInput"
-      placeholder="Player 1 Name"
-    >
+    <div class="panel">
 
-    <div class="gameDots">
+      <div class="lorcana">
 
-      <div id="p1g1" class="dot"></div>
+        <div class="disney">
+          Disney
+        </div>
 
-      <div id="p1g2" class="dot"></div>
+        <div class="main">
+          LORCANA
+        </div>
 
-    </div>
+        <div class="sub">
+          TRADING CARD GAME
+        </div>
 
-    <div class="buttonRow">
-
-      <button
-        class="loreButton plusBtn"
-        onclick="updateLore('p1',1)"
-      >
-        +
-      </button>
-
-      <button
-        class="loreButton minusBtn"
-        onclick="updateLore('p1',-1)"
-      >
-        −
-      </button>
+      </div>
 
     </div>
-
-    <button
-      class="resetLoreBtn"
-      onmousedown="startResetHold()"
-      onmouseup="cancelResetHold()"
-      onmouseleave="cancelResetHold()"
-      ontouchstart="startResetHold()"
-      ontouchend="cancelResetHold()"
-    >
-
-      <div class="resetFill" id="resetFill2"></div>
-
-      <span class="resetText" id="resetText2">
-        Hold To Reset Lore
-      </span>
-
-    </button>
-
-    <div class="gameButtonRow">
-
-      <button
-        class="gameBtn goldBtn"
-        onclick="addGameWin('p1')"
-      >
-        + Game P1
-      </button>
-
-      <button
-        class="gameBtn resetBtn"
-        onclick="resetGames()"
-      >
-        Reset Games
-      </button>
-
-    </div>
-
-    <button
-      class="saveBtn"
-      onclick="saveNames()"
-    >
-      Save Names
-    </button>
 
   </div>
+
+</div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
   getDatabase,
   ref,
-  set,
-  onValue,
-  get
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
-  authDomain: "lore-counter-4e654.firebaseapp.com",
-  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
-  projectId: "lore-counter-4e654"
+
+  apiKey:
+  "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+
+  authDomain:
+  "lore-counter-4e654.firebaseapp.com",
+
+  databaseURL:
+  "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+
+  projectId:
+  "lore-counter-4e654"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
-const p1Ref = ref(db, "p1");
-const p2Ref = ref(db, "p2");
+const leftTrack =
+document.getElementById("leftTrack");
 
-const p1GamesRef = ref(db, "p1Games");
-const p2GamesRef = ref(db, "p2Games");
+const rightTrack =
+document.getElementById("rightTrack");
 
-const p1NameRef = ref(db, "p1Name");
-const p2NameRef = ref(db, "p2Name");
+const MAX = 20;
 
-let resetTimer;
-let fillInterval;
+function render(el, val) {
 
-function renderDots(player, wins){
+  el.innerHTML = "";
 
-  document.getElementById(player + "g1").style.background =
-    wins >= 1 ? "gold" : "transparent";
+  for (let i = MAX; i >= 1; i--) {
 
-  document.getElementById(player + "g2").style.background =
-    wins >= 2 ? "gold" : "transparent";
+    const m =
+    document.createElement("div");
+
+    m.className = "marker";
+
+    if (i <= val) {
+      m.classList.add("lit");
+    }
+
+    if (i === val) {
+      m.classList.add("current");
+    }
+
+    m.textContent = String(i);
+
+    const pos =
+      ((MAX - i) / (MAX - 1)) * 100;
+
+    m.style.top =
+      `calc(${pos}% - 26px)`;
+
+    el.appendChild(m);
+  }
 }
 
-onValue(p1Ref, snap => {
-
-  let v = snap.val() || 0;
-
-  p1.innerText = v;
-  p1_top.innerText = v;
+onValue(ref(db, "p1"), (s) => {
+  render(leftTrack, Number(s.val()) || 0);
 });
 
-onValue(p2Ref, snap => {
-
-  let v = snap.val() || 0;
-
-  p2.innerText = v;
-  p2_bottom.innerText = v;
+onValue(ref(db, "p2"), (s) => {
+  render(rightTrack, Number(s.val()) || 0);
 });
-
-onValue(p1GamesRef, snap => {
-
-  renderDots("p1", snap.val() || 0);
-
-});
-
-onValue(p2GamesRef, snap => {
-
-  renderDots("p2", snap.val() || 0);
-
-});
-
-onValue(p1NameRef, s => {
-
-  p1NameInput.value = s.val() || "";
-
-});
-
-onValue(p2NameRef, s => {
-
-  p2NameInput.value = s.val() || "";
-
-});
-
-window.updateLore = async (p,c)=>{
-
-  let r = p === "p1"
-    ? p1Ref
-    : p2Ref;
-
-  let v = (await get(r)).val() || 0;
-
-  v = Math.max(0, Math.min(20, v + c));
-
-  set(r, v);
-};
-
-window.startResetHold = ()=>{
-
-  let progress = 0;
-
-  document.getElementById("resetText1").innerText =
-    "Resetting...";
-
-  document.getElementById("resetText2").innerText =
-    "Resetting...";
-
-  fillInterval = setInterval(()=>{
-
-    progress += 2;
-
-    document.getElementById("resetFill1").style.width =
-      progress + "%";
-
-    document.getElementById("resetFill2").style.width =
-      progress + "%";
-
-  }, 30);
-
-  resetTimer = setTimeout(()=>{
-
-    set(p1Ref, 0);
-    set(p2Ref, 0);
-
-    resetButtons();
-
-  }, 1500);
-};
-
-window.cancelResetHold = ()=>{
-
-  clearTimeout(resetTimer);
-
-  clearInterval(fillInterval);
-
-  resetButtons();
-};
-
-function resetButtons(){
-
-  document.getElementById("resetFill1").style.width =
-    "0%";
-
-  document.getElementById("resetFill2").style.width =
-    "0%";
-
-  document.getElementById("resetText1").innerText =
-    "Hold To Reset Lore";
-
-  document.getElementById("resetText2").innerText =
-    "Hold To Reset Lore";
-}
-
-window.addGameWin = async p=>{
-
-  let r = p === "p1"
-    ? p1GamesRef
-    : p2GamesRef;
-
-  let v = (await get(r)).val() || 0;
-
-  set(r, Math.min(2, v + 1));
-};
-
-window.resetGames = ()=>{
-
-  set(p1GamesRef, 0);
-
-  set(p2GamesRef, 0);
-};
-
-window.saveNames = ()=>{
-
-  set(p1NameRef, p1NameInput.value);
-
-  set(p2NameRef, p2NameInput.value);
-};
 
 </script>
 
