@@ -363,7 +363,7 @@ function render(el, val) {
 
   el.innerHTML = "";
 
-  for (let i = MAX; i >= 1; i--) {
+  for (let i = MAX; i >= 0; i--) {
 
     const m = document.createElement("div");
 
@@ -380,7 +380,7 @@ function render(el, val) {
     m.textContent = String(i);
 
     const pos =
-      ((MAX - i) / (MAX - 1)) * 100;
+      ((MAX - i) / MAX) * 100;
 
     m.style.top =
       `calc(${pos}% - 26px)`;
