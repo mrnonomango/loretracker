@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,7 +58,7 @@ body {
 
 .track {
 
-  width: 92px;
+  width: 56px;
   height: 100%;
 
   position: relative;
@@ -93,8 +94,8 @@ body {
 
   transform: translateX(-50%);
 
-  width: 54px;
-  height: 54px;
+  width: 44px;
+  height: 44px;
 
   border-radius: 50%;
 
@@ -108,7 +109,7 @@ body {
 
   color: white;
 
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
@@ -208,7 +209,7 @@ function render(el, val) {
     const pos = ((MAX - i) / MAX) * 100;
 
     marker.style.top =
-      `calc(${pos}% - 27px)`;
+      `calc(${pos}% - 22px)`;
 
     el.appendChild(marker);
   }
@@ -226,3 +227,4 @@ onValue(ref(db, "riftbound/p2"), (snapshot) => {
 
 </body>
 </html>
+```
