@@ -1,296 +1,152 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Controller</title>
+<title>Riftbound Victory Track</title>
 
 <style>
+
+html,
 body {
   margin: 0;
-  padding: 20px;
-  background: #071326;
-  color: white;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
   font-family: Arial, sans-serif;
-  text-align: center;
 }
 
-.controller {
+.overlay {
+  width: 1920px;
+  height: 1080px;
   position: relative;
-  min-height: 100vh;
-  padding-right: 180px;
+}
+
+.track-wrapper {
+
+  position: absolute;
+
+  top: 25px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+
+  gap: 25px;
+
+  z-index: 100;
+}
+
+.player-name {
+
+  min-width: 220px;
+
+  color: white;
+
+  font-size: 34px;
+
+  font-weight: bold;
+
+  text-shadow:
+    0 0 10px rgba(0,0,0,.9);
+
+  white-space: nowrap;
+}
+
+.player-left {
+  text-align: right;
+}
+
+.player-right {
+  text-align: left;
+}
+
+.victory-track {
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.point {
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  border: 2px solid #d8b45a;
+
+  background: rgba(2,6,17,.85);
+
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  font-weight: bold;
+
   box-sizing: border-box;
 }
 
-.player {
-  margin-bottom: 40px;
+.point.active {
+
+  background: #d8b45a;
+
+  color: #071326;
+
+  box-shadow:
+    0 0 8px rgba(216,180,90,.9),
+    0 0 20px rgba(90,170,255,.7),
+    0 0 35px rgba(90,170,255,.4);
 }
 
-.topHalf {
-  transform: rotate(180deg);
-}
+.center {
 
-.player h2 {
-  color: #d8b45a;
-  margin-bottom: 15px;
-}
+  width: 52px;
+  height: 52px;
 
-.name-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.player2-name-row {
-  transform: rotate(180deg);
-}
-
-input {
-  width: 300px;
-  height: 50px;
   font-size: 24px;
-  border-radius: 10px;
-  border: none;
-  padding: 0 12px;
+
+  border-width: 3px;
 }
 
-.save-btn {
-  width: 120px;
-  height: 50px;
-  font-size: 20px;
-  background: #d8b45a;
-  color: #071326;
-  border: none;
-  border-radius: 10px;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.score-btn {
-  width: 100px;
-  height: 100px;
-  font-size: 48px;
-  border: none;
-  border-radius: 20px;
-  background: #d8b45a;
-  color: #071326;
-  font-weight: bold;
-}
-
-.score {
-  width: 120px;
-  font-size: 64px;
-  font-weight: bold;
-}
-
-.victory-target {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.target-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.target-btn {
-  width: 76px;
-  height: 64px;
-  font-size: 30px;
-  border-radius: 14px;
-  border: none;
-  background: #1a2b52;
-  color: white;
-  font-weight: bold;
-}
-
-.target-btn span {
-  display: inline-block;
-  transform: rotate(90deg);
-}
-
-.target-btn.active {
-  background: #d8b45a;
-  color: #071326;
-  box-shadow: 0 0 18px rgba(216, 180, 90, 0.95);
-}
-
-.target-label {
-  width: 54px;
-  height: 260px;
-  color: #d8b45a;
-  font-size: 24px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.target-label span {
-  display: inline-block;
-  white-space: nowrap;
-  transform: rotate(90deg);
-}
-
-.reset {
-  position: relative;
-  overflow: hidden;
-  width: 320px;
-  height: 80px;
-  margin-top: 30px;
-  font-size: 24px;
-  border: none;
-  border-radius: 15px;
-  background: #d8b45a;
-  color: #071326;
-  font-weight: bold;
-}
-
-.reset::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  width: 0%;
-  background: #ffef9a;
-  transition: none;
-  z-index: 0;
-}
-
-.reset.holding::before {
-  width: 100%;
-  transition: width 0.5s linear;
-}
-
-.reset span {
-  position: relative;
-  z-index: 1;
-}
 </style>
 </head>
 
 <body>
 
-<div class="controller">
+<div class="overlay">
 
-  <div class="player topHalf">
-    <h2>Player 2</h2>
+  <div class="track-wrapper">
 
-    <div class="name-row player2-name-row">
-      <input
-        id="p2NameInput"
-        placeholder="Player 2 Name">
-
-      <button
-        class="save-btn"
-        onclick="saveName('p2')">
-        Save
-      </button>
+    <div class="player-name player-left" id="p1Name">
+      Player 1
     </div>
 
-    <div class="controls">
-      <button
-        class="score-btn"
-        onclick="changeScore('p2', -1)">&minus;</button>
+    <div class="victory-track" id="track"></div>
 
-      <div
-        class="score"
-        id="p2Score">0</div>
-
-      <button
-        class="score-btn"
-        onclick="changeScore('p2', 1)">+</button>
+    <div class="player-name player-right" id="p2Name">
+      Player 2
     </div>
 
-    <button
-      class="reset"
-      onpointerdown="startResetHold(this)"
-      onpointerup="cancelResetHold(this)"
-      onpointerleave="cancelResetHold(this)"
-      onpointercancel="cancelResetHold(this)">
-      <span>HOLD TO RESET POINTS</span>
-    </button>
-  </div>
-
-  <div class="victory-target">
-    <div class="target-buttons">
-      <button class="target-btn" onclick="setTarget(8)" data-target="8">
-        <span>8</span>
-      </button>
-
-      <button class="target-btn" onclick="setTarget(9)" data-target="9">
-        <span>9</span>
-      </button>
-
-      <button class="target-btn" onclick="setTarget(10)" data-target="10">
-        <span>10</span>
-      </button>
-    </div>
-
-    <div class="target-label">
-      <span>VICTORY TARGET POINTS</span>
-    </div>
-  </div>
-
-  <div class="player">
-    <h2>Player 1</h2>
-
-    <div class="name-row">
-      <input
-        id="p1NameInput"
-        placeholder="Player 1 Name">
-
-      <button
-        class="save-btn"
-        onclick="saveName('p1')">
-        Save
-      </button>
-    </div>
-
-    <div class="controls">
-      <button
-        class="score-btn"
-        onclick="changeScore('p1', -1)">&minus;</button>
-
-      <div
-        class="score"
-        id="p1Score">0</div>
-
-      <button
-        class="score-btn"
-        onclick="changeScore('p1', 1)">+</button>
-    </div>
-
-    <button
-      class="reset"
-      onpointerdown="startResetHold(this)"
-      onpointerup="cancelResetHold(this)"
-      onpointerleave="cancelResetHold(this)"
-      onpointercancel="cancelResetHold(this)">
-      <span>HOLD TO RESET POINTS</span>
-    </button>
   </div>
 
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
   getDatabase,
   ref,
-  set,
   onValue
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -304,122 +160,99 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let p1 = 0;
-let p2 = 0;
-let target = 8;
-let resetTimer = null;
+const track = document.getElementById("track");
 
-window.saveName = async function(player) {
-  const input = document.getElementById(player + "NameInput");
+let p1Score = 0;
+let p2Score = 0;
+let victoryTarget = 8;
 
-  await set(
-    ref(db, "riftbound/" + player + "Name"),
-    input.value.trim()
-  );
-};
+function render() {
 
-window.changeScore = async function(player, amount) {
-  if (player === "p1") {
-    p1 = Math.max(0, Math.min(target, p1 + amount));
-    await set(ref(db, "riftbound/p1"), p1);
-  } else {
-    p2 = Math.max(0, Math.min(target, p2 + amount));
-    await set(ref(db, "riftbound/p2"), p2);
+  track.innerHTML = "";
+
+  for (let i = 1; i < victoryTarget; i++) {
+
+    const point = document.createElement("div");
+
+    point.className = "point";
+
+    if (p1Score === i) {
+      point.classList.add("active");
+    }
+
+    point.textContent = i;
+
+    track.appendChild(point);
   }
-};
 
-window.setTarget = async function(value) {
-  target = value;
+  const center = document.createElement("div");
 
-  await set(
-    ref(db, "riftbound/victoryTarget"),
-    value
-  );
-};
+  center.className = "point center";
 
-window.startResetHold = function(button) {
-  const label = button.querySelector("span");
-
-  button.classList.remove("holding");
-  void button.offsetWidth;
-
-  label.textContent = "RESETTING...";
-  button.classList.add("holding");
-
-  resetTimer = setTimeout(async function() {
-    await resetMatch();
-
-    button.classList.remove("holding");
-    label.textContent = "RESET DONE";
-
-    resetTimer = null;
-
-    setTimeout(function() {
-      label.textContent = "HOLD TO RESET POINTS";
-    }, 800);
-  }, 500);
-};
-
-window.cancelResetHold = function(button) {
-  const label = button.querySelector("span");
-
-  if (resetTimer) {
-    clearTimeout(resetTimer);
-    resetTimer = null;
-
-    button.classList.remove("holding");
-    label.textContent = "HOLD TO RESET POINTS";
+  if (
+    p1Score === victoryTarget ||
+    p2Score === victoryTarget
+  ) {
+    center.classList.add("active");
   }
-};
 
-window.resetMatch = async function() {
-  await set(ref(db, "riftbound/p1"), 0);
-  await set(ref(db, "riftbound/p2"), 0);
-};
+  center.textContent = victoryTarget;
 
-function updateTargetButtons() {
-  document
-    .querySelectorAll(".target-btn")
-    .forEach(btn => {
-      btn.classList.toggle(
-        "active",
-        Number(btn.dataset.target) === target
-      );
-    });
+  track.appendChild(center);
+
+  for (let i = victoryTarget - 1; i >= 1; i--) {
+
+    const point = document.createElement("div");
+
+    point.className = "point";
+
+    if (p2Score === i) {
+      point.classList.add("active");
+    }
+
+    point.textContent = i;
+
+    track.appendChild(point);
+  }
 }
 
-onValue(ref(db, "riftbound/p1"), s => {
-  p1 = Number(s.val()) || 0;
+onValue(ref(db, "riftbound/p1"), (snapshot) => {
 
-  document.getElementById("p1Score")
-    .textContent = p1;
+  p1Score = Number(snapshot.val()) || 0;
+
+  render();
 });
 
-onValue(ref(db, "riftbound/p2"), s => {
-  p2 = Number(s.val()) || 0;
+onValue(ref(db, "riftbound/p2"), (snapshot) => {
 
-  document.getElementById("p2Score")
-    .textContent = p2;
+  p2Score = Number(snapshot.val()) || 0;
+
+  render();
 });
 
-onValue(ref(db, "riftbound/victoryTarget"), s => {
-  target = Number(s.val()) || 8;
+onValue(ref(db, "riftbound/victoryTarget"), (snapshot) => {
 
-  updateTargetButtons();
+  victoryTarget = Number(snapshot.val()) || 8;
+
+  render();
 });
 
-onValue(ref(db, "riftbound/p1Name"), s => {
-  document.getElementById("p1NameInput")
-    .value = s.val() || "";
+onValue(ref(db, "riftbound/p1Name"), (snapshot) => {
+
+  document.getElementById("p1Name").textContent =
+    snapshot.val() || "Player 1";
 });
 
-onValue(ref(db, "riftbound/p2Name"), s => {
-  document.getElementById("p2NameInput")
-    .value = s.val() || "";
+onValue(ref(db, "riftbound/p2Name"), (snapshot) => {
+
+  document.getElementById("p2Name").textContent =
+    snapshot.val() || "Player 2";
 });
 
-updateTargetButtons();
+render();
+
 </script>
 
 </body>
 </html>
+```
