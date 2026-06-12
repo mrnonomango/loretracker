@@ -61,6 +61,22 @@
       line-height:1;
     }
 
+    .yourLore{
+      color:#7cc7ff;
+      text-shadow:
+        0 0 8px rgba(0,140,255,0.95),
+        0 0 18px rgba(0,140,255,0.75),
+        0 0 34px rgba(0,90,255,0.55);
+    }
+
+    .opponentLore{
+      color:#ff8a8a;
+      text-shadow:
+        0 0 8px rgba(255,0,0,0.95),
+        0 0 18px rgba(255,0,0,0.75),
+        0 0 34px rgba(180,0,0,0.6);
+    }
+
     .nameInput{
       width:190px;
       padding:5px;
@@ -185,7 +201,7 @@
 
     <div class="smallText">Opponent Lore</div>
 
-    <div id="p1_top" class="loreNumber">0</div>
+    <div id="p1_top" class="loreNumber opponentLore">0</div>
 
     <div style="text-align:center;">
 
@@ -193,11 +209,10 @@
 
       <div class="smallText">YOUR LORE</div>
 
-      <div id="p2" class="loreNumber">0</div>
+      <div id="p2" class="loreNumber yourLore">0</div>
 
     </div>
 
-    <!-- FIXED TYPING -->
     <input
       id="p2NameInput"
       class="nameInput"
@@ -280,7 +295,7 @@
 
     <div class="smallText">Opponent Lore</div>
 
-    <div id="p2_bottom" class="loreNumber">0</div>
+    <div id="p2_bottom" class="loreNumber opponentLore">0</div>
 
     <div style="text-align:center;">
 
@@ -288,7 +303,7 @@
 
       <div class="smallText">YOUR LORE</div>
 
-      <div id="p1" class="loreNumber">0</div>
+      <div id="p1" class="loreNumber yourLore">0</div>
 
     </div>
 
