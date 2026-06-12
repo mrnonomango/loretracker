@@ -59,22 +59,21 @@
       font-size:74px;
       font-weight:bold;
       line-height:1;
+      color:white;
     }
 
     .yourLore{
-      color:#7cc7ff;
       text-shadow:
-        0 0 8px rgba(0,140,255,0.95),
-        0 0 18px rgba(0,140,255,0.75),
-        0 0 34px rgba(0,90,255,0.55);
+        0 0 7px rgba(0,140,255,0.95),
+        0 0 17px rgba(0,140,255,0.70),
+        0 0 30px rgba(0,90,255,0.45);
     }
 
     .opponentLore{
-      color:#ff8a8a;
       text-shadow:
-        0 0 8px rgba(255,0,0,0.95),
-        0 0 18px rgba(255,0,0,0.75),
-        0 0 34px rgba(180,0,0,0.6);
+        0 0 7px rgba(255,0,0,0.95),
+        0 0 17px rgba(255,0,0,0.70),
+        0 0 30px rgba(180,0,0,0.45);
     }
 
     .nameInput{
@@ -230,17 +229,11 @@
 
     <div class="buttonRow">
 
-      <button
-        class="loreButton minusBtn"
-        onclick="updateLore('p2',-1)"
-      >
+      <button class="loreButton minusBtn" onclick="updateLore('p2',-1)">
         -
       </button>
 
-      <button
-        class="loreButton plusBtn"
-        onclick="updateLore('p2',1)"
-      >
+      <button class="loreButton plusBtn" onclick="updateLore('p2',1)">
         +
       </button>
 
@@ -265,26 +258,17 @@
 
     <div class="gameButtonRow">
 
-      <button
-        class="gameBtn goldBtn"
-        onclick="addGameWin('p2')"
-      >
+      <button class="gameBtn goldBtn" onclick="addGameWin('p2')">
         + Game P2
       </button>
 
-      <button
-        class="gameBtn resetBtn"
-        onclick="resetGames()"
-      >
+      <button class="gameBtn resetBtn" onclick="resetGames()">
         Reset Games
       </button>
 
     </div>
 
-    <button
-      class="saveBtn"
-      onclick="saveNames()"
-    >
+    <button class="saveBtn" onclick="saveNames()">
       Save Names
     </button>
 
@@ -323,17 +307,11 @@
 
     <div class="buttonRow">
 
-      <button
-        class="loreButton minusBtn"
-        onclick="updateLore('p1',-1)"
-      >
+      <button class="loreButton minusBtn" onclick="updateLore('p1',-1)">
         -
       </button>
 
-      <button
-        class="loreButton plusBtn"
-        onclick="updateLore('p1',1)"
-      >
+      <button class="loreButton plusBtn" onclick="updateLore('p1',1)">
         +
       </button>
 
@@ -358,26 +336,17 @@
 
     <div class="gameButtonRow">
 
-      <button
-        class="gameBtn goldBtn"
-        onclick="addGameWin('p1')"
-      >
+      <button class="gameBtn goldBtn" onclick="addGameWin('p1')">
         + Game P1
       </button>
 
-      <button
-        class="gameBtn resetBtn"
-        onclick="resetGames()"
-      >
+      <button class="gameBtn resetBtn" onclick="resetGames()">
         Reset Games
       </button>
 
     </div>
 
-    <button
-      class="saveBtn"
-      onclick="saveNames()"
-    >
+    <button class="saveBtn" onclick="saveNames()">
       Save Names
     </button>
 
