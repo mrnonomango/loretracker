@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Controller</title>
+
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  background: #071326;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.controller {
+  position: relative;
+  min-height: 100vh;
+  padding-right: 180px;
+  box-sizing: border-box;
+}
+
+.player {
+  margin-bottom: 40px;
+}
+
+.topHalf {
+  transform: rotate(180deg);
+}
+
+.player h2 {
+  color: #d8b45a;
+  margin-bottom: 15px;
+}
+
+.name-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.player2-name-row {
+  transform: rotate(180deg);
+}
+
+input {
+  width: 440px;
+  height: 50px;
+  font-size: 24px;
+  border-radius: 10px;
+  border: none;
+  padding: 0 12px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-btn {
+  width: 100px;
+  height: 100px;
+  font-size: 48px;
+  border: none;
+  border-radius: 20px;
+  background: #d8b45a;
+  color: #071326;
+  font-weight: bold;
+}
+
+.score {
+  width: 120px;
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.game-count {
+  width: 90px;
+  height: 58px;
+  border: 2px solid #d8b45a;
+  border-radius: 14px;
+  color: #d8b45a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.game-btn,
+.reset-games {
+  height: 58px;
+  border: none;
+  border-radius: 14px;
+  background: #d8b45a;
+  color: #071326;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.game-btn {
+  width: 170px;
+}
+
+.reset-games {
+  width: 220px;
+  margin: 12px auto 26px;
+  display: block;
+}
+
+.victory-target {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.target-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.target-btn {
+  width: 76px;
+  height: 64px;
+  font-size: 30px;
+  border-radius: 14px;
+  border: none;
+  background: #1a2b52;
+  color: white;
+  font-weight: bold;
+}
+
+.target-btn span {
+  display: inline-block;
+  transform: rotate(90deg);
+}
+
+.target-btn.active {
+  background: #d8b45a;
+  color: #071326;
+  box-shadow: 0 0 18px rgba(216, 180, 90, 0.95);
+}
+
+.target-label {
+  width: 54px;
+  height: 260px;
+  color: #d8b45a;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.target-label span {
+  display: inline-block;
+  white-space: nowrap;
+  transform: rotate(90deg);
+}
+
+.reset {
+  position: relative;
+  overflow: hidden;
+  width: 320px;
+  height: 80px;
+  margin-top: 30px;
+  font-size: 24px;
+  border: none;
+  border-radius: 15px;
+  background: #d8b45a;
+  color: #071326;
+  font-weight: bold;
+}
+
+.reset::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: #ffef9a;
+  transition: none;
+  z-index: 0;
+}
+
+.reset.holding::before {
+  width: 100%;
+  transition: width 0.5s linear;
+}
+
+.reset span {
+  position: relative;
+  z-index: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="controller">
+
+  <div class="player topHalf">
+    <h2>Player 2</h2>
+
+    <div class="name-row player2-name-row">
+      <input
+        id="p2NameInput"
+        placeholder="Player 2 Name"
+        oninput="autoSaveName('p2')">
+    </div>
+
+    <div class="controls">
+      <button
+        class="score-btn"
+        onclick="changeScore('p2', -1)">&minus;</button>
+
+      <div
+        class="score"
+        id="p2Score">0</div>
+
+      <button
+        class="score-btn"
+        onclick="changeScore('p2', 1)">+</button>
+    </div>
+
+    <div class="game-controls">
+      <div class="game-count" id="p2Games">0</div>
+
+      <button
+        class="game-btn"
+        onclick="addGame('p2')">
+        +1 GAME
+      </button>
+    </div>
+
+    <button
+      class="reset"
+      onpointerdown="startResetHold(this)"
+      onpointerup="cancelResetHold(this)"
+      onpointerleave="cancelResetHold(this)"
+      onpointercancel="cancelResetHold(this)">
+      <span>HOLD TO RESET POINTS</span>
+    </button>
+  </div>
+
+  <button
+    class="reset-games"
+    onclick="resetGames()">
+    RESET GAMES
+  </button>
+
+  <div class="victory-target">
+    <div class="target-buttons">
+      <button class="target-btn" onclick="setTarget(8)" data-target="8">
+        <span>8</span>
+      </button>
+
+      <button class="target-btn" onclick="setTarget(9)" data-target="9">
+        <span>9</span>
+      </button>
+
+      <button class="target-btn" onclick="setTarget(10)" data-target="10">
+        <span>10</span>
+      </button>
+    </div>
+
+    <div class="target-label">
+      <span>VICTORY TARGET POINTS</span>
+    </div>
+  </div>
+
+  <div class="player">
+    <h2>Player 1</h2>
+
+    <div class="name-row">
+      <input
+        id="p1NameInput"
+        placeholder="Player 1 Name"
+        oninput="autoSaveName('p1')">
+    </div>
+
+    <div class="controls">
+      <button
+        class="score-btn"
+        onclick="changeScore('p1', -1)">&minus;</button>
+
+      <div
+        class="score"
+        id="p1Score">0</div>
+
+      <button
+        class="score-btn"
+        onclick="changeScore('p1', 1)">+</button>
+    </div>
+
+    <div class="game-controls">
+      <div class="game-count" id="p1Games">0</div>
+
+      <button
+        class="game-btn"
+        onclick="addGame('p1')">
+        +1 GAME
+      </button>
+    </div>
+
+    <button
+      class="reset"
+      onpointerdown="startResetHold(this)"
+      onpointerup="cancelResetHold(this)"
+      onpointerleave="cancelResetHold(this)"
+      onpointercancel="cancelResetHold(this)">
+      <span>HOLD TO RESET POINTS</span>
+    </button>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let p1 = 0;
+let p2 = 0;
+let p1Games = 0;
+let p2Games = 0;
+let target = 8;
+let resetTimer = null;
+
+const nameTimers = {
+  p1: null,
+  p2: null
+};
+
+window.autoSaveName = function(player) {
+  clearTimeout(nameTimers[player]);
+
+  nameTimers[player] = setTimeout(async function() {
+    const input = document.getElementById(player + "NameInput");
+
+    await set(
+      ref(db, "riftbound/" + player + "Name"),
+      input.value.trim()
+    );
+  }, 500);
+};
+
+window.changeScore = async function(player, amount) {
+  if (player === "p1") {
+    p1 = Math.max(0, Math.min(target, p1 + amount));
+    await set(ref(db, "riftbound/p1"), p1);
+  } else {
+    p2 = Math.max(0, Math.min(target, p2 + amount));
+    await set(ref(db, "riftbound/p2"), p2);
+  }
+};
+
+window.addGame = async function(player) {
+  if (player === "p1") {
+    p1Games = Math.min(2, p1Games + 1);
+    await set(ref(db, "riftbound/p1Games"), p1Games);
+  } else {
+    p2Games = Math.min(2, p2Games + 1);
+    await set(ref(db, "riftbound/p2Games"), p2Games);
+  }
+};
+
+window.resetGames = async function() {
+  await set(ref(db, "riftbound/p1Games"), 0);
+  await set(ref(db, "riftbound/p2Games"), 0);
+};
+
+window.setTarget = async function(value) {
+  target = value;
+
+  await set(
+    ref(db, "riftbound/victoryTarget"),
+    value
+  );
+};
+
+window.startResetHold = function(button) {
+  const label = button.querySelector("span");
+
+  button.classList.remove("holding");
+  void button.offsetWidth;
+
+  label.textContent = "RESETTING...";
+  button.classList.add("holding");
+
+  resetTimer = setTimeout(async function() {
+    await resetMatch();
+
+    button.classList.remove("holding");
+    label.textContent = "RESET DONE";
+
+    resetTimer = null;
+
+    setTimeout(function() {
+      label.textContent = "HOLD TO RESET POINTS";
+    }, 800);
+  }, 500);
+};
+
+window.cancelResetHold = function(button) {
+  const label = button.querySelector("span");
+
+  if (resetTimer) {
+    clearTimeout(resetTimer);
+    resetTimer = null;
+
+    button.classList.remove("holding");
+    label.textContent = "HOLD TO RESET POINTS";
+  }
+};
+
+window.resetMatch = async function() {
+  await set(ref(db, "riftbound/p1"), 0);
+  await set(ref(db, "riftbound/p2"), 0);
+};
+
+function updateTargetButtons() {
+  document
+    .querySelectorAll(".target-btn")
+    .forEach(btn => {
+      btn.classList.toggle(
+        "active",
+        Number(btn.dataset.target) === target
+      );
+    });
+}
+
+onValue(ref(db, "riftbound/p1"), s => {
+  p1 = Number(s.val()) || 0;
+
+  document.getElementById("p1Score")
+    .textContent = p1;
+});
+
+onValue(ref(db, "riftbound/p2"), s => {
+  p2 = Number(s.val()) || 0;
+
+  document.getElementById("p2Score")
+    .textContent = p2;
+});
+
+onValue(ref(db, "riftbound/p1Games"), s => {
+  p1Games = Number(s.val()) || 0;
+
+  document.getElementById("p1Games")
+    .textContent = p1Games;
+});
+
+onValue(ref(db, "riftbound/p2Games"), s => {
+  p2Games = Number(s.val()) || 0;
+
+  document.getElementById("p2Games")
+    .textContent = p2Games;
+});
+
+onValue(ref(db, "riftbound/victoryTarget"), s => {
+  target = Number(s.val()) || 8;
+
+  updateTargetButtons();
+});
+
+onValue(ref(db, "riftbound/p1Name"), s => {
+  const input = document.getElementById("p1NameInput");
+
+  if (document.activeElement !== input) {
+    input.value = s.val() || "";
+  }
+});
+
+onValue(ref(db, "riftbound/p2Name"), s => {
+  const input = document.getElementById("p2NameInput");
+
+  if (document.activeElement !== input) {
+    input.value = s.val() || "";
+  }
+});
+
+updateTargetButtons();
+</script>
+
+</body>
+</html>
