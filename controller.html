@@ -178,18 +178,6 @@
       background:#444;
       color:white;
     }
-
-    .saveBtn{
-      width:155px;
-      height:40px;
-      border:none;
-      border-radius:10px;
-      background:#2f8f6b;
-      color:white;
-      font-size:15px;
-      font-weight:bold;
-      margin-top:2px;
-    }
   </style>
 </head>
 
@@ -217,6 +205,7 @@
       class="nameInput"
       placeholder="Player 2 Name"
       style="transform:rotate(180deg);"
+      oninput="autoSaveNames()"
     >
 
     <div class="gameDots">
@@ -268,10 +257,6 @@
 
     </div>
 
-    <button class="saveBtn" onclick="saveNames()">
-      Save Names
-    </button>
-
   </div>
 
   <!-- BOTTOM PLAYER -->
@@ -295,6 +280,7 @@
       id="p1NameInput"
       class="nameInput"
       placeholder="Player 1 Name"
+      oninput="autoSaveNames()"
     >
 
     <div class="gameDots">
@@ -346,10 +332,6 @@
 
     </div>
 
-    <button class="saveBtn" onclick="saveNames()">
-      Save Names
-    </button>
-
   </div>
 
 <script type="module">
@@ -386,6 +368,7 @@ const p2NameRef = ref(db, "p2Name");
 
 let resetTimer;
 let fillInterval;
+let nameSaveTimer;
 
 function renderDots(player, wins){
 
@@ -447,6 +430,19 @@ window.updateLore = async (p,c)=>{
   v = Math.max(0, Math.min(20, v + c));
 
   set(r, v);
+};
+
+window.autoSaveNames = ()=>{
+
+  clearTimeout(nameSaveTimer);
+
+  nameSaveTimer = setTimeout(()=>{
+
+    set(p1NameRef, p1NameInput.value);
+
+    set(p2NameRef, p2NameInput.value);
+
+  }, 400);
 };
 
 window.startResetHold = ()=>{
@@ -521,13 +517,6 @@ window.resetGames = ()=>{
   set(p1GamesRef, 0);
 
   set(p2GamesRef, 0);
-};
-
-window.saveNames = ()=>{
-
-  set(p1NameRef, p1NameInput.value);
-
-  set(p2NameRef, p2NameInput.value);
 };
 
 </script>
