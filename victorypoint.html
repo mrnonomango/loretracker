@@ -23,83 +23,60 @@ body {
 }
 
 .track-wrapper {
-
   position: absolute;
-
   top: 25px;
   left: 50%;
-
   transform: translateX(-50%);
-
-  display: flex;
-  align-items: center;
-
-  gap: 25px;
-
   z-index: 100;
 }
 
 .player-name {
-
-  min-width: 220px;
-
+  position: absolute;
+  top: 34px;
+  width: 320px;
   color: white;
-
   font-size: 34px;
-
   font-weight: bold;
-
   text-shadow:
     0 0 10px rgba(0,0,0,.9);
-
   white-space: nowrap;
+  z-index: 100;
 }
 
 .player-left {
+  left: 280px;
   text-align: right;
 }
 
 .player-right {
+  right: 280px;
   text-align: left;
 }
 
 .victory-track {
-
   display: flex;
   align-items: center;
-
   gap: 8px;
 }
 
 .point {
-
   width: 34px;
   height: 34px;
-
   border-radius: 50%;
-
   border: 2px solid #d8b45a;
-
   background: rgba(2,6,17,.85);
-
   color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 16px;
   font-weight: bold;
-
   box-sizing: border-box;
 }
 
 .point.active {
-
   background: #d8b45a;
-
   color: #071326;
-
   box-shadow:
     0 0 8px rgba(216,180,90,.9),
     0 0 20px rgba(90,170,255,.7),
@@ -107,12 +84,9 @@ body {
 }
 
 .center {
-
   width: 52px;
   height: 52px;
-
   font-size: 24px;
-
   border-width: 3px;
 }
 
@@ -123,18 +97,16 @@ body {
 
 <div class="overlay">
 
+  <div class="player-name player-left" id="p1Name">
+    Player 1
+  </div>
+
   <div class="track-wrapper">
-
-    <div class="player-name player-left" id="p1Name">
-      Player 1
-    </div>
-
     <div class="victory-track" id="track"></div>
+  </div>
 
-    <div class="player-name player-right" id="p2Name">
-      Player 2
-    </div>
-
+  <div class="player-name player-right" id="p2Name">
+    Player 2
   </div>
 
 </div>
@@ -166,11 +138,9 @@ let p2Score = 0;
 let victoryTarget = 8;
 
 function render() {
-
   track.innerHTML = "";
 
   for (let i = 1; i < victoryTarget; i++) {
-
     const point = document.createElement("div");
 
     point.className = "point";
@@ -200,7 +170,6 @@ function render() {
   track.appendChild(center);
 
   for (let i = victoryTarget - 1; i >= 1; i--) {
-
     const point = document.createElement("div");
 
     point.className = "point";
@@ -216,34 +185,29 @@ function render() {
 }
 
 onValue(ref(db, "riftbound/p1"), (snapshot) => {
-
   p1Score = Number(snapshot.val()) || 0;
 
   render();
 });
 
 onValue(ref(db, "riftbound/p2"), (snapshot) => {
-
   p2Score = Number(snapshot.val()) || 0;
 
   render();
 });
 
 onValue(ref(db, "riftbound/victoryTarget"), (snapshot) => {
-
   victoryTarget = Number(snapshot.val()) || 8;
 
   render();
 });
 
 onValue(ref(db, "riftbound/p1Name"), (snapshot) => {
-
   document.getElementById("p1Name").textContent =
     snapshot.val() || "Player 1";
 });
 
 onValue(ref(db, "riftbound/p2Name"), (snapshot) => {
-
   document.getElementById("p2Name").textContent =
     snapshot.val() || "Player 2";
 });
