@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Riftbound Game Counter Overlay</title>
+
+<style>
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: Arial, sans-serif;
+}
+
+.overlay {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+}
+
+.game-counter-wrapper {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.player-games {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-orb {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(21, 42, 71, 0.95) 0 42%, rgba(6, 14, 30, 0.98) 43% 100%);
+  border: 3px solid #d8b45a;
+  box-sizing: border-box;
+  box-shadow:
+    0 0 8px rgba(216, 180, 90, 0.75),
+    inset 0 0 14px rgba(0, 0, 0, 0.85);
+}
+
+.game-orb::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 2px solid rgba(216, 180, 90, 0.35);
+  box-shadow:
+    inset 0 0 10px rgba(90, 170, 255, 0.25);
+}
+
+.game-orb::after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  top: 50%;
+  height: 6px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(216, 180, 90, 0.95),
+    transparent
+  );
+  z-index: -1;
+}
+
+.game-orb.won {
+  background:
+    radial-gradient(circle at 50% 48%, #10213a 0 44%, #071326 45% 100%);
+  box-shadow:
+    0 0 10px rgba(216, 180, 90, 1),
+    0 0 22px rgba(216, 180, 90, 0.8),
+    inset 0 0 10px rgba(255, 245, 190, 0.2);
+}
+
+.game-orb.won::before {
+  border-color: rgba(216, 180, 90, 0.7);
+  box-shadow:
+    inset 0 0 10px rgba(216, 180, 90, 0.25);
+}
+
+.swirl {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  opacity: 0.2;
+}
+
+.game-orb.won .swirl {
+  opacity: 1;
+}
+
+.swirl-piece {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 7px solid transparent;
+  border-top-color: #f49a22;
+  border-right-color: #d8b45a;
+  filter: drop-shadow(0 0 2px rgba(244, 154, 34, 0.95));
+}
+
+.swirl-piece:nth-child(1) {
+  transform: rotate(18deg);
+}
+
+.swirl-piece:nth-child(2) {
+  transform: rotate(108deg);
+}
+
+.swirl-piece:nth-child(3) {
+  transform: rotate(198deg);
+}
+
+.swirl-piece:nth-child(4) {
+  transform: rotate(288deg);
+}
+
+.swirl::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: #071326;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.85);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <div class="game-counter-wrapper">
+
+    <div class="player-games" id="p1Games">
+      <div class="game-orb">
+        <div class="swirl">
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+        </div>
+      </div>
+
+      <div class="game-orb">
+        <div class="swirl">
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="player-games" id="p2Games">
+      <div class="game-orb">
+        <div class="swirl">
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+        </div>
+      </div>
+
+      <div class="game-orb">
+        <div class="swirl">
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+          <div class="swirl-piece"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+function updateGameOrbs(playerId, games) {
+  const orbs = document
+    .getElementById(playerId)
+    .querySelectorAll(".game-orb");
+
+  orbs.forEach((orb, index) => {
+    orb.classList.toggle("won", index < games);
+  });
+}
+
+onValue(ref(db, "riftbound/p1Games"), snapshot => {
+  updateGameOrbs("p1Games", Number(snapshot.val()) || 0);
+});
+
+onValue(ref(db, "riftbound/p2Games"), snapshot => {
+  updateGameOrbs("p2Games", Number(snapshot.val()) || 0);
+});
+
+updateGameOrbs("p1Games", 0);
+updateGameOrbs("p2Games", 0);
+</script>
+
+</body>
+</html>
