@@ -1,137 +1,531 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
 <head>
   <title>Timer Overlay</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+
     html, body {
       margin: 0;
       padding: 0;
       background: transparent;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     body {
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       min-height: 100vh;
+      padding-top: 10px;
     }
+
+    /* =========================
+       TIMER BOX
+    ========================== */
 
     #overlayBox {
-      display: inline-flex;
-      flex-direction: column;
+      position: relative;
+
+      width: 430px;
+      height: 120px;
+
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       align-items: center;
-      justify-content: center;
-      text-align: center;
 
-      background: #000;
-      border-radius: 10px;
-      border: 2px solid #d6a640;
-      box-shadow: 0 0 10px rgba(214, 166, 64, 0.45);
+      /*
+        ATTACK OF THE VINE THEME
 
-      padding: 10px 22px 12px 22px;
+        Purple interior
+        Green vine border
+        Lime/yellow highlights
+      */
+
+      background:
+
+        /* Green glow coming from bottom */
+        radial-gradient(
+          circle at center 110%,
+          rgba(150, 230, 0, 0.22),
+          transparent 42%
+        ),
+
+        /* Purple magical glow */
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(135, 70, 190, 0.55),
+          transparent 65%
+        ),
+
+        /* Main purple background */
+        linear-gradient(
+          180deg,
+          #542a78 0%,
+          #3a1c59 32%,
+          #251238 65%,
+          #13091f 100%
+        );
+
+      border: 5px solid #68d000;
+
+      border-radius: 4px;
+
+      box-shadow:
+
+        /* Main shadow */
+        0 4px 12px rgba(0, 0, 0, 0.75),
+
+        /* Bright green edge glow */
+        0 0 8px rgba(105, 220, 0, 0.80),
+
+        /* Wider lime glow */
+        0 0 18px rgba(170, 230, 0, 0.35),
+
+        /* Purple atmospheric glow */
+        0 0 28px rgba(100, 45, 145, 0.30),
+
+        /* Green bottom interior */
+        inset 0 -10px 18px rgba(110, 200, 0, 0.13),
+
+        /* Purple top interior */
+        inset 0 10px 18px rgba(175, 90, 220, 0.18);
+
       box-sizing: border-box;
-      width: fit-content;
-      height: fit-content;
+
+      padding: 10px 24px;
+
+      column-gap: 18px;
     }
+
+
+    /* =========================
+       INNER VINE BORDER
+    ========================== */
+
+    #overlayBox::before {
+      content: "";
+
+      position: absolute;
+
+      top: 5px;
+      bottom: 5px;
+      left: 5px;
+      right: 5px;
+
+      border:
+        1px solid rgba(215, 245, 55, 0.55);
+
+      box-shadow:
+
+        inset 0 0 10px
+        rgba(125, 225, 0, 0.12),
+
+        0 0 5px
+        rgba(175, 230, 0, 0.15);
+
+      pointer-events: none;
+    }
+
+
+    /* =========================
+       CENTER DIVIDER
+    ========================== */
+
+    #overlayBox::after {
+      content: "";
+
+      position: absolute;
+
+      top: 14px;
+      bottom: 14px;
+
+      left: 50%;
+
+      width: 1px;
+
+      background:
+        linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(215, 245, 55, 0.55) 25%,
+          rgba(105, 215, 0, 0.75) 50%,
+          rgba(215, 245, 55, 0.55) 75%,
+          transparent 100%
+        );
+
+      box-shadow:
+        0 0 7px rgba(130, 220, 0, 0.35);
+
+      pointer-events: none;
+    }
+
+
+    /* =========================
+       ROUND NAME
+    ========================== */
 
     #roundName {
+      grid-column: 1;
+
+      justify-self: center;
+
       font-size: 38px;
-      font-weight: bold;
-      color: white;
-      text-shadow:
-        0 0 5px #d6a640,
-        0 0 12px rgba(214, 166, 64, 0.7);
-      margin: 0 0 4px 0;
+
+      font-weight: 900;
+
+      color: #ffffff;
+
+      text-transform: uppercase;
+
       line-height: 1;
+
+      margin: 0;
+
       white-space: nowrap;
+
+      text-shadow:
+
+        0 0 4px
+        rgba(235, 255, 100, 0.95),
+
+        0 0 10px
+        rgba(140, 225, 0, 0.75),
+
+        0 0 18px
+        rgba(90, 190, 0, 0.35),
+
+        0 2px 0
+        rgba(0, 0, 0, 0.90);
+
+      position: relative;
+
+      z-index: 2;
     }
 
-    #time {
-      font-size: 72px;
-      font-weight: bold;
-      color: white;
-      text-shadow:
-        0 0 8px #d6a640,
-        0 0 18px rgba(214, 166, 64, 0.65);
+
+    /* =========================
+       TIME AREA
+    ========================== */
+
+    #timeWrap {
+      grid-column: 2;
+
+      justify-self: center;
+
+      text-align: center;
+
       margin: 0;
-      line-height: 0.95;
-      white-space: nowrap;
+
+      position: relative;
+
+      z-index: 2;
     }
+
+
+    /* =========================
+       TIME LABEL
+    ========================== */
+
+    #timeLabel {
+      font-size: 25px;
+
+      font-weight: 900;
+
+      color: #efffd2;
+
+      line-height: 1;
+
+      margin-bottom: 3px;
+
+      text-shadow:
+
+        0 0 4px
+        rgba(235, 255, 100, 0.90),
+
+        0 0 10px
+        rgba(130, 220, 0, 0.65),
+
+        0 2px 0
+        rgba(0, 0, 0, 0.85);
+    }
+
+
+    /* =========================
+       TIMER
+    ========================== */
+
+    #time {
+      font-size: 46px;
+
+      font-weight: 900;
+
+      color: #ffffff;
+
+      line-height: 1;
+
+      white-space: nowrap;
+
+      text-shadow:
+
+        0 0 5px
+        rgba(240, 255, 110, 1),
+
+        0 0 12px
+        rgba(175, 230, 0, 0.85),
+
+        0 0 20px
+        rgba(100, 200, 0, 0.45),
+
+        0 2px 0
+        rgba(0, 0, 0, 0.90);
+    }
+
   </style>
 </head>
 
+
 <body>
+
+  <!-- =========================
+       TIMER OVERLAY
+  ========================== -->
+
   <div id="overlayBox">
-    <div id="roundName">Round 1</div>
-    <div id="time">55:00</div>
+
+    <div id="roundName">
+      Finals
+    </div>
+
+    <div id="timeWrap">
+
+      <div id="timeLabel">
+        TIME
+      </div>
+
+      <div id="time">
+        55:00
+      </div>
+
+    </div>
+
   </div>
 
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+
+    import {
+      getDatabase,
+      ref,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+
+    /* =========================
+       FIREBASE CONFIG
+    ========================== */
 
     const config = {
-      apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
-      authDomain: "lore-counter-4e654.firebaseapp.com",
-      databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
-      projectId: "lore-counter-4e654"
+
+      apiKey:
+        "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+
+      authDomain:
+        "lore-counter-4e654.firebaseapp.com",
+
+      databaseURL:
+        "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+
+      projectId:
+        "lore-counter-4e654"
     };
 
-    const app = initializeApp(config);
-    const db = getDatabase(app);
-    const timerRef = ref(db, "timer");
+
+    /* =========================
+       INITIALIZE FIREBASE
+    ========================== */
+
+    const app =
+      initializeApp(config);
+
+    const db =
+      getDatabase(app);
+
+    const timerRef =
+      ref(db, "timer");
+
+
+    /* =========================
+       TIMER STATE
+    ========================== */
 
     let timerState = {
-      roundName: "Round 1",
-      remaining: 3300,
-      running: false,
-      startedAt: 0
+
+      roundName:
+        "Finals",
+
+      remaining:
+        3300,
+
+      running:
+        false,
+
+      startedAt:
+        0
     };
 
+
+    /* =========================
+       FORMAT TIMER
+    ========================== */
+
     function formatTime(totalSeconds) {
-      const safe = Math.max(0, Number(totalSeconds) || 0);
-      const minutes = Math.floor(safe / 60);
-      const seconds = safe % 60;
-      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+
+      const safe =
+        Math.max(
+          0,
+          Number(totalSeconds) || 0
+        );
+
+      const minutes =
+        Math.floor(
+          safe / 60
+        );
+
+      const seconds =
+        safe % 60;
+
+
+      return (
+        `${minutes}:` +
+        `${String(seconds).padStart(2, "0")}`
+      );
     }
 
+
+    /* =========================
+       CALCULATE REMAINING TIME
+    ========================== */
+
     function computeRemaining() {
-      const now = Date.now();
 
-      let remaining = Number(timerState.remaining ?? 3300);
-      const running = Boolean(timerState.running);
-      const startedAt = Number(timerState.startedAt ?? 0);
+      const now =
+        Date.now();
 
-      if (running && startedAt > 0) {
-        const elapsed = Math.floor((now - startedAt) / 1000);
-        remaining = Math.max(0, remaining - elapsed);
+
+      let remaining =
+        Number(
+          timerState.remaining ?? 3300
+        );
+
+
+      const running =
+        Boolean(
+          timerState.running
+        );
+
+
+      const startedAt =
+        Number(
+          timerState.startedAt ?? 0
+        );
+
+
+      if (
+        running &&
+        startedAt > 0
+      ) {
+
+        const elapsed =
+          Math.floor(
+            (now - startedAt) / 1000
+          );
+
+
+        remaining =
+          Math.max(
+            0,
+            remaining - elapsed
+          );
       }
+
 
       return remaining;
     }
 
+
+    /* =========================
+       RENDER OVERLAY
+    ========================== */
+
     function render() {
-      document.getElementById("roundName").textContent = timerState.roundName || "Round 1";
-      document.getElementById("time").textContent = formatTime(computeRemaining());
+
+      document
+        .getElementById("roundName")
+        .textContent =
+          timerState.roundName ||
+          "Finals";
+
+
+      document
+        .getElementById("time")
+        .textContent =
+          formatTime(
+            computeRemaining()
+          );
     }
 
-    onValue(timerRef, (snap) => {
-      timerState = snap.val() || {
-        roundName: "Round 1",
-        remaining: 3300,
-        running: false,
-        startedAt: 0
-      };
 
-      render();
-    });
+    /* =========================
+       FIREBASE LISTENER
+    ========================== */
 
-    setInterval(render, 250);
+    onValue(
+      timerRef,
+      (snap) => {
+
+        timerState =
+          snap.val() || {
+
+            roundName:
+              "Finals",
+
+            remaining:
+              3300,
+
+            running:
+              false,
+
+            startedAt:
+              0
+          };
+
+
+        render();
+      }
+    );
+
+
+    /* =========================
+       LIVE TIMER UPDATE
+    ========================== */
+
+    setInterval(
+      render,
+      250
+    );
+
+
     render();
+
   </script>
+
 </body>
 </html>
