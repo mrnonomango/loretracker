@@ -1,6 +1,3 @@
-Yep — here is the full updated file with the new black/charcoal + vine green + yellow-green theme, while keeping your Firebase lore tracking and layout intact.
-
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,6 +50,8 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
       height: 100%;
       position: relative;
 
+      box-sizing: border-box;
+
       background:
         radial-gradient(
           circle at 50% 88%,
@@ -102,6 +101,8 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
 
       position: relative;
 
+      box-sizing: border-box;
+
       background:
         linear-gradient(
           180deg,
@@ -148,8 +149,13 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
     .markers {
       position: absolute;
 
-      top: 34px;
-      bottom: 34px;
+      /*
+        Extra room at the top and bottom
+        prevents 20 and 0 from being clipped.
+      */
+
+      top: 42px;
+      bottom: 42px;
 
       left: 0;
       right: 0;
@@ -194,6 +200,10 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
 
       transition: .2s ease;
     }
+
+    /* =========================
+       COMPLETED LORE
+    ========================== */
 
     .marker.lit {
       background:
@@ -247,6 +257,7 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
     @keyframes vinePulse {
 
       0%,100% {
+
         box-shadow:
           0 0 12px rgba(235, 255, 80, 1),
           0 0 26px rgba(185, 235, 0, 1),
@@ -256,6 +267,7 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
       }
 
       50% {
+
         box-shadow:
           0 0 18px rgba(250, 255, 120, 1),
           0 0 38px rgba(210, 245, 20, 1),
@@ -312,7 +324,9 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
 
 <div class="overlay">
 
-  <!-- LEFT -->
+  <!-- =========================
+       LEFT PLAYER
+  ========================== -->
 
   <div class="side left">
 
@@ -328,19 +342,28 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
 
     <div class="track">
 
-      <div class="markers" id="leftTrack"></div>
+      <div
+        class="markers"
+        id="leftTrack">
+      </div>
 
     </div>
 
   </div>
 
-  <!-- RIGHT -->
+
+  <!-- =========================
+       RIGHT PLAYER
+  ========================== -->
 
   <div class="side right">
 
     <div class="track">
 
-      <div class="markers" id="rightTrack"></div>
+      <div
+        class="markers"
+        id="rightTrack">
+      </div>
 
     </div>
 
@@ -358,9 +381,12 @@ Yep — here is the full updated file with the new black/charcoal + vine green +
 
 </div>
 
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
   getDatabase,
@@ -368,21 +394,50 @@ import {
   onValue
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+
+/* =========================
+   FIREBASE
+========================== */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
-  authDomain: "lore-counter-4e654.firebaseapp.com",
-  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
-  projectId: "lore-counter-4e654"
+
+  apiKey:
+    "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+
+  authDomain:
+    "lore-counter-4e654.firebaseapp.com",
+
+  databaseURL:
+    "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+
+  projectId:
+    "lore-counter-4e654"
 };
 
-const app = initializeApp(firebaseConfig);
 
-const db = getDatabase(app);
+const app =
+  initializeApp(firebaseConfig);
 
-const leftTrack = document.getElementById("leftTrack");
-const rightTrack = document.getElementById("rightTrack");
+const db =
+  getDatabase(app);
+
+
+/* =========================
+   TRACKS
+========================== */
+
+const leftTrack =
+  document.getElementById("leftTrack");
+
+const rightTrack =
+  document.getElementById("rightTrack");
 
 const MAX = 20;
+
+
+/* =========================
+   RENDER LORE
+========================== */
 
 function render(el, val) {
 
@@ -390,19 +445,31 @@ function render(el, val) {
 
   for (let i = MAX; i >= 0; i--) {
 
-    const m = document.createElement("div");
+    const m =
+      document.createElement("div");
 
     m.className = "marker";
+
+
+    /* Completed lore */
 
     if (i <= val) {
       m.classList.add("lit");
     }
 
+
+    /* Current lore */
+
     if (i === val) {
       m.classList.add("current");
     }
 
-    m.textContent = String(i);
+
+    m.textContent =
+      String(i);
+
+
+    /* Position lore marker */
 
     const pos =
       ((MAX - i) / MAX) * 100;
@@ -410,17 +477,44 @@ function render(el, val) {
     m.style.top =
       `calc(${pos}% - 26px)`;
 
+
     el.appendChild(m);
   }
 }
 
-onValue(ref(db, "p1"), (s) => {
-  render(leftTrack, Number(s.val()) || 0);
-});
 
-onValue(ref(db, "p2"), (s) => {
-  render(rightTrack, Number(s.val()) || 0);
-});
+/* =========================
+   PLAYER 1
+========================== */
+
+onValue(
+  ref(db, "p1"),
+  (s) => {
+
+    render(
+      leftTrack,
+      Number(s.val()) || 0
+    );
+
+  }
+);
+
+
+/* =========================
+   PLAYER 2
+========================== */
+
+onValue(
+  ref(db, "p2"),
+  (s) => {
+
+    render(
+      rightTrack,
+      Number(s.val()) || 0
+    );
+
+  }
+);
 
 </script>
 
