@@ -1,66 +1,38 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html>
 <head>
   <title>Timer Overlay</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-
     html, body {
       margin: 0;
       padding: 0;
       background: transparent;
       overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       min-height: 100vh;
-      padding-top: 10px;
     }
 
-    /* =========================
-       TIMER BOX
-    ========================== */
-
     #overlayBox {
-      position: relative;
-
-      width: 430px;
-      height: 120px;
-
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: inline-flex;
+      flex-direction: column;
       align-items: center;
-
-      /*
-        ATTACK OF THE VINE THEME
-
-        Purple interior
-        Green vine border
-        Lime/yellow highlights
-      */
+      justify-content: center;
+      text-align: center;
 
       background:
-
-        /* Green glow coming from bottom */
         radial-gradient(
-          circle at center 110%,
-          rgba(150, 230, 0, 0.22),
-          transparent 42%
-        ),
-
-        /* Purple magical glow */
-        radial-gradient(
-          circle at 50% 25%,
+          circle at 50% 20%,
           rgba(135, 70, 190, 0.55),
           transparent 65%
         ),
-
-        /* Main purple background */
         linear-gradient(
           180deg,
           #542a78 0%,
@@ -69,257 +41,69 @@
           #13091f 100%
         );
 
-      border: 5px solid #68d000;
+      border-radius: 6px;
 
-      border-radius: 4px;
+      border: 2px solid #68d000;
 
       box-shadow:
+        0 0 10px rgba(105, 220, 0, 0.65);
 
-        /* Main shadow */
-        0 4px 12px rgba(0, 0, 0, 0.75),
-
-        /* Bright green edge glow */
-        0 0 8px rgba(105, 220, 0, 0.80),
-
-        /* Wider lime glow */
-        0 0 18px rgba(170, 230, 0, 0.35),
-
-        /* Purple atmospheric glow */
-        0 0 28px rgba(100, 45, 145, 0.30),
-
-        /* Green bottom interior */
-        inset 0 -10px 18px rgba(110, 200, 0, 0.13),
-
-        /* Purple top interior */
-        inset 0 10px 18px rgba(175, 90, 220, 0.18);
-
+      padding: 8px 28px 10px 28px;
       box-sizing: border-box;
 
-      padding: 10px 24px;
-
-      column-gap: 18px;
+      width: 310px;
+      height: 130px;
     }
-
-
-    /* =========================
-       INNER VINE BORDER
-    ========================== */
-
-    #overlayBox::before {
-      content: "";
-
-      position: absolute;
-
-      top: 5px;
-      bottom: 5px;
-      left: 5px;
-      right: 5px;
-
-      border:
-        1px solid rgba(215, 245, 55, 0.55);
-
-      box-shadow:
-
-        inset 0 0 10px
-        rgba(125, 225, 0, 0.12),
-
-        0 0 5px
-        rgba(175, 230, 0, 0.15);
-
-      pointer-events: none;
-    }
-
-
-    /* =========================
-       CENTER DIVIDER
-    ========================== */
-
-    #overlayBox::after {
-      content: "";
-
-      position: absolute;
-
-      top: 14px;
-      bottom: 14px;
-
-      left: 50%;
-
-      width: 1px;
-
-      background:
-        linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(215, 245, 55, 0.55) 25%,
-          rgba(105, 215, 0, 0.75) 50%,
-          rgba(215, 245, 55, 0.55) 75%,
-          transparent 100%
-        );
-
-      box-shadow:
-        0 0 7px rgba(130, 220, 0, 0.35);
-
-      pointer-events: none;
-    }
-
-
-    /* =========================
-       ROUND NAME
-    ========================== */
 
     #roundName {
-      grid-column: 1;
+      font-size: 44px;
+      font-weight: bold;
 
-      justify-self: center;
+      color: white;
 
-      font-size: 38px;
+      text-shadow:
+        0 0 5px #d7f537,
+        0 0 12px rgba(105, 220, 0, 0.70);
 
-      font-weight: 900;
-
-      color: #ffffff;
-
-      text-transform: uppercase;
-
+      margin: 0 0 4px 0;
       line-height: 1;
-
-      margin: 0;
-
       white-space: nowrap;
-
-      text-shadow:
-
-        0 0 4px
-        rgba(235, 255, 100, 0.95),
-
-        0 0 10px
-        rgba(140, 225, 0, 0.75),
-
-        0 0 18px
-        rgba(90, 190, 0, 0.35),
-
-        0 2px 0
-        rgba(0, 0, 0, 0.90);
-
-      position: relative;
-
-      z-index: 2;
     }
-
-
-    /* =========================
-       TIME AREA
-    ========================== */
-
-    #timeWrap {
-      grid-column: 2;
-
-      justify-self: center;
-
-      text-align: center;
-
-      margin: 0;
-
-      position: relative;
-
-      z-index: 2;
-    }
-
-
-    /* =========================
-       TIME LABEL
-    ========================== */
-
-    #timeLabel {
-      font-size: 25px;
-
-      font-weight: 900;
-
-      color: #efffd2;
-
-      line-height: 1;
-
-      margin-bottom: 3px;
-
-      text-shadow:
-
-        0 0 4px
-        rgba(235, 255, 100, 0.90),
-
-        0 0 10px
-        rgba(130, 220, 0, 0.65),
-
-        0 2px 0
-        rgba(0, 0, 0, 0.85);
-    }
-
-
-    /* =========================
-       TIMER
-    ========================== */
 
     #time {
-      font-size: 46px;
+      font-size: 72px;
+      font-weight: bold;
 
-      font-weight: 900;
-
-      color: #ffffff;
-
-      line-height: 1;
-
-      white-space: nowrap;
+      color: white;
 
       text-shadow:
+        0 0 8px #d7f537,
+        0 0 18px rgba(105, 220, 0, 0.65);
 
-        0 0 5px
-        rgba(240, 255, 110, 1),
-
-        0 0 12px
-        rgba(175, 230, 0, 0.85),
-
-        0 0 20px
-        rgba(100, 200, 0, 0.45),
-
-        0 2px 0
-        rgba(0, 0, 0, 0.90);
+      margin: 0;
+      line-height: 0.95;
+      white-space: nowrap;
     }
-
   </style>
 </head>
 
-
 <body>
-
-  <!-- =========================
-       TIMER OVERLAY
-  ========================== -->
 
   <div id="overlayBox">
 
     <div id="roundName">
-      Finals
+      Round 1
     </div>
 
-    <div id="timeWrap">
-
-      <div id="timeLabel">
-        TIME
-      </div>
-
-      <div id="time">
-        55:00
-      </div>
-
+    <div id="time">
+      55:00
     </div>
 
   </div>
 
-
   <script type="module">
 
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
     import {
       getDatabase,
@@ -327,201 +111,92 @@
       onValue
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-
-    /* =========================
-       FIREBASE CONFIG
-    ========================== */
-
     const config = {
-
-      apiKey:
-        "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
-
-      authDomain:
-        "lore-counter-4e654.firebaseapp.com",
-
-      databaseURL:
-        "https://lore-counter-4e654-default-rtdb.firebaseio.com",
-
-      projectId:
-        "lore-counter-4e654"
+      apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+      authDomain: "lore-counter-4e654.firebaseapp.com",
+      databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+      projectId: "lore-counter-4e654"
     };
 
+    const app = initializeApp(config);
 
-    /* =========================
-       INITIALIZE FIREBASE
-    ========================== */
+    const db = getDatabase(app);
 
-    const app =
-      initializeApp(config);
-
-    const db =
-      getDatabase(app);
-
-    const timerRef =
-      ref(db, "timer");
-
-
-    /* =========================
-       TIMER STATE
-    ========================== */
+    const timerRef = ref(db, "timer");
 
     let timerState = {
-
-      roundName:
-        "Finals",
-
-      remaining:
-        3300,
-
-      running:
-        false,
-
-      startedAt:
-        0
+      roundName: "Round 1",
+      remaining: 3300,
+      running: false,
+      startedAt: 0
     };
-
-
-    /* =========================
-       FORMAT TIMER
-    ========================== */
 
     function formatTime(totalSeconds) {
 
       const safe =
-        Math.max(
-          0,
-          Number(totalSeconds) || 0
-        );
+        Math.max(0, Number(totalSeconds) || 0);
 
       const minutes =
-        Math.floor(
-          safe / 60
-        );
+        Math.floor(safe / 60);
 
       const seconds =
         safe % 60;
 
-
-      return (
-        `${minutes}:` +
-        `${String(seconds).padStart(2, "0")}`
-      );
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
     }
-
-
-    /* =========================
-       CALCULATE REMAINING TIME
-    ========================== */
 
     function computeRemaining() {
 
-      const now =
-        Date.now();
-
+      const now = Date.now();
 
       let remaining =
-        Number(
-          timerState.remaining ?? 3300
-        );
-
+        Number(timerState.remaining ?? 3300);
 
       const running =
-        Boolean(
-          timerState.running
-        );
-
+        Boolean(timerState.running);
 
       const startedAt =
-        Number(
-          timerState.startedAt ?? 0
-        );
+        Number(timerState.startedAt ?? 0);
 
-
-      if (
-        running &&
-        startedAt > 0
-      ) {
+      if (running && startedAt > 0) {
 
         const elapsed =
-          Math.floor(
-            (now - startedAt) / 1000
-          );
-
+          Math.floor((now - startedAt) / 1000);
 
         remaining =
-          Math.max(
-            0,
-            remaining - elapsed
-          );
+          Math.max(0, remaining - elapsed);
       }
-
 
       return remaining;
     }
-
-
-    /* =========================
-       RENDER OVERLAY
-    ========================== */
 
     function render() {
 
       document
         .getElementById("roundName")
         .textContent =
-          timerState.roundName ||
-          "Finals";
-
+          timerState.roundName || "Round 1";
 
       document
         .getElementById("time")
         .textContent =
-          formatTime(
-            computeRemaining()
-          );
+          formatTime(computeRemaining());
     }
 
+    onValue(timerRef, (snap) => {
 
-    /* =========================
-       FIREBASE LISTENER
-    ========================== */
+      timerState =
+        snap.val() || {
+          roundName: "Round 1",
+          remaining: 3300,
+          running: false,
+          startedAt: 0
+        };
 
-    onValue(
-      timerRef,
-      (snap) => {
+      render();
+    });
 
-        timerState =
-          snap.val() || {
-
-            roundName:
-              "Finals",
-
-            remaining:
-              3300,
-
-            running:
-              false,
-
-            startedAt:
-              0
-          };
-
-
-        render();
-      }
-    );
-
-
-    /* =========================
-       LIVE TIMER UPDATE
-    ========================== */
-
-    setInterval(
-      render,
-      250
-    );
-
+    setInterval(render, 250);
 
     render();
 
