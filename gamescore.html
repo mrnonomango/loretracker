@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+
   <style>
 
+    html,
     body {
       margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       background: transparent;
       overflow: hidden;
     }
+
 
     .container {
       position: absolute;
       width: 100%;
       height: 100%;
     }
+
 
     .player {
       position: absolute;
@@ -22,12 +30,16 @@
       align-items: center;
     }
 
-    /* PLAYER POSITIONS */
+
+    /* =========================
+       PLAYER POSITIONS
+       ========================= */
 
     #p1_games {
       top: 40%;
       left: 25%;
     }
+
 
     #p2_games {
       top: 60%;
@@ -36,35 +48,82 @@
 
 
     /* =========================
-       ICON
+       GAME ICON HOLDER
        ========================= */
 
     .tick {
-      width: 38px;
-      height: 38px;
+      position: relative;
+
+      width: 42px;
+      height: 42px;
+
+      flex-shrink: 0;
+
+      transition: transform 0.15s ease;
+    }
+
+
+    /* ALL ICON IMAGE LAYERS */
+
+    .tick img {
+      position: absolute;
+
+      top: 50%;
+      left: 50%;
+
+      width: 100%;
+      height: 100%;
 
       object-fit: contain;
 
-      /* EMPTY = WHITE */
-      filter:
-        drop-shadow(0 0 2px black)
-        drop-shadow(0 0 3px rgba(0, 0, 0, 0.6));
+      transform: translate(-50%, -50%);
 
-      transition:
-        filter 0.2s ease,
-        transform 0.2s ease;
+      pointer-events: none;
     }
 
 
     /* =========================
-       GAME WON = BLACK
+       BLACK OUTLINE LAYER
        ========================= */
 
-    .filled {
-      filter:
-        brightness(0)
-        drop-shadow(0 0 2px white)
-        drop-shadow(0 0 4px rgba(255, 255, 255, 0.7));
+    .icon-outline {
+
+      /*
+        Turns the original white PNG black
+        and makes it slightly larger.
+
+        This creates a CLEAN black outline
+        without using blurry shadows.
+      */
+
+      filter: brightness(0);
+
+      transform:
+        translate(-50%, -50%)
+        scale(1.12) !important;
+    }
+
+
+    /* =========================
+       WHITE INNER LAYER
+       ========================= */
+
+    .icon-fill {
+      opacity: 1;
+
+      transition: opacity 0.15s ease;
+    }
+
+
+    /* =========================
+       GAME WON
+
+       Remove the white inner layer.
+       The black layer underneath remains.
+       ========================= */
+
+    .tick.filled .icon-fill {
+      opacity: 0;
     }
 
 
@@ -76,6 +135,7 @@
       animation: pulse 0.35s ease;
     }
 
+
     @keyframes pulse {
 
       0% {
@@ -83,7 +143,7 @@
       }
 
       50% {
-        transform: scale(1.35);
+        transform: scale(1.30);
       }
 
       100% {
@@ -96,45 +156,119 @@
 </head>
 
 
+
 <body>
+
 
   <div class="container">
 
 
-    <!-- PLAYER 1 -->
+    <!-- =====================
+         PLAYER 1
+         ===================== -->
 
-    <div id="p1_games" class="player">
+    <div
+      id="p1_games"
+      class="player"
+    >
 
-      <img
+
+      <!-- GAME 1 -->
+
+      <div
         id="p1g1"
         class="tick"
-        src="Illuminary Icon_White.png"
       >
 
-      <img
+        <img
+          class="icon-outline"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-fill"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+      </div>
+
+
+
+      <!-- GAME 2 -->
+
+      <div
         id="p1g2"
         class="tick"
-        src="Illuminary Icon_White.png"
       >
+
+        <img
+          class="icon-outline"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-fill"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+      </div>
+
 
     </div>
 
 
-    <!-- PLAYER 2 -->
 
-    <div id="p2_games" class="player">
 
-      <img
+    <!-- =====================
+         PLAYER 2
+         ===================== -->
+
+    <div
+      id="p2_games"
+      class="player"
+    >
+
+
+      <!-- GAME 1 -->
+
+      <div
         id="p2g1"
         class="tick"
-        src="Illuminary Icon_White.png"
       >
 
-      <img
+        <img
+          class="icon-outline"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-fill"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+      </div>
+
+
+
+      <!-- GAME 2 -->
+
+      <div
         id="p2g2"
         class="tick"
-        src="Illuminary Icon_White.png"
       >
+
+        <img
+          class="icon-outline"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-fill"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+      </div>
+
 
     </div>
 
@@ -142,12 +276,15 @@
   </div>
 
 
+
 <script type="module">
+
 
 import {
   initializeApp
 }
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+from
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 
 import {
@@ -155,8 +292,14 @@ import {
   ref,
   onValue
 }
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+from
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+
+
+/* =========================
+   FIREBASE
+   ========================= */
 
 const firebaseConfig = {
 
@@ -175,6 +318,7 @@ const firebaseConfig = {
 };
 
 
+
 const app =
   initializeApp(firebaseConfig);
 
@@ -183,12 +327,24 @@ const db =
   getDatabase(app);
 
 
+
+/* =========================
+   GAME SCORE REFERENCES
+   ========================= */
+
 const p1GamesRef =
-  ref(db, "p1Games");
+  ref(
+    db,
+    "p1Games"
+  );
 
 
 const p2GamesRef =
-  ref(db, "p2Games");
+  ref(
+    db,
+    "p2Games"
+  );
+
 
 
 let lastP1 = 0;
@@ -196,59 +352,103 @@ let lastP1 = 0;
 let lastP2 = 0;
 
 
-function render(player, wins, lastWins) {
+
+/* =========================
+   UPDATE GAME ICONS
+   ========================= */
+
+function render(
+  player,
+  wins,
+  lastWins
+) {
+
 
   const g1 =
-    document.getElementById(player + "g1");
+    document.getElementById(
+      player + "g1"
+    );
+
 
   const g2 =
-    document.getElementById(player + "g2");
+    document.getElementById(
+      player + "g2"
+    );
 
 
-  /* FIRST GAME */
+
+  /* GAME 1 */
+
   g1.classList.toggle(
     "filled",
     wins >= 1
   );
 
 
-  /* SECOND GAME */
+
+  /* GAME 2 */
+
   g2.classList.toggle(
     "filled",
     wins >= 2
   );
 
 
-  /* PULSE WHEN WIN ADDED */
 
-  if (wins > lastWins) {
+  /* =========================
+     NEW WIN PULSE
+     ========================= */
+
+  if (
+    wins > lastWins
+  ) {
+
 
     const target =
       wins === 1
         ? g1
         : g2;
 
-    target.classList.add("pulse");
 
-    setTimeout(() => {
+    target.classList.add(
+      "pulse"
+    );
 
-      target.classList.remove("pulse");
 
-    }, 350);
+    setTimeout(
+      () => {
+
+        target.classList.remove(
+          "pulse"
+        );
+
+      },
+
+      350
+    );
+
 
   }
+
 
 }
 
 
-/* PLAYER 1 */
+
+/* =========================
+   PLAYER 1
+   ========================= */
 
 onValue(
+
   p1GamesRef,
+
   snap => {
+
 
     const wins =
       snap.val() || 0;
+
 
     render(
       "p1",
@@ -256,21 +456,31 @@ onValue(
       lastP1
     );
 
+
     lastP1 =
       wins;
 
+
   }
+
 );
 
 
-/* PLAYER 2 */
+
+/* =========================
+   PLAYER 2
+   ========================= */
 
 onValue(
+
   p2GamesRef,
+
   snap => {
+
 
     const wins =
       snap.val() || 0;
+
 
     render(
       "p2",
@@ -278,13 +488,18 @@ onValue(
       lastP2
     );
 
+
     lastP2 =
       wins;
 
+
   }
+
 );
 
+
 </script>
+
 
 </body>
 </html>
