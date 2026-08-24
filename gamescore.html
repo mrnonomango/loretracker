@@ -28,6 +28,7 @@
       gap: 0;
     }
 
+
     /* =========================
        PLAYER POSITIONS
        ========================= */
@@ -70,7 +71,9 @@
 
     /* =========================
        OUTER WHITE BORDER
-       + WHITE GLOW
+
+       DEFAULT:
+       WHITE INSIDE = BLACK GLOW
        ========================= */
 
     .icon-outline-white {
@@ -85,17 +88,28 @@
       object-fit: contain;
       display: block;
 
-      /*
-        ONLY NEW CHANGE:
-        Soft white glow around
-        the existing outer border.
-      */
+      filter:
+        drop-shadow(0 0 3px rgba(0, 0, 0, 1))
+        drop-shadow(0 0 7px rgba(0, 0, 0, 0.85))
+        drop-shadow(0 0 12px rgba(0, 0, 0, 0.55));
+
+      pointer-events: none;
+
+      transition: filter 0.15s ease;
+    }
+
+
+    /* =========================
+       GAME WON:
+       BLACK INSIDE = WHITE GLOW
+       ========================= */
+
+    .tick.filled .icon-outline-white {
 
       filter:
         drop-shadow(0 0 3px rgba(255, 255, 255, 0.95))
         drop-shadow(0 0 7px rgba(255, 255, 255, 0.55));
 
-      pointer-events: none;
     }
 
 
@@ -149,6 +163,9 @@
 
     /* =========================
        GAME WON
+
+       REMOVE WHITE INNER LAYER
+       SO BLACK SHOWS
        ========================= */
 
     .tick.filled .icon-fill {
@@ -163,6 +180,7 @@
     .pulse {
       animation: pulse 0.35s ease;
     }
+
 
     @keyframes pulse {
 
@@ -189,7 +207,9 @@
   <div class="container">
 
 
-    <!-- PLAYER 1 -->
+    <!-- =========================
+         PLAYER 1
+         ========================= -->
 
     <div id="p1_games" class="player">
 
@@ -241,7 +261,9 @@
 
 
 
-    <!-- PLAYER 2 -->
+    <!-- =========================
+         PLAYER 2
+         ========================= -->
 
     <div id="p2_games" class="player">
 
@@ -348,6 +370,10 @@ let lastP1 = 0;
 let lastP2 = 0;
 
 
+/* =========================
+   RENDER GAME ICONS
+   ========================= */
+
 function render(
   player,
   wins,
@@ -359,11 +385,14 @@ function render(
       player + "g1"
     );
 
+
   const g2 =
     document.getElementById(
       player + "g2"
     );
 
+
+  /* GAME 1 */
 
   g1.classList.toggle(
     "filled",
@@ -371,11 +400,17 @@ function render(
   );
 
 
+  /* GAME 2 */
+
   g2.classList.toggle(
     "filled",
     wins >= 2
   );
 
+
+  /* =========================
+     WIN PULSE
+     ========================= */
 
   if (wins > lastWins) {
 
@@ -407,7 +442,9 @@ function render(
 }
 
 
-/* PLAYER 1 */
+/* =========================
+   PLAYER 1
+   ========================= */
 
 onValue(
 
@@ -418,20 +455,25 @@ onValue(
     const wins =
       snap.val() || 0;
 
+
     render(
       "p1",
       wins,
       lastP1
     );
 
-    lastP1 = wins;
+
+    lastP1 =
+      wins;
 
   }
 
 );
 
 
-/* PLAYER 2 */
+/* =========================
+   PLAYER 2
+   ========================= */
 
 onValue(
 
@@ -442,13 +484,16 @@ onValue(
     const wins =
       snap.val() || 0;
 
+
     render(
       "p2",
       wins,
       lastP2
     );
 
-    lastP2 = wins;
+
+    lastP2 =
+      wins;
 
   }
 
