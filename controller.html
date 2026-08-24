@@ -32,12 +32,13 @@
 
     .playerHalf{
       flex:1;
+      min-height:0;
       display:flex;
       flex-direction:column;
       justify-content:center;
       align-items:center;
-      padding:6px;
-      gap:2px;
+      padding:3px 6px;
+      gap:1px;
     }
 
     .topHalf{
@@ -48,42 +49,44 @@
     .roundTimerBox{
       display:flex;
       align-items:center;
-      gap:10px;
-      margin-bottom:3px;
-      padding:4px 12px;
+      gap:8px;
+      margin-bottom:1px;
+      padding:3px 10px;
       border:2px solid #555;
       border-radius:10px;
       background:#181818;
     }
 
     .roundTimerName{
-      font-size:15px;
+      font-size:14px;
       font-weight:bold;
       color:#ddd;
       white-space:nowrap;
     }
 
     .roundTimerTime{
-      font-size:28px;
+      font-size:25px;
       font-weight:bold;
       color:white;
       line-height:1;
     }
 
     .smallText{
-      font-size:12px;
+      font-size:11px;
       color:#aaa;
+      line-height:1;
     }
 
     .playerLabel{
-      font-size:12px;
+      font-size:11px;
       color:#aaa;
+      line-height:1;
     }
 
     .loreNumber{
-      font-size:74px;
+      font-size:66px;
       font-weight:bold;
-      line-height:1;
+      line-height:0.95;
       color:white;
     }
 
@@ -103,7 +106,8 @@
 
     .nameInput{
       width:190px;
-      padding:5px;
+      height:34px;
+      padding:4px;
       font-size:16px;
       border:none;
       border-radius:8px;
@@ -119,8 +123,8 @@
     }
 
     .dot{
-      width:12px;
-      height:12px;
+      width:11px;
+      height:11px;
       border:2px solid gold;
       border-radius:50%;
       background:transparent;
@@ -132,11 +136,11 @@
     }
 
     .loreButton{
-      width:84px;
-      height:84px;
+      width:80px;
+      height:70px;
       border:none;
-      border-radius:16px;
-      font-size:38px;
+      border-radius:14px;
+      font-size:36px;
       color:white;
       font-weight:bold;
     }
@@ -151,16 +155,17 @@
 
     .resetLoreBtn{
       width:190px;
-      height:42px;
+      height:36px;
       border:none;
       border-radius:10px;
       background:#7a2020;
       color:white;
-      font-size:13px;
+      font-size:12px;
       font-weight:bold;
-      margin-top:2px;
+      margin-top:1px;
       position:relative;
       overflow:hidden;
+      flex-shrink:0;
     }
 
     .resetFill{
@@ -182,15 +187,16 @@
     .gameButtonRow{
       display:flex;
       gap:6px;
-      margin-top:2px;
+      margin-top:1px;
+      flex-shrink:0;
     }
 
     .gameBtn{
-      width:135px;
-      height:46px;
+      width:128px;
+      height:38px;
       border:none;
-      border-radius:12px;
-      font-size:15px;
+      border-radius:10px;
+      font-size:14px;
       font-weight:bold;
       color:white;
     }
@@ -239,11 +245,8 @@
     >
 
     <div class="gameDots">
-
       <div id="p2g1" class="dot"></div>
-
       <div id="p2g2" class="dot"></div>
-
     </div>
 
     <div class="buttonRow">
@@ -318,11 +321,8 @@
     >
 
     <div class="gameDots">
-
       <div id="p1g1" class="dot"></div>
-
       <div id="p1g2" class="dot"></div>
-
     </div>
 
     <div class="buttonRow">
@@ -632,8 +632,8 @@ p1NameInput.addEventListener("keydown", event => {
   if(event.key === "Enter"){
 
     event.preventDefault();
-
     p1NameInput.blur();
+
   }
 
 });
@@ -644,8 +644,8 @@ p2NameInput.addEventListener("keydown", event => {
   if(event.key === "Enter"){
 
     event.preventDefault();
-
     p2NameInput.blur();
+
   }
 
 });
@@ -763,6 +763,7 @@ window.resetGames = () => {
 
   set(p1GamesRef, 0);
   set(p2GamesRef, 0);
+
 };
 
 </script>
