@@ -45,6 +45,31 @@
       border-bottom:2px solid #333;
     }
 
+    .roundTimerBox{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:3px;
+      padding:4px 12px;
+      border:2px solid #555;
+      border-radius:10px;
+      background:#181818;
+    }
+
+    .roundTimerName{
+      font-size:15px;
+      font-weight:bold;
+      color:#ddd;
+      white-space:nowrap;
+    }
+
+    .roundTimerTime{
+      font-size:28px;
+      font-weight:bold;
+      color:white;
+      line-height:1;
+    }
+
     .smallText{
       font-size:12px;
       color:#aaa;
@@ -84,6 +109,7 @@
       border-radius:8px;
       text-align:center;
       background:white;
+      color:black;
     }
 
     .gameDots{
@@ -186,6 +212,11 @@
   <!-- TOP PLAYER -->
   <div class="playerHalf topHalf">
 
+    <div class="roundTimerBox">
+      <div id="roundNameTop" class="roundTimerName">Round 1</div>
+      <div id="roundTimeTop" class="roundTimerTime">55:00</div>
+    </div>
+
     <div class="smallText">Opponent Lore</div>
 
     <div id="p1_top" class="loreNumber opponentLore">0</div>
@@ -203,9 +234,8 @@
     <input
       id="p2NameInput"
       class="nameInput"
-      placeholder="Player 2 Name"
+      value="Player 2"
       style="transform:rotate(180deg);"
-      oninput="autoSaveNames()"
     >
 
     <div class="gameDots">
@@ -262,6 +292,11 @@
   <!-- BOTTOM PLAYER -->
   <div class="playerHalf">
 
+    <div class="roundTimerBox">
+      <div id="roundNameBottom" class="roundTimerName">Round 1</div>
+      <div id="roundTimeBottom" class="roundTimerTime">55:00</div>
+    </div>
+
     <div class="smallText">Opponent Lore</div>
 
     <div id="p2_bottom" class="loreNumber opponentLore">0</div>
@@ -279,8 +314,7 @@
     <input
       id="p1NameInput"
       class="nameInput"
-      placeholder="Player 1 Name"
-      oninput="autoSaveNames()"
+      value="Player 1"
     >
 
     <div class="gameDots">
@@ -346,6 +380,7 @@ import {
   get
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
   authDomain: "lore-counter-4e654.firebaseapp.com",
@@ -353,9 +388,10 @@ const firebaseConfig = {
   projectId: "lore-counter-4e654"
 };
 
-const app = initializeApp(firebaseConfig);
 
+const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
 
 const p1Ref = ref(db, "p1");
 const p2Ref = ref(db, "p2");
@@ -366,9 +402,113 @@ const p2GamesRef = ref(db, "p2Games");
 const p1NameRef = ref(db, "p1Name");
 const p2NameRef = ref(db, "p2Name");
 
+const timerRef = ref(db, "timer");
+
+
+const DEFAULT_RESET = 3300;
+const DEFAULT_ROUND_NAME = "Round 1";
+
+
+let timerData = {
+  roundName: DEFAULT_ROUND_NAME,
+  remaining: DEFAULT_RESET,
+  running: false,
+  startedAt: 0
+};
+
+
 let resetTimer;
 let fillInterval;
-let nameSaveTimer;
+
+
+/* ----------------------------
+   ROUND TIMER
+----------------------------- */
+
+function formatTime(totalSeconds){
+
+  const safe = Math.max(
+    0,
+    Math.floor(Number(totalSeconds) || 0)
+  );
+
+  const minutes = Math.floor(safe / 60);
+  const seconds = safe % 60;
+
+  return `${minutes}:${String(seconds).padStart(2,"0")}`;
+}
+
+
+function getTimerRemaining(){
+
+  let remaining =
+    Number(timerData.remaining ?? DEFAULT_RESET);
+
+  const running =
+    Boolean(timerData.running);
+
+  const startedAt =
+    Number(timerData.startedAt ?? 0);
+
+  if(running && startedAt > 0){
+
+    const elapsed =
+      Math.floor((Date.now() - startedAt) / 1000);
+
+    remaining =
+      Math.max(0, remaining - elapsed);
+  }
+
+  return remaining;
+}
+
+
+function renderRoundTimer(){
+
+  const remaining = getTimerRemaining();
+
+  const formatted = formatTime(remaining);
+
+  const roundName =
+    timerData.roundName || DEFAULT_ROUND_NAME;
+
+  document.getElementById("roundTimeTop").textContent =
+    formatted;
+
+  document.getElementById("roundTimeBottom").textContent =
+    formatted;
+
+  document.getElementById("roundNameTop").textContent =
+    roundName;
+
+  document.getElementById("roundNameBottom").textContent =
+    roundName;
+}
+
+
+onValue(timerRef, snap => {
+
+  timerData = snap.val() || {
+    roundName: DEFAULT_ROUND_NAME,
+    remaining: DEFAULT_RESET,
+    running: false,
+    startedAt: 0
+  };
+
+  renderRoundTimer();
+});
+
+
+setInterval(() => {
+
+  renderRoundTimer();
+
+}, 250);
+
+
+/* ----------------------------
+   GAME WIN DOTS
+----------------------------- */
 
 function renderDots(player, wins){
 
@@ -379,21 +519,28 @@ function renderDots(player, wins){
     wins >= 2 ? "gold" : "transparent";
 }
 
+
+/* ----------------------------
+   LORE LISTENERS
+----------------------------- */
+
 onValue(p1Ref, snap => {
 
-  let v = snap.val() || 0;
+  const v = snap.val() || 0;
 
-  p1.innerText = v;
-  p1_top.innerText = v;
+  document.getElementById("p1").innerText = v;
+  document.getElementById("p1_top").innerText = v;
 });
+
 
 onValue(p2Ref, snap => {
 
-  let v = snap.val() || 0;
+  const v = snap.val() || 0;
 
-  p2.innerText = v;
-  p2_bottom.innerText = v;
+  document.getElementById("p2").innerText = v;
+  document.getElementById("p2_bottom").innerText = v;
 });
+
 
 onValue(p1GamesRef, snap => {
 
@@ -401,51 +548,138 @@ onValue(p1GamesRef, snap => {
 
 });
 
+
 onValue(p2GamesRef, snap => {
 
   renderDots("p2", snap.val() || 0);
 
 });
 
-onValue(p1NameRef, s => {
 
-  p1NameInput.value = s.val() || "";
+/* ----------------------------
+   PLAYER NAME AUTO SAVE
+----------------------------- */
+
+const p1NameInput =
+  document.getElementById("p1NameInput");
+
+const p2NameInput =
+  document.getElementById("p2NameInput");
+
+
+onValue(p1NameRef, snap => {
+
+  const name =
+    String(snap.val() || "").trim() || "Player 1";
+
+  if(document.activeElement !== p1NameInput){
+    p1NameInput.value = name;
+  }
 
 });
 
-onValue(p2NameRef, s => {
 
-  p2NameInput.value = s.val() || "";
+onValue(p2NameRef, snap => {
+
+  const name =
+    String(snap.val() || "").trim() || "Player 2";
+
+  if(document.activeElement !== p2NameInput){
+    p2NameInput.value = name;
+  }
 
 });
 
-window.updateLore = async (p,c)=>{
 
-  let r = p === "p1"
-    ? p1Ref
-    : p2Ref;
+async function savePlayerName(input, nameRef, defaultName){
 
-  let v = (await get(r)).val() || 0;
+  let name = input.value.trim();
 
-  v = Math.max(0, Math.min(20, v + c));
+  if(!name){
+    name = defaultName;
+  }
+
+  input.value = name;
+
+  await set(nameRef, name);
+}
+
+
+p1NameInput.addEventListener("blur", () => {
+
+  savePlayerName(
+    p1NameInput,
+    p1NameRef,
+    "Player 1"
+  );
+
+});
+
+
+p2NameInput.addEventListener("blur", () => {
+
+  savePlayerName(
+    p2NameInput,
+    p2NameRef,
+    "Player 2"
+  );
+
+});
+
+
+p1NameInput.addEventListener("keydown", event => {
+
+  if(event.key === "Enter"){
+
+    event.preventDefault();
+
+    p1NameInput.blur();
+  }
+
+});
+
+
+p2NameInput.addEventListener("keydown", event => {
+
+  if(event.key === "Enter"){
+
+    event.preventDefault();
+
+    p2NameInput.blur();
+  }
+
+});
+
+
+/* ----------------------------
+   LORE BUTTONS
+----------------------------- */
+
+window.updateLore = async (p,c) => {
+
+  const r =
+    p === "p1"
+      ? p1Ref
+      : p2Ref;
+
+  let v =
+    (await get(r)).val() || 0;
+
+  v =
+    Math.max(
+      0,
+      Math.min(20, v + c)
+    );
 
   set(r, v);
 };
 
-window.autoSaveNames = ()=>{
 
-  clearTimeout(nameSaveTimer);
+/* ----------------------------
+   HOLD TO RESET LORE
+----------------------------- */
 
-  nameSaveTimer = setTimeout(()=>{
-
-    set(p1NameRef, p1NameInput.value);
-
-    set(p2NameRef, p2NameInput.value);
-
-  }, 400);
-};
-
-window.startResetHold = ()=>{
+window.startResetHold = () => {
 
   let progress = 0;
 
@@ -455,7 +689,7 @@ window.startResetHold = ()=>{
   document.getElementById("resetText2").innerText =
     "Resetting...";
 
-  fillInterval = setInterval(()=>{
+  fillInterval = setInterval(() => {
 
     progress += 3;
 
@@ -467,7 +701,8 @@ window.startResetHold = ()=>{
 
   }, 30);
 
-  resetTimer = setTimeout(()=>{
+
+  resetTimer = setTimeout(() => {
 
     set(p1Ref, 0);
     set(p2Ref, 0);
@@ -477,14 +712,15 @@ window.startResetHold = ()=>{
   }, 1000);
 };
 
-window.cancelResetHold = ()=>{
+
+window.cancelResetHold = () => {
 
   clearTimeout(resetTimer);
-
   clearInterval(fillInterval);
 
   resetButtons();
 };
+
 
 function resetButtons(){
 
@@ -501,21 +737,31 @@ function resetButtons(){
     "Hold To Reset Lore";
 }
 
-window.addGameWin = async p=>{
 
-  let r = p === "p1"
-    ? p1GamesRef
-    : p2GamesRef;
+/* ----------------------------
+   GAME WINS
+----------------------------- */
 
-  let v = (await get(r)).val() || 0;
+window.addGameWin = async p => {
 
-  set(r, Math.min(2, v + 1));
+  const r =
+    p === "p1"
+      ? p1GamesRef
+      : p2GamesRef;
+
+  let v =
+    (await get(r)).val() || 0;
+
+  set(
+    r,
+    Math.min(2, v + 1)
+  );
 };
 
-window.resetGames = ()=>{
+
+window.resetGames = () => {
 
   set(p1GamesRef, 0);
-
   set(p2GamesRef, 0);
 };
 
