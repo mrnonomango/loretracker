@@ -70,6 +70,7 @@
 
     /* =========================
        OUTER WHITE BORDER
+       + WHITE GLOW
        ========================= */
 
     .icon-outline-white {
@@ -84,7 +85,15 @@
       object-fit: contain;
       display: block;
 
-      filter: none;
+      /*
+        ONLY NEW CHANGE:
+        Soft white glow around
+        the existing outer border.
+      */
+
+      filter:
+        drop-shadow(0 0 3px rgba(255, 255, 255, 0.95))
+        drop-shadow(0 0 7px rgba(255, 255, 255, 0.55));
 
       pointer-events: none;
     }
@@ -140,10 +149,6 @@
 
     /* =========================
        GAME WON
-
-       White center disappears.
-       White outer border stays.
-       Black center remains.
        ========================= */
 
     .tick.filled .icon-fill {
@@ -184,9 +189,7 @@
   <div class="container">
 
 
-    <!-- =====================
-         PLAYER 1
-         ===================== -->
+    <!-- PLAYER 1 -->
 
     <div id="p1_games" class="player">
 
@@ -238,9 +241,7 @@
 
 
 
-    <!-- =====================
-         PLAYER 2
-         ===================== -->
+    <!-- PLAYER 2 -->
 
     <div id="p2_games" class="player">
 
@@ -364,23 +365,17 @@ function render(
     );
 
 
-  /* GAME 1 */
-
   g1.classList.toggle(
     "filled",
     wins >= 1
   );
 
 
-  /* GAME 2 */
-
   g2.classList.toggle(
     "filled",
     wins >= 2
   );
 
-
-  /* NEW WIN PULSE */
 
   if (wins > lastWins) {
 
