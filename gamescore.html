@@ -50,8 +50,8 @@
     .tick {
       position: relative;
 
-      width: 136px;
-      height: 136px;
+      width: 144px;
+      height: 144px;
 
       flex-shrink: 0;
 
@@ -64,25 +64,46 @@
        ========================= */
 
     .tick + .tick {
-      margin-left: -55px;
+      margin-left: -63px;
     }
 
 
     /* =========================
-       BLACK OUTLINE LAYER
+       OUTER WHITE BORDER
        ========================= */
 
-    .icon-outline {
+    .icon-outline-white {
       position: absolute;
 
-      width: 136px;
-      height: 136px;
+      width: 144px;
+      height: 144px;
 
       top: 0;
       left: 0;
 
       object-fit: contain;
+      display: block;
 
+      filter: none;
+
+      pointer-events: none;
+    }
+
+
+    /* =========================
+       BLACK BORDER LAYER
+       ========================= */
+
+    .icon-outline-black {
+      position: absolute;
+
+      width: 136px;
+      height: 136px;
+
+      top: 4px;
+      left: 4px;
+
+      object-fit: contain;
       display: block;
 
       filter: brightness(0);
@@ -101,11 +122,10 @@
       width: 124px;
       height: 124px;
 
-      top: 6px;
-      left: 6px;
+      top: 10px;
+      left: 10px;
 
       object-fit: contain;
-
       display: block;
 
       filter: none;
@@ -120,6 +140,10 @@
 
     /* =========================
        GAME WON
+
+       White center disappears.
+       White outer border stays.
+       Black center remains.
        ========================= */
 
     .tick.filled .icon-fill {
@@ -160,14 +184,24 @@
   <div class="container">
 
 
-    <!-- PLAYER 1 -->
+    <!-- =====================
+         PLAYER 1
+         ===================== -->
 
     <div id="p1_games" class="player">
+
+
+      <!-- GAME 1 -->
 
       <div id="p1g1" class="tick">
 
         <img
-          class="icon-outline"
+          class="icon-outline-white"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-outline-black"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -179,10 +213,17 @@
       </div>
 
 
+      <!-- GAME 2 -->
+
       <div id="p1g2" class="tick">
 
         <img
-          class="icon-outline"
+          class="icon-outline-white"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-outline-black"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -197,14 +238,24 @@
 
 
 
-    <!-- PLAYER 2 -->
+    <!-- =====================
+         PLAYER 2
+         ===================== -->
 
     <div id="p2_games" class="player">
+
+
+      <!-- GAME 1 -->
 
       <div id="p2g1" class="tick">
 
         <img
-          class="icon-outline"
+          class="icon-outline-white"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-outline-black"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -216,10 +267,17 @@
       </div>
 
 
+      <!-- GAME 2 -->
+
       <div id="p2g2" class="tick">
 
         <img
-          class="icon-outline"
+          class="icon-outline-white"
+          src="./Illuminary%20Icon_White.png"
+        >
+
+        <img
+          class="icon-outline-black"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -306,17 +364,23 @@ function render(
     );
 
 
+  /* GAME 1 */
+
   g1.classList.toggle(
     "filled",
     wins >= 1
   );
 
 
+  /* GAME 2 */
+
   g2.classList.toggle(
     "filled",
     wins >= 2
   );
 
+
+  /* NEW WIN PULSE */
 
   if (wins > lastWins) {
 
