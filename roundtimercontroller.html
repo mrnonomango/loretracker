@@ -105,40 +105,93 @@
     <div id="liveRoundName" class="round-name">Round 1</div>
 
     <div class="label">Type round name</div>
+
     <div class="row">
-      <input id="roundNameInput" class="round-input" type="text" placeholder="Round 1, Top 16, Finals" />
-      <button class="purple" onclick="applyRoundName()">Set Round Name</button>
+      <input
+        id="roundNameInput"
+        class="round-input"
+        type="text"
+        placeholder="Round 1, Top 16, Finals"
+      />
+
+      <button class="purple" onclick="applyRoundName()">
+        Set Round Name
+      </button>
     </div>
 
-    <div id="liveTime" class="live-time">55:00</div>
+    <div id="liveTime" class="live-time">60:00</div>
 
     <div class="row">
-      <button class="blue" onclick="setPreset(3300)">55 Min</button>
-      <button class="gray" onclick="setPreset(600)">10 Min</button>
-      <button class="gray" onclick="setPreset(300)">5 Min</button>
+
+      <button class="blue" onclick="setPreset(3600)">
+        60 Min
+      </button>
+
+      <button class="gray" onclick="setPreset(600)">
+        10 Min
+      </button>
+
+      <button class="gray" onclick="setPreset(300)">
+        5 Min
+      </button>
+
     </div>
 
-    <div class="label">Type any time you want</div>
-    <div class="row">
-      <input id="manualTime" type="text" placeholder="55:00" />
-      <button class="blue" onclick="applyManualTime()">Set Time</button>
+    <div class="label">
+      Type any time you want
     </div>
 
     <div class="row">
-      <button class="green" onclick="startTimer()">Start</button>
-      <button class="orange" onclick="pauseTimer()">Pause</button>
-      <button class="red" onclick="resetTimer()">Reset 55</button>
+
+      <input
+        id="manualTime"
+        type="text"
+        placeholder="60:00"
+      />
+
+      <button class="blue" onclick="applyManualTime()">
+        Set Time
+      </button>
+
+    </div>
+
+    <div class="row">
+
+      <button class="green" onclick="startTimer()">
+        Start
+      </button>
+
+      <button class="orange" onclick="pauseTimer()">
+        Pause
+      </button>
+
+      <button class="red" onclick="resetTimer()">
+        Reset 60
+      </button>
+
     </div>
 
     <div class="small">
-      Time examples: 55:00, 12:30, 3:15<br>
+      Time examples: 60:00, 12:30, 3:15<br>
       Round examples: Round 1, Top 16, Top 8, Finals
     </div>
+
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+    import {
+      getDatabase,
+      ref,
+      set,
+      onValue,
+      get
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
 
     const config = {
       apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
@@ -147,157 +200,368 @@
       projectId: "lore-counter-4e654"
     };
 
+
     const app = initializeApp(config);
+
     const db = getDatabase(app);
 
-    const DEFAULT_RESET = 3300; // 55:00
+
+    /* 60 MINUTES */
+    const DEFAULT_RESET = 3600;
+
     const DEFAULT_ROUND_NAME = "Round 1";
 
     const timerRef = ref(db, "timer");
 
+
     function formatTime(totalSeconds) {
-      const safe = Math.max(0, Number(totalSeconds) || 0);
-      const minutes = Math.floor(safe / 60);
-      const seconds = safe % 60;
+
+      const safe =
+        Math.max(
+          0,
+          Number(totalSeconds) || 0
+        );
+
+      const minutes =
+        Math.floor(safe / 60);
+
+      const seconds =
+        safe % 60;
+
       return `${minutes}:${String(seconds).padStart(2, "0")}`;
     }
 
+
     function parseTimeString(value) {
-      const trimmed = String(value).trim();
-      const match = trimmed.match(/^(\d+):([0-5]\d)$/);
+
+      const trimmed =
+        String(value).trim();
+
+      const match =
+        trimmed.match(/^(\d+):([0-5]\d)$/);
+
       if (!match) return null;
 
-      const minutes = Number(match[1]);
-      const seconds = Number(match[2]);
+      const minutes =
+        Number(match[1]);
+
+      const seconds =
+        Number(match[2]);
+
       return minutes * 60 + seconds;
     }
 
+
     async function getCurrentTimerData() {
-      const snap = await get(timerRef);
+
+      const snap =
+        await get(timerRef);
+
       return snap.val() || {};
     }
 
-    async function getCurrentRemaining() {
-      const timer = await getCurrentTimerData();
-      const now = Date.now();
 
-      let remaining = Number(timer.remaining ?? DEFAULT_RESET);
-      const running = Boolean(timer.running);
-      const startedAt = Number(timer.startedAt ?? 0);
+    async function getCurrentRemaining() {
+
+      const timer =
+        await getCurrentTimerData();
+
+      const now =
+        Date.now();
+
+      let remaining =
+        Number(
+          timer.remaining ?? DEFAULT_RESET
+        );
+
+      const running =
+        Boolean(timer.running);
+
+      const startedAt =
+        Number(timer.startedAt ?? 0);
+
 
       if (running && startedAt > 0) {
-        const elapsed = Math.floor((now - startedAt) / 1000);
-        remaining = Math.max(0, remaining - elapsed);
+
+        const elapsed =
+          Math.floor(
+            (now - startedAt) / 1000
+          );
+
+        remaining =
+          Math.max(
+            0,
+            remaining - elapsed
+          );
       }
 
       return remaining;
     }
 
-    async function writeTimer(remaining, running) {
-      const oldData = await getCurrentTimerData();
+
+    async function writeTimer(
+      remaining,
+      running
+    ) {
+
+      const oldData =
+        await getCurrentTimerData();
 
       await set(timerRef, {
-        roundName: oldData.roundName || DEFAULT_ROUND_NAME,
+
+        roundName:
+          oldData.roundName ||
+          DEFAULT_ROUND_NAME,
+
         remaining,
+
         running,
-        startedAt: running ? Date.now() : 0
+
+        startedAt:
+          running
+            ? Date.now()
+            : 0
       });
     }
+
 
     async function writeRoundName(roundName) {
-      const oldData = await getCurrentTimerData();
-      const remaining = await getCurrentRemaining();
+
+      const oldData =
+        await getCurrentTimerData();
+
+      const remaining =
+        await getCurrentRemaining();
 
       await set(timerRef, {
-        roundName: roundName || DEFAULT_ROUND_NAME,
+
+        roundName:
+          roundName ||
+          DEFAULT_ROUND_NAME,
+
         remaining,
-        running: Boolean(oldData.running),
-        startedAt: oldData.running ? Date.now() : 0
+
+        running:
+          Boolean(oldData.running),
+
+        startedAt:
+          oldData.running
+            ? Date.now()
+            : 0
       });
     }
 
+
     window.applyRoundName = async () => {
-      const input = document.getElementById("roundNameInput");
-      const roundName = input.value.trim();
+
+      const input =
+        document.getElementById(
+          "roundNameInput"
+        );
+
+      const roundName =
+        input.value.trim();
+
 
       if (!roundName) {
-        alert("Type a round name first");
+
+        alert(
+          "Type a round name first"
+        );
+
         return;
       }
 
+
       await writeRoundName(roundName);
+
       input.blur();
     };
 
+
     window.setPreset = async (seconds) => {
-      await writeTimer(seconds, false);
+
+      await writeTimer(
+        seconds,
+        false
+      );
     };
 
+
     window.applyManualTime = async () => {
-      const input = document.getElementById("manualTime");
-      const parsed = parseTimeString(input.value);
+
+      const input =
+        document.getElementById(
+          "manualTime"
+        );
+
+      const parsed =
+        parseTimeString(
+          input.value
+        );
+
 
       if (parsed === null) {
-        alert("Use mm:ss format like 55:00 or 12:30");
+
+        alert(
+          "Use mm:ss format like 60:00 or 12:30"
+        );
+
         return;
       }
 
-      await writeTimer(parsed, false);
+
+      await writeTimer(
+        parsed,
+        false
+      );
+
       input.value = "";
     };
 
+
     window.startTimer = async () => {
-      const remaining = await getCurrentRemaining();
-      await writeTimer(remaining, true);
+
+      const remaining =
+        await getCurrentRemaining();
+
+      await writeTimer(
+        remaining,
+        true
+      );
     };
+
 
     window.pauseTimer = async () => {
-      const remaining = await getCurrentRemaining();
-      await writeTimer(remaining, false);
+
+      const remaining =
+        await getCurrentRemaining();
+
+      await writeTimer(
+        remaining,
+        false
+      );
     };
+
 
     window.resetTimer = async () => {
-      await writeTimer(DEFAULT_RESET, false);
+
+      await writeTimer(
+        DEFAULT_RESET,
+        false
+      );
     };
 
-    onValue(timerRef, (snap) => {
-      const timer = snap.val() || {};
-      const now = Date.now();
 
-      let remaining = Number(timer.remaining ?? DEFAULT_RESET);
-      const running = Boolean(timer.running);
-      const startedAt = Number(timer.startedAt ?? 0);
-      const roundName = timer.roundName || DEFAULT_ROUND_NAME;
+    onValue(timerRef, (snap) => {
+
+      const timer =
+        snap.val() || {};
+
+      const now =
+        Date.now();
+
+
+      let remaining =
+        Number(
+          timer.remaining ?? DEFAULT_RESET
+        );
+
+      const running =
+        Boolean(timer.running);
+
+      const startedAt =
+        Number(
+          timer.startedAt ?? 0
+        );
+
+      const roundName =
+        timer.roundName ||
+        DEFAULT_ROUND_NAME;
+
 
       if (running && startedAt > 0) {
-        const elapsed = Math.floor((now - startedAt) / 1000);
-        remaining = Math.max(0, remaining - elapsed);
+
+        const elapsed =
+          Math.floor(
+            (now - startedAt) / 1000
+          );
+
+        remaining =
+          Math.max(
+            0,
+            remaining - elapsed
+          );
       }
 
-      document.getElementById("liveTime").textContent = formatTime(remaining);
-      document.getElementById("liveRoundName").textContent = roundName;
 
-      const roundInput = document.getElementById("roundNameInput");
-      if (document.activeElement !== roundInput) {
-        roundInput.value = roundName;
+      document.getElementById(
+        "liveTime"
+      ).textContent =
+        formatTime(remaining);
+
+
+      document.getElementById(
+        "liveRoundName"
+      ).textContent =
+        roundName;
+
+
+      const roundInput =
+        document.getElementById(
+          "roundNameInput"
+        );
+
+
+      if (
+        document.activeElement !==
+        roundInput
+      ) {
+
+        roundInput.value =
+          roundName;
       }
+
     });
+
 
     setInterval(async () => {
-      const remaining = await getCurrentRemaining();
-      document.getElementById("liveTime").textContent = formatTime(remaining);
+
+      const remaining =
+        await getCurrentRemaining();
+
+      document.getElementById(
+        "liveTime"
+      ).textContent =
+        formatTime(remaining);
+
     }, 250);
 
+
     get(timerRef).then((snap) => {
+
       if (!snap.exists()) {
+
         set(timerRef, {
-          roundName: DEFAULT_ROUND_NAME,
-          remaining: DEFAULT_RESET,
-          running: false,
-          startedAt: 0
+
+          roundName:
+            DEFAULT_ROUND_NAME,
+
+          remaining:
+            DEFAULT_RESET,
+
+          running:
+            false,
+
+          startedAt:
+            0
         });
+
       }
+
     });
+
   </script>
+
 </body>
 </html>
