@@ -2,6 +2,7 @@
 <html>
 <head>
   <style>
+
     body {
       margin: 0;
       background: transparent;
@@ -21,7 +22,8 @@
       align-items: center;
     }
 
-    /* KEEP YOUR POSITIONS */
+    /* PLAYER POSITIONS */
+
     #p1_games {
       top: 40%;
       left: 25%;
@@ -32,118 +34,256 @@
       right: 25%;
     }
 
-    /* EMPTY HOLLOW DIAMOND */
+
+    /* =========================
+       ICON
+       ========================= */
+
     .tick {
-      width: 18px;
-      height: 18px;
+      width: 38px;
+      height: 38px;
 
-      background: transparent;
-      border: 3px solid rgba(255, 180, 60, 1);
+      object-fit: contain;
 
-      transform: rotate(45deg);
-      box-sizing: border-box;
-      transition: all 0.2s ease;
+      /* EMPTY = WHITE */
+      filter:
+        drop-shadow(0 0 2px black)
+        drop-shadow(0 0 3px rgba(0, 0, 0, 0.6));
 
-      box-shadow:
-        0 0 5px rgba(255, 180, 60, 0.9),
-        0 0 12px rgba(255, 120, 0, 0.45);
+      transition:
+        filter 0.2s ease,
+        transform 0.2s ease;
     }
 
-    /* FILLED DIAMOND */
+
+    /* =========================
+       GAME WON = BLACK
+       ========================= */
+
     .filled {
-      background: rgba(255, 150, 30, 1);
-      border-color: rgba(255, 220, 100, 1);
-
-      box-shadow:
-        0 0 6px rgba(255, 220, 100, 1),
-        0 0 14px rgba(255, 140, 20, 0.75),
-        0 0 24px rgba(255, 90, 0, 0.45),
-        inset 0 0 6px rgba(255, 230, 120, 0.65);
+      filter:
+        brightness(0)
+        drop-shadow(0 0 2px white)
+        drop-shadow(0 0 4px rgba(255, 255, 255, 0.7));
     }
 
-    /* WIN PULSE */
+
+    /* =========================
+       WIN PULSE
+       ========================= */
+
     .pulse {
       animation: pulse 0.35s ease;
     }
 
     @keyframes pulse {
+
       0% {
-        transform: rotate(45deg) scale(1);
+        transform: scale(1);
       }
 
       50% {
-        transform: rotate(45deg) scale(1.35);
+        transform: scale(1.35);
       }
 
       100% {
-        transform: rotate(45deg) scale(1);
+        transform: scale(1);
       }
+
     }
+
   </style>
 </head>
 
+
 <body>
+
   <div class="container">
 
-    <!-- Player 1 -->
+
+    <!-- PLAYER 1 -->
+
     <div id="p1_games" class="player">
-      <div id="p1g1" class="tick"></div>
-      <div id="p1g2" class="tick"></div>
+
+      <img
+        id="p1g1"
+        class="tick"
+        src="Illuminary Icon_White.png"
+      >
+
+      <img
+        id="p1g2"
+        class="tick"
+        src="Illuminary Icon_White.png"
+      >
+
     </div>
 
-    <!-- Player 2 -->
+
+    <!-- PLAYER 2 -->
+
     <div id="p2_games" class="player">
-      <div id="p2g1" class="tick"></div>
-      <div id="p2g2" class="tick"></div>
+
+      <img
+        id="p2g1"
+        class="tick"
+        src="Illuminary Icon_White.png"
+      >
+
+      <img
+        id="p2g2"
+        class="tick"
+        src="Illuminary Icon_White.png"
+      >
+
     </div>
+
 
   </div>
 
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+import {
+  initializeApp
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+
+import {
+  getDatabase,
+  ref,
+  onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
-  authDomain: "lore-counter-4e654.firebaseapp.com",
-  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
-  projectId: "lore-counter-4e654"
+
+  apiKey:
+    "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+
+  authDomain:
+    "lore-counter-4e654.firebaseapp.com",
+
+  databaseURL:
+    "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+
+  projectId:
+    "lore-counter-4e654"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 
-const p1GamesRef = ref(db, "p1Games");
-const p2GamesRef = ref(db, "p2Games");
+const app =
+  initializeApp(firebaseConfig);
+
+
+const db =
+  getDatabase(app);
+
+
+const p1GamesRef =
+  ref(db, "p1Games");
+
+
+const p2GamesRef =
+  ref(db, "p2Games");
+
 
 let lastP1 = 0;
+
 let lastP2 = 0;
 
-function render(player, wins, lastWins) {
-  const g1 = document.getElementById(player + "g1");
-  const g2 = document.getElementById(player + "g2");
 
-  g1.classList.toggle("filled", wins >= 1);
-  g2.classList.toggle("filled", wins >= 2);
+function render(player, wins, lastWins) {
+
+  const g1 =
+    document.getElementById(player + "g1");
+
+  const g2 =
+    document.getElementById(player + "g2");
+
+
+  /* FIRST GAME */
+  g1.classList.toggle(
+    "filled",
+    wins >= 1
+  );
+
+
+  /* SECOND GAME */
+  g2.classList.toggle(
+    "filled",
+    wins >= 2
+  );
+
+
+  /* PULSE WHEN WIN ADDED */
 
   if (wins > lastWins) {
-    const target = wins === 1 ? g1 : g2;
+
+    const target =
+      wins === 1
+        ? g1
+        : g2;
+
     target.classList.add("pulse");
-    setTimeout(() => target.classList.remove("pulse"), 350);
+
+    setTimeout(() => {
+
+      target.classList.remove("pulse");
+
+    }, 350);
+
   }
+
 }
 
-onValue(p1GamesRef, snap => {
-  const wins = snap.val() || 0;
-  render("p1", wins, lastP1);
-  lastP1 = wins;
-});
 
-onValue(p2GamesRef, snap => {
-  const wins = snap.val() || 0;
-  render("p2", wins, lastP2);
-  lastP2 = wins;
-});
+/* PLAYER 1 */
+
+onValue(
+  p1GamesRef,
+  snap => {
+
+    const wins =
+      snap.val() || 0;
+
+    render(
+      "p1",
+      wins,
+      lastP1
+    );
+
+    lastP1 =
+      wins;
+
+  }
+);
+
+
+/* PLAYER 2 */
+
+onValue(
+  p2GamesRef,
+  snap => {
+
+    const wins =
+      snap.val() || 0;
+
+    render(
+      "p2",
+      wins,
+      lastP2
+    );
+
+    lastP2 =
+      wins;
+
+  }
+);
+
 </script>
 
 </body>
