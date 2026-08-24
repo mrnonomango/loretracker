@@ -116,6 +116,11 @@
       color:black;
     }
 
+    .nameInput::placeholder{
+      color:#777;
+      opacity:1;
+    }
+
     .gameDots{
       display:flex;
       gap:5px;
@@ -240,7 +245,8 @@
     <input
       id="p2NameInput"
       class="nameInput"
-      value="Player 2"
+      placeholder="Player 2"
+      autocomplete="off"
       style="transform:rotate(180deg);"
     >
 
@@ -317,7 +323,8 @@
     <input
       id="p1NameInput"
       class="nameInput"
-      value="Player 1"
+      placeholder="Player 1"
+      autocomplete="off"
     >
 
     <div class="gameDots">
@@ -500,9 +507,7 @@ onValue(timerRef, snap => {
 
 
 setInterval(() => {
-
   renderRoundTimer();
-
 }, 250);
 
 
@@ -543,16 +548,12 @@ onValue(p2Ref, snap => {
 
 
 onValue(p1GamesRef, snap => {
-
   renderDots("p1", snap.val() || 0);
-
 });
 
 
 onValue(p2GamesRef, snap => {
-
   renderDots("p2", snap.val() || 0);
-
 });
 
 
@@ -569,11 +570,17 @@ const p2NameInput =
 
 onValue(p1NameRef, snap => {
 
-  const name =
-    String(snap.val() || "").trim() || "Player 1";
+  const savedName =
+    String(snap.val() || "").trim();
 
   if(document.activeElement !== p1NameInput){
-    p1NameInput.value = name;
+
+    if(savedName === "Player 1"){
+      p1NameInput.value = "";
+    }else{
+      p1NameInput.value = savedName;
+    }
+
   }
 
 });
@@ -581,22 +588,33 @@ onValue(p1NameRef, snap => {
 
 onValue(p2NameRef, snap => {
 
-  const name =
-    String(snap.val() || "").trim() || "Player 2";
+  const savedName =
+    String(snap.val() || "").trim();
 
   if(document.activeElement !== p2NameInput){
-    p2NameInput.value = name;
+
+    if(savedName === "Player 2"){
+      p2NameInput.value = "";
+    }else{
+      p2NameInput.value = savedName;
+    }
+
   }
 
 });
 
 
-async function savePlayerName(input, nameRef, defaultName){
+async function savePlayerName(input, nameRef){
 
-  let name = input.value.trim();
+  const name = input.value.trim();
 
   if(!name){
-    name = defaultName;
+
+    await set(nameRef, "");
+
+    input.value = "";
+
+    return;
   }
 
   input.value = name;
@@ -609,8 +627,7 @@ p1NameInput.addEventListener("blur", () => {
 
   savePlayerName(
     p1NameInput,
-    p1NameRef,
-    "Player 1"
+    p1NameRef
   );
 
 });
@@ -620,8 +637,7 @@ p2NameInput.addEventListener("blur", () => {
 
   savePlayerName(
     p2NameInput,
-    p2NameRef,
-    "Player 2"
+    p2NameRef
   );
 
 });
@@ -632,8 +648,8 @@ p1NameInput.addEventListener("keydown", event => {
   if(event.key === "Enter"){
 
     event.preventDefault();
-    p1NameInput.blur();
 
+    p1NameInput.blur();
   }
 
 });
@@ -644,8 +660,8 @@ p2NameInput.addEventListener("keydown", event => {
   if(event.key === "Enter"){
 
     event.preventDefault();
-    p2NameInput.blur();
 
+    p2NameInput.blur();
   }
 
 });
