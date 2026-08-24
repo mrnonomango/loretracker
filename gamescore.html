@@ -26,7 +26,10 @@
     .player {
       position: absolute;
       display: flex;
-      gap: 12px;
+
+      /* CLOSER TOGETHER */
+      gap: 5px;
+
       align-items: center;
     }
 
@@ -54,31 +57,12 @@
     .tick {
       position: relative;
 
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
 
       flex-shrink: 0;
 
       transition: transform 0.15s ease;
-    }
-
-
-    /* ALL ICON IMAGE LAYERS */
-
-    .tick img {
-      position: absolute;
-
-      top: 50%;
-      left: 50%;
-
-      width: 100%;
-      height: 100%;
-
-      object-fit: contain;
-
-      transform: translate(-50%, -50%);
-
-      pointer-events: none;
     }
 
 
@@ -87,20 +71,30 @@
        ========================= */
 
     .icon-outline {
+      position: absolute;
+
+      width: 46px;
+      height: 46px;
+
+      top: 0;
+      left: 0;
+
+      object-fit: contain;
+
+      display: block;
 
       /*
-        Turns the original white PNG black
-        and makes it slightly larger.
+        MAKE ORIGINAL WHITE IMAGE BLACK.
 
-        This creates a CLEAN black outline
-        without using blurry shadows.
+        IMPORTANT:
+        NO SCALE.
+        NO TRANSLATE.
+        NO FRACTIONAL PIXELS.
       */
 
       filter: brightness(0);
 
-      transform:
-        translate(-50%, -50%)
-        scale(1.12) !important;
+      pointer-events: none;
     }
 
 
@@ -109,7 +103,31 @@
        ========================= */
 
     .icon-fill {
+      position: absolute;
+
+      /*
+        42px white image inside
+        46px black image.
+
+        Gives approximately a
+        2px black outline.
+      */
+
+      width: 42px;
+      height: 42px;
+
+      top: 2px;
+      left: 2px;
+
+      object-fit: contain;
+
+      display: block;
+
+      filter: none;
+
       opacity: 1;
+
+      pointer-events: none;
 
       transition: opacity 0.15s ease;
     }
@@ -118,8 +136,8 @@
     /* =========================
        GAME WON
 
-       Remove the white inner layer.
-       The black layer underneath remains.
+       White disappears.
+       Black image remains.
        ========================= */
 
     .tick.filled .icon-fill {
@@ -143,7 +161,7 @@
       }
 
       50% {
-        transform: scale(1.30);
+        transform: scale(1.25);
       }
 
       100% {
