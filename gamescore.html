@@ -27,8 +27,8 @@
       position: absolute;
       display: flex;
 
-      /* CLOSER TOGETHER */
-      gap: 5px;
+      /* CLOSE TOGETHER */
+      gap: 12px;
 
       align-items: center;
     }
@@ -57,8 +57,16 @@
     .tick {
       position: relative;
 
-      width: 46px;
-      height: 46px;
+      /*
+        Previously 46px.
+
+        OBS was enlarging it about 2.94x.
+        So now we render it at its
+        final size directly in the HTML.
+      */
+
+      width: 136px;
+      height: 136px;
 
       flex-shrink: 0;
 
@@ -73,8 +81,8 @@
     .icon-outline {
       position: absolute;
 
-      width: 46px;
-      height: 46px;
+      width: 136px;
+      height: 136px;
 
       top: 0;
       left: 0;
@@ -84,12 +92,7 @@
       display: block;
 
       /*
-        MAKE ORIGINAL WHITE IMAGE BLACK.
-
-        IMPORTANT:
-        NO SCALE.
-        NO TRANSLATE.
-        NO FRACTIONAL PIXELS.
+        Turn original PNG black.
       */
 
       filter: brightness(0);
@@ -106,18 +109,16 @@
       position: absolute;
 
       /*
-        42px white image inside
-        46px black image.
-
-        Gives approximately a
-        2px black outline.
+        Slightly smaller than the
+        black layer to create the
+        black outline.
       */
 
-      width: 42px;
-      height: 42px;
+      width: 124px;
+      height: 124px;
 
-      top: 2px;
-      left: 2px;
+      top: 6px;
+      left: 6px;
 
       object-fit: contain;
 
@@ -137,7 +138,7 @@
        GAME WON
 
        White disappears.
-       Black image remains.
+       Black icon remains.
        ========================= */
 
     .tick.filled .icon-fill {
@@ -161,7 +162,7 @@
       }
 
       50% {
-        transform: scale(1.25);
+        transform: scale(1.15);
       }
 
       100% {
