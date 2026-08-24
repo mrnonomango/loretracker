@@ -15,24 +15,18 @@
       overflow: hidden;
     }
 
-
     .container {
       position: absolute;
       width: 100%;
       height: 100%;
     }
 
-
     .player {
       position: absolute;
       display: flex;
-
-      /* ICONS CLOSER TOGETHER */
-      gap: -18px;
-
       align-items: center;
+      gap: 0;
     }
-
 
     /* =========================
        PLAYER POSITIONS
@@ -42,7 +36,6 @@
       top: 40%;
       left: 25%;
     }
-
 
     #p2_games {
       top: 60%;
@@ -63,6 +56,15 @@
       flex-shrink: 0;
 
       transition: transform 0.15s ease;
+    }
+
+
+    /* =========================
+       PULL SECOND ICON CLOSER
+       ========================= */
+
+    .tick + .tick {
+      margin-left: -55px;
     }
 
 
@@ -133,7 +135,6 @@
       animation: pulse 0.35s ease;
     }
 
-
     @keyframes pulse {
 
       0% {
@@ -154,27 +155,16 @@
 </head>
 
 
-
 <body>
-
 
   <div class="container">
 
 
     <!-- PLAYER 1 -->
 
-    <div
-      id="p1_games"
-      class="player"
-    >
+    <div id="p1_games" class="player">
 
-
-      <!-- GAME 1 -->
-
-      <div
-        id="p1g1"
-        class="tick"
-      >
+      <div id="p1g1" class="tick">
 
         <img
           class="icon-outline"
@@ -189,13 +179,7 @@
       </div>
 
 
-
-      <!-- GAME 2 -->
-
-      <div
-        id="p1g2"
-        class="tick"
-      >
+      <div id="p1g2" class="tick">
 
         <img
           class="icon-outline"
@@ -208,27 +192,16 @@
         >
 
       </div>
-
 
     </div>
 
 
 
-
     <!-- PLAYER 2 -->
 
-    <div
-      id="p2_games"
-      class="player"
-    >
+    <div id="p2_games" class="player">
 
-
-      <!-- GAME 1 -->
-
-      <div
-        id="p2g1"
-        class="tick"
-      >
+      <div id="p2g1" class="tick">
 
         <img
           class="icon-outline"
@@ -243,13 +216,7 @@
       </div>
 
 
-
-      <!-- GAME 2 -->
-
-      <div
-        id="p2g2"
-        class="tick"
-      >
+      <div id="p2g2" class="tick">
 
         <img
           class="icon-outline"
@@ -262,7 +229,6 @@
         >
 
       </div>
-
 
     </div>
 
@@ -270,15 +236,12 @@
   </div>
 
 
-
 <script type="module">
-
 
 import {
   initializeApp
 }
-from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 
 import {
@@ -286,9 +249,7 @@ import {
   ref,
   onValue
 }
-from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 
 const firebaseConfig = {
@@ -308,7 +269,6 @@ const firebaseConfig = {
 };
 
 
-
 const app =
   initializeApp(firebaseConfig);
 
@@ -317,26 +277,16 @@ const db =
   getDatabase(app);
 
 
-
 const p1GamesRef =
-  ref(
-    db,
-    "p1Games"
-  );
+  ref(db, "p1Games");
 
 
 const p2GamesRef =
-  ref(
-    db,
-    "p2Games"
-  );
-
+  ref(db, "p2Games");
 
 
 let lastP1 = 0;
-
 let lastP2 = 0;
-
 
 
 function render(
@@ -345,18 +295,15 @@ function render(
   lastWins
 ) {
 
-
   const g1 =
     document.getElementById(
       player + "g1"
     );
 
-
   const g2 =
     document.getElementById(
       player + "g2"
     );
-
 
 
   g1.classList.toggle(
@@ -371,11 +318,7 @@ function render(
   );
 
 
-
-  if (
-    wins > lastWins
-  ) {
-
+  if (wins > lastWins) {
 
     const target =
       wins === 1
@@ -400,12 +343,9 @@ function render(
       350
     );
 
-
   }
 
-
 }
-
 
 
 /* PLAYER 1 */
@@ -416,10 +356,8 @@ onValue(
 
   snap => {
 
-
     const wins =
       snap.val() || 0;
-
 
     render(
       "p1",
@@ -427,15 +365,11 @@ onValue(
       lastP1
     );
 
-
-    lastP1 =
-      wins;
-
+    lastP1 = wins;
 
   }
 
 );
-
 
 
 /* PLAYER 2 */
@@ -446,10 +380,8 @@ onValue(
 
   snap => {
 
-
     const wins =
       snap.val() || 0;
-
 
     render(
       "p2",
@@ -457,18 +389,13 @@ onValue(
       lastP2
     );
 
-
-    lastP2 =
-      wins;
-
+    lastP2 = wins;
 
   }
 
 );
 
-
 </script>
-
 
 </body>
 </html>
