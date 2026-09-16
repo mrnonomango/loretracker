@@ -70,88 +70,13 @@
 
 
     /* =========================
-       OUTER WHITE SHAPE
+       EMPTY GAME OUTLINE
+
+       WHITE OUTLINE ONLY
+       CENTER = TRUE TRANSPARENCY
        ========================= */
 
-    .outer-shape {
-      position: absolute;
-
-      width: 144px;
-      height: 144px;
-
-      top: 0;
-      left: 0;
-
-      background: white;
-
-      -webkit-mask-image:
-        url("./Illuminary%20Icon_White.png");
-
-      -webkit-mask-size: contain;
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-
-      mask-image:
-        url("./Illuminary%20Icon_White.png");
-
-      mask-size: contain;
-      mask-repeat: no-repeat;
-      mask-position: center;
-
-      pointer-events: none;
-    }
-
-
-    /* =========================
-       TRANSPARENT CENTER CUTOUT
-
-       THIS ACTUALLY CUTS THE
-       CENTER OUT OF THE WHITE
-       SHAPE
-       ========================= */
-
-    .center-cutout {
-      position: absolute;
-
-      width: 124px;
-      height: 124px;
-
-      top: 10px;
-      left: 10px;
-
-      background: #000;
-
-      -webkit-mask-image:
-        url("./Illuminary%20Icon_White.png");
-
-      -webkit-mask-size: contain;
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-
-      mask-image:
-        url("./Illuminary%20Icon_White.png");
-
-      mask-size: contain;
-      mask-repeat: no-repeat;
-      mask-position: center;
-
-      mix-blend-mode: destination-out;
-
-      pointer-events: none;
-    }
-
-
-    /* =========================
-       TRUE OUTLINE
-
-       OUTER 144
-       INNER 124
-
-       THE MIDDLE IS ACTUALLY
-       TRANSPARENT
-       ========================= */
-
-    .outline {
+    .empty-outline {
       position: absolute;
 
       width: 144px;
@@ -164,57 +89,19 @@
     }
 
 
-    .outline::before {
-      content: "";
+    .empty-outline svg {
+      width: 144px;
+      height: 144px;
 
-      position: absolute;
-      inset: 0;
-
-      background: white;
-
-      -webkit-mask:
-        url("./Illuminary%20Icon_White.png")
-        center / contain
-        no-repeat;
-
-      mask:
-        url("./Illuminary%20Icon_White.png")
-        center / contain
-        no-repeat;
-    }
-
-
-    .outline::after {
-      content: "";
-
-      position: absolute;
-
-      width: 124px;
-      height: 124px;
-
-      top: 10px;
-      left: 10px;
-
-      background: black;
-
-      -webkit-mask:
-        url("./Illuminary%20Icon_White.png")
-        center / contain
-        no-repeat;
-
-      mask:
-        url("./Illuminary%20Icon_White.png")
-        center / contain
-        no-repeat;
-
-      mix-blend-mode: destination-out;
+      display: block;
+      overflow: visible;
     }
 
 
     /* =========================
-       WHITE WIN FILL
+       GAME WON WHITE FILL
 
-       DEFAULT = INVISIBLE
+       DEFAULT = HIDDEN
        ========================= */
 
     .win-fill {
@@ -241,7 +128,7 @@
     /* =========================
        GAME WON
 
-       TRANSPARENT -> WHITE
+       SHOW WHITE INNER SHAPE
        ========================= */
 
     .tick.filled .win-fill {
@@ -280,6 +167,85 @@
 
 <body>
 
+  <!-- =========================
+       SVG DEFINITIONS
+
+       THIS CREATES THE TRUE
+       TRANSPARENT OUTLINE
+       ========================= -->
+
+  <svg
+    width="0"
+    height="0"
+    style="position:absolute;"
+  >
+
+    <defs>
+
+      <!-- =====================
+           OUTLINE MASK
+
+           LARGE IMAGE = WHITE
+           SMALL IMAGE = CUTOUT
+           ===================== -->
+
+      <mask
+        id="illuminaryOutlineMask"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="144"
+        height="144"
+      >
+
+        <!-- EVERYTHING STARTS BLACK -->
+
+        <rect
+          x="0"
+          y="0"
+          width="144"
+          height="144"
+          fill="black"
+        />
+
+
+        <!-- OUTER ILLUMINARY SHAPE -->
+
+        <image
+          href="./Illuminary%20Icon_White.png"
+          x="0"
+          y="0"
+          width="144"
+          height="144"
+          preserveAspectRatio="xMidYMid meet"
+        />
+
+
+        <!--
+          INNER CUTOUT
+
+          BLACK ACTUALLY REMOVES
+          THIS AREA FROM THE MASK
+        -->
+
+        <image
+          href="./Illuminary%20Icon_White.png"
+          x="6"
+          y="6"
+          width="132"
+          height="132"
+          preserveAspectRatio="xMidYMid meet"
+          style="filter:brightness(0);"
+        />
+
+      </mask>
+
+    </defs>
+
+  </svg>
+
+
+
   <div class="container">
 
 
@@ -294,7 +260,23 @@
 
       <div id="p1g1" class="tick">
 
-        <div class="outline"></div>
+        <div class="empty-outline">
+
+          <svg viewBox="0 0 144 144">
+
+            <rect
+              x="0"
+              y="0"
+              width="144"
+              height="144"
+              fill="white"
+              mask="url(#illuminaryOutlineMask)"
+            />
+
+          </svg>
+
+        </div>
+
 
         <img
           class="win-fill"
@@ -304,11 +286,28 @@
       </div>
 
 
+
       <!-- GAME 2 -->
 
       <div id="p1g2" class="tick">
 
-        <div class="outline"></div>
+        <div class="empty-outline">
+
+          <svg viewBox="0 0 144 144">
+
+            <rect
+              x="0"
+              y="0"
+              width="144"
+              height="144"
+              fill="white"
+              mask="url(#illuminaryOutlineMask)"
+            />
+
+          </svg>
+
+        </div>
+
 
         <img
           class="win-fill"
@@ -332,7 +331,23 @@
 
       <div id="p2g1" class="tick">
 
-        <div class="outline"></div>
+        <div class="empty-outline">
+
+          <svg viewBox="0 0 144 144">
+
+            <rect
+              x="0"
+              y="0"
+              width="144"
+              height="144"
+              fill="white"
+              mask="url(#illuminaryOutlineMask)"
+            />
+
+          </svg>
+
+        </div>
+
 
         <img
           class="win-fill"
@@ -342,11 +357,28 @@
       </div>
 
 
+
       <!-- GAME 2 -->
 
       <div id="p2g2" class="tick">
 
-        <div class="outline"></div>
+        <div class="empty-outline">
+
+          <svg viewBox="0 0 144 144">
+
+            <rect
+              x="0"
+              y="0"
+              width="144"
+              height="144"
+              fill="white"
+              mask="url(#illuminaryOutlineMask)"
+            />
+
+          </svg>
+
+        </div>
+
 
         <img
           class="win-fill"
@@ -359,6 +391,7 @@
 
 
   </div>
+
 
 
 <script type="module">
@@ -429,17 +462,26 @@ function render(
       player + "g1"
     );
 
+
   const g2 =
     document.getElementById(
       player + "g2"
     );
 
 
+  /* =========================
+     GAME 1
+     ========================= */
+
   g1.classList.toggle(
     "filled",
     wins >= 1
   );
 
+
+  /* =========================
+     GAME 2
+     ========================= */
 
   g2.classList.toggle(
     "filled",
@@ -482,7 +524,7 @@ function render(
 
 
 /* =========================
-   PLAYER 1
+   PLAYER 1 FIREBASE
    ========================= */
 
 onValue(
@@ -510,7 +552,7 @@ onValue(
 
 
 /* =========================
-   PLAYER 2
+   PLAYER 2 FIREBASE
    ========================= */
 
 onValue(
