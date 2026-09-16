@@ -73,7 +73,7 @@
        EMPTY GAME OUTLINE
 
        WHITE OUTLINE ONLY
-       CENTER = TRUE TRANSPARENCY
+       CENTER = TRANSPARENT
        ========================= */
 
     .empty-outline {
@@ -107,11 +107,11 @@
     .win-fill {
       position: absolute;
 
-      width: 124px;
-      height: 124px;
+      width: 120px;
+      height: 120px;
 
-      top: 10px;
-      left: 10px;
+      top: 12px;
+      left: 12px;
 
       object-fit: contain;
 
@@ -167,11 +167,11 @@
 
 <body>
 
+
   <!-- =========================
        SVG DEFINITIONS
 
-       THIS CREATES THE TRUE
-       TRANSPARENT OUTLINE
+       TRUE TRANSPARENT OUTLINE
        ========================= -->
 
   <svg
@@ -182,13 +182,6 @@
 
     <defs>
 
-      <!-- =====================
-           OUTLINE MASK
-
-           LARGE IMAGE = WHITE
-           SMALL IMAGE = CUTOUT
-           ===================== -->
-
       <mask
         id="illuminaryOutlineMask"
         maskUnits="userSpaceOnUse"
@@ -198,7 +191,7 @@
         height="144"
       >
 
-        <!-- EVERYTHING STARTS BLACK -->
+        <!-- MASK BACKGROUND -->
 
         <rect
           x="0"
@@ -209,7 +202,7 @@
         />
 
 
-        <!-- OUTER ILLUMINARY SHAPE -->
+        <!-- OUTER WHITE SHAPE -->
 
         <image
           href="./Illuminary%20Icon_White.png"
@@ -221,19 +214,22 @@
         />
 
 
-        <!--
-          INNER CUTOUT
+        <!-- =====================
+             INNER CUTOUT
 
-          BLACK ACTUALLY REMOVES
-          THIS AREA FROM THE MASK
-        -->
+             SMALLER CUTOUT =
+             BOLDER OUTLINE
+
+             120 x 120
+             CENTERED AT 12 / 12
+             ===================== -->
 
         <image
           href="./Illuminary%20Icon_White.png"
-          x="6"
-          y="6"
-          width="132"
-          height="132"
+          x="12"
+          y="12"
+          width="120"
+          height="120"
           preserveAspectRatio="xMidYMid meet"
           style="filter:brightness(0);"
         />
@@ -284,7 +280,6 @@
         >
 
       </div>
-
 
 
       <!-- GAME 2 -->
@@ -355,7 +350,6 @@
         >
 
       </div>
-
 
 
       <!-- GAME 2 -->
@@ -469,9 +463,7 @@ function render(
     );
 
 
-  /* =========================
-     GAME 1
-     ========================= */
+  /* GAME 1 */
 
   g1.classList.toggle(
     "filled",
@@ -479,9 +471,7 @@ function render(
   );
 
 
-  /* =========================
-     GAME 2
-     ========================= */
+  /* GAME 2 */
 
   g2.classList.toggle(
     "filled",
@@ -524,7 +514,7 @@ function render(
 
 
 /* =========================
-   PLAYER 1 FIREBASE
+   PLAYER 1
    ========================= */
 
 onValue(
@@ -552,7 +542,7 @@ onValue(
 
 
 /* =========================
-   PLAYER 2 FIREBASE
+   PLAYER 2
    ========================= */
 
 onValue(
