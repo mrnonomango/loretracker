@@ -70,13 +70,10 @@
 
 
     /* =========================
-       OUTER WHITE OUTLINE
-
-       144 x 144
-       NO GLOW
+       OUTER WHITE SHAPE
        ========================= */
 
-    .icon-outline-white {
+    .outer-shape {
       position: absolute;
 
       width: 144px;
@@ -85,50 +82,142 @@
       top: 0;
       left: 0;
 
-      object-fit: contain;
-      display: block;
+      background: white;
 
-      filter: none;
+      -webkit-mask-image:
+        url("./Illuminary%20Icon_White.png");
+
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+
+      mask-image:
+        url("./Illuminary%20Icon_White.png");
+
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
 
       pointer-events: none;
     }
 
 
     /* =========================
-       BLACK BORDER LAYER
+       TRANSPARENT CENTER CUTOUT
 
-       CHANGED:
-       136 x 136 -> 132 x 132
-
-       THIS MAKES THE WHITE
-       OUTLINE BOLDER
+       THIS ACTUALLY CUTS THE
+       CENTER OUT OF THE WHITE
+       SHAPE
        ========================= */
 
-    .icon-outline-black {
+    .center-cutout {
       position: absolute;
 
-      width: 132px;
-      height: 132px;
+      width: 124px;
+      height: 124px;
 
-      top: 6px;
-      left: 6px;
+      top: 10px;
+      left: 10px;
 
-      object-fit: contain;
-      display: block;
+      background: #000;
 
-      filter: brightness(0);
+      -webkit-mask-image:
+        url("./Illuminary%20Icon_White.png");
+
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+
+      mask-image:
+        url("./Illuminary%20Icon_White.png");
+
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+
+      mix-blend-mode: destination-out;
 
       pointer-events: none;
     }
 
 
     /* =========================
-       WHITE INNER FILL
+       TRUE OUTLINE
 
-       DEFAULT = TRANSPARENT
+       OUTER 144
+       INNER 124
+
+       THE MIDDLE IS ACTUALLY
+       TRANSPARENT
        ========================= */
 
-    .icon-fill {
+    .outline {
+      position: absolute;
+
+      width: 144px;
+      height: 144px;
+
+      top: 0;
+      left: 0;
+
+      pointer-events: none;
+    }
+
+
+    .outline::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background: white;
+
+      -webkit-mask:
+        url("./Illuminary%20Icon_White.png")
+        center / contain
+        no-repeat;
+
+      mask:
+        url("./Illuminary%20Icon_White.png")
+        center / contain
+        no-repeat;
+    }
+
+
+    .outline::after {
+      content: "";
+
+      position: absolute;
+
+      width: 124px;
+      height: 124px;
+
+      top: 10px;
+      left: 10px;
+
+      background: black;
+
+      -webkit-mask:
+        url("./Illuminary%20Icon_White.png")
+        center / contain
+        no-repeat;
+
+      mask:
+        url("./Illuminary%20Icon_White.png")
+        center / contain
+        no-repeat;
+
+      mix-blend-mode: destination-out;
+    }
+
+
+    /* =========================
+       WHITE WIN FILL
+
+       DEFAULT = INVISIBLE
+       ========================= */
+
+    .win-fill {
       position: absolute;
 
       width: 124px;
@@ -138,9 +227,8 @@
       left: 10px;
 
       object-fit: contain;
-      display: block;
 
-      filter: none;
+      display: block;
 
       opacity: 0;
 
@@ -156,7 +244,7 @@
        TRANSPARENT -> WHITE
        ========================= */
 
-    .tick.filled .icon-fill {
+    .tick.filled .win-fill {
       opacity: 1;
     }
 
@@ -206,18 +294,10 @@
 
       <div id="p1g1" class="tick">
 
-        <img
-          class="icon-outline-white"
-          src="./Illuminary%20Icon_White.png"
-        >
+        <div class="outline"></div>
 
         <img
-          class="icon-outline-black"
-          src="./Illuminary%20Icon_White.png"
-        >
-
-        <img
-          class="icon-fill"
+          class="win-fill"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -228,18 +308,10 @@
 
       <div id="p1g2" class="tick">
 
-        <img
-          class="icon-outline-white"
-          src="./Illuminary%20Icon_White.png"
-        >
+        <div class="outline"></div>
 
         <img
-          class="icon-outline-black"
-          src="./Illuminary%20Icon_White.png"
-        >
-
-        <img
-          class="icon-fill"
+          class="win-fill"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -260,18 +332,10 @@
 
       <div id="p2g1" class="tick">
 
-        <img
-          class="icon-outline-white"
-          src="./Illuminary%20Icon_White.png"
-        >
+        <div class="outline"></div>
 
         <img
-          class="icon-outline-black"
-          src="./Illuminary%20Icon_White.png"
-        >
-
-        <img
-          class="icon-fill"
+          class="win-fill"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -282,18 +346,10 @@
 
       <div id="p2g2" class="tick">
 
-        <img
-          class="icon-outline-white"
-          src="./Illuminary%20Icon_White.png"
-        >
+        <div class="outline"></div>
 
         <img
-          class="icon-outline-black"
-          src="./Illuminary%20Icon_White.png"
-        >
-
-        <img
-          class="icon-fill"
+          class="win-fill"
           src="./Illuminary%20Icon_White.png"
         >
 
@@ -373,22 +429,17 @@ function render(
       player + "g1"
     );
 
-
   const g2 =
     document.getElementById(
       player + "g2"
     );
 
 
-  /* GAME 1 */
-
   g1.classList.toggle(
     "filled",
     wins >= 1
   );
 
-
-  /* GAME 2 */
 
   g2.classList.toggle(
     "filled",
