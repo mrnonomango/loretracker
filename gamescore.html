@@ -71,9 +71,6 @@
 
     /* =========================
        EMPTY GAME OUTLINE
-
-       WHITE OUTLINE ONLY
-       CENTER = TRANSPARENT
        ========================= */
 
     .empty-outline {
@@ -107,11 +104,11 @@
     .win-fill {
       position: absolute;
 
-      width: 120px;
-      height: 120px;
+      width: 108px;
+      height: 108px;
 
-      top: 12px;
-      left: 12px;
+      top: 18px;
+      left: 18px;
 
       object-fit: contain;
 
@@ -128,7 +125,7 @@
     /* =========================
        GAME WON
 
-       SHOW WHITE INNER SHAPE
+       TRANSPARENT -> WHITE
        ========================= */
 
     .tick.filled .win-fill {
@@ -171,7 +168,8 @@
   <!-- =========================
        SVG DEFINITIONS
 
-       TRUE TRANSPARENT OUTLINE
+       WHITE OUTLINE WITH
+       TRUE TRANSPARENT CENTER
        ========================= -->
 
   <svg
@@ -202,7 +200,7 @@
         />
 
 
-        <!-- OUTER WHITE SHAPE -->
+        <!-- OUTER ILLUMINARY SHAPE -->
 
         <image
           href="./Illuminary%20Icon_White.png"
@@ -215,21 +213,20 @@
 
 
         <!-- =====================
-             INNER CUTOUT
+             TRANSPARENT CUTOUT
+
+             108 x 108
 
              SMALLER CUTOUT =
-             BOLDER OUTLINE
-
-             120 x 120
-             CENTERED AT 12 / 12
+             MUCH BOLDER OUTLINE
              ===================== -->
 
         <image
           href="./Illuminary%20Icon_White.png"
-          x="12"
-          y="12"
-          width="120"
-          height="120"
+          x="18"
+          y="18"
+          width="108"
+          height="108"
           preserveAspectRatio="xMidYMid meet"
           style="filter:brightness(0);"
         />
