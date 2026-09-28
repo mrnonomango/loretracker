@@ -49,6 +49,7 @@
     .roundTimerBox{
       display:flex;
       align-items:center;
+      justify-content:center;
       gap:8px;
       margin-bottom:1px;
       padding:3px 10px;
@@ -62,13 +63,15 @@
       font-weight:bold;
       color:#ddd;
       white-space:nowrap;
+      line-height:1;
     }
 
     .roundTimerTime{
-      font-size:25px;
+      text-align:center;
+      font-size:40px;
       font-weight:bold;
       color:white;
-      line-height:1;
+      line-height:0.95;
     }
 
     .smallText{
@@ -84,7 +87,7 @@
     }
 
     .loreNumber{
-      font-size:66px;
+      font-size:64px;
       font-weight:bold;
       line-height:0.95;
       color:white;
@@ -116,11 +119,6 @@
       color:black;
     }
 
-    .nameInput::placeholder{
-      color:#777;
-      opacity:1;
-    }
-
     .gameDots{
       display:flex;
       gap:5px;
@@ -142,7 +140,7 @@
 
     .loreButton{
       width:80px;
-      height:70px;
+      height:68px;
       border:none;
       border-radius:14px;
       font-size:36px;
@@ -160,7 +158,7 @@
 
     .resetLoreBtn{
       width:190px;
-      height:36px;
+      height:34px;
       border:none;
       border-radius:10px;
       background:#7a2020;
@@ -198,7 +196,7 @@
 
     .gameBtn{
       width:128px;
-      height:38px;
+      height:36px;
       border:none;
       border-radius:10px;
       font-size:14px;
@@ -245,8 +243,7 @@
     <input
       id="p2NameInput"
       class="nameInput"
-      placeholder="Player 2"
-      autocomplete="off"
+      value="Player 2"
       style="transform:rotate(180deg);"
     >
 
@@ -323,8 +320,7 @@
     <input
       id="p1NameInput"
       class="nameInput"
-      placeholder="Player 1"
-      autocomplete="off"
+      value="Player 1"
     >
 
     <div class="gameDots">
@@ -507,7 +503,9 @@ onValue(timerRef, snap => {
 
 
 setInterval(() => {
+
   renderRoundTimer();
+
 }, 250);
 
 
@@ -548,12 +546,16 @@ onValue(p2Ref, snap => {
 
 
 onValue(p1GamesRef, snap => {
+
   renderDots("p1", snap.val() || 0);
+
 });
 
 
 onValue(p2GamesRef, snap => {
+
   renderDots("p2", snap.val() || 0);
+
 });
 
 
@@ -570,17 +572,11 @@ const p2NameInput =
 
 onValue(p1NameRef, snap => {
 
-  const savedName =
-    String(snap.val() || "").trim();
+  const name =
+    String(snap.val() || "").trim() || "Player 1";
 
   if(document.activeElement !== p1NameInput){
-
-    if(savedName === "Player 1"){
-      p1NameInput.value = "";
-    }else{
-      p1NameInput.value = savedName;
-    }
-
+    p1NameInput.value = name;
   }
 
 });
@@ -588,33 +584,22 @@ onValue(p1NameRef, snap => {
 
 onValue(p2NameRef, snap => {
 
-  const savedName =
-    String(snap.val() || "").trim();
+  const name =
+    String(snap.val() || "").trim() || "Player 2";
 
   if(document.activeElement !== p2NameInput){
-
-    if(savedName === "Player 2"){
-      p2NameInput.value = "";
-    }else{
-      p2NameInput.value = savedName;
-    }
-
+    p2NameInput.value = name;
   }
 
 });
 
 
-async function savePlayerName(input, nameRef){
+async function savePlayerName(input, nameRef, defaultName){
 
-  const name = input.value.trim();
+  let name = input.value.trim();
 
   if(!name){
-
-    await set(nameRef, "");
-
-    input.value = "";
-
-    return;
+    name = defaultName;
   }
 
   input.value = name;
@@ -627,7 +612,8 @@ p1NameInput.addEventListener("blur", () => {
 
   savePlayerName(
     p1NameInput,
-    p1NameRef
+    p1NameRef,
+    "Player 1"
   );
 
 });
@@ -637,7 +623,8 @@ p2NameInput.addEventListener("blur", () => {
 
   savePlayerName(
     p2NameInput,
-    p2NameRef
+    p2NameRef,
+    "Player 2"
   );
 
 });
@@ -648,8 +635,8 @@ p1NameInput.addEventListener("keydown", event => {
   if(event.key === "Enter"){
 
     event.preventDefault();
-
     p1NameInput.blur();
+
   }
 
 });
@@ -660,8 +647,8 @@ p2NameInput.addEventListener("keydown", event => {
   if(event.key === "Enter"){
 
     event.preventDefault();
-
     p2NameInput.blur();
+
   }
 
 });
