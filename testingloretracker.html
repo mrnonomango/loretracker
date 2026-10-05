@@ -29,7 +29,6 @@ body {
 
 /* =========================================================
    MAIN TOP BROADCAST BAR
-   PURPLE THEME
 ========================================================= */
 
 .broadcast-bar {
@@ -70,7 +69,6 @@ body {
 
 /* =========================================================
    SIDE FACECAM BLOCKS
-   KEEPING 300PX
 ========================================================= */
 
 .player-panel {
@@ -104,140 +102,6 @@ body {
 .player-panel.right {
   border-left:
     2px solid rgba(104,208,0,0.75);
-}
-
-
-/* =========================================================
-   GAME WIN ICON POSITION
-========================================================= */
-
-.game-row {
-  position: absolute;
-
-  bottom: -3px;
-
-  display: flex;
-  align-items: center;
-
-  z-index: 10;
-}
-
-.player-panel.left .game-row {
-  left: 22px;
-}
-
-.player-panel.right .game-row {
-  right: 22px;
-}
-
-
-/* =========================================================
-   ILLUMINARY ICON HOLDER
-========================================================= */
-
-.game-icons {
-  display: flex;
-  align-items: center;
-}
-
-
-/* =========================================================
-   INDIVIDUAL ILLUMINARY ICON
-========================================================= */
-
-.tick {
-  position: relative;
-
-  width: 72px;
-  height: 72px;
-
-  flex-shrink: 0;
-
-  transition: transform 0.15s ease;
-}
-
-.tick + .tick {
-  margin-left: -30px;
-}
-
-
-/* =========================================================
-   EMPTY ILLUMINARY OUTLINE
-========================================================= */
-
-.empty-outline {
-  position: absolute;
-
-  width: 72px;
-  height: 72px;
-
-  top: 0;
-  left: 0;
-
-  pointer-events: none;
-}
-
-.empty-outline svg {
-  width: 72px;
-  height: 72px;
-
-  display: block;
-
-  overflow: visible;
-}
-
-
-/* =========================================================
-   GAME WON FILL
-========================================================= */
-
-.win-fill {
-  position: absolute;
-
-  width: 50px;
-  height: 50px;
-
-  top: 11px;
-  left: 11px;
-
-  object-fit: contain;
-
-  display: block;
-
-  opacity: 0;
-
-  pointer-events: none;
-
-  transition: opacity 0.15s ease;
-}
-
-.tick.filled .win-fill {
-  opacity: 1;
-}
-
-
-/* =========================================================
-   WIN PULSE
-========================================================= */
-
-.pulse {
-  animation: winPulse 0.35s ease;
-}
-
-@keyframes winPulse {
-
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.18);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-
 }
 
 
@@ -277,23 +141,6 @@ body {
 
 
 /* =========================================================
-   ROUND + TIMER GROUP
-========================================================= */
-
-.center-match-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 18px;
-
-  position: relative;
-
-  z-index: 5;
-}
-
-
-/* =========================================================
    PLAYER NAMES
 ========================================================= */
 
@@ -304,7 +151,7 @@ body {
 
   transform: translateY(-50%);
 
-  width: 300px;
+  width: 260px;
 
   color: white;
 
@@ -345,7 +192,24 @@ body {
 
 
 /* =========================================================
-   ROUND NAME
+   CENTER ROUND + TIMER
+========================================================= */
+
+.center-match-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 18px;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+
+/* =========================================================
+   ROUND
 ========================================================= */
 
 .round-name {
@@ -407,6 +271,151 @@ body {
   text-shadow:
     0 0 5px #d7f537,
     0 0 12px rgba(105,220,0,0.55);
+}
+
+
+/* =========================================================
+   GAME WIN ICON GROUPS
+========================================================= */
+
+.header-game-icons {
+  position: absolute;
+
+  /* ONLY CHANGE:
+     MOVED DOWN 12PX
+  */
+  top: calc(50% + 12px);
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+
+  z-index: 10;
+}
+
+
+/* PLAYER 1
+   BETWEEN NAME AND ROUND
+*/
+
+.p1-header-games {
+  left: 315px;
+}
+
+
+/* PLAYER 2
+   BETWEEN TIMER AND NAME
+*/
+
+.p2-header-games {
+  right: 315px;
+}
+
+
+/* =========================================================
+   LARGE ILLUMINARY ICONS
+========================================================= */
+
+.tick {
+  position: relative;
+
+  width: 72px;
+  height: 72px;
+
+  flex-shrink: 0;
+
+  transition: transform 0.15s ease;
+}
+
+
+/* Pull second icon closer */
+
+.tick + .tick {
+  margin-left: -30px;
+}
+
+
+/* =========================================================
+   EMPTY OUTLINE
+========================================================= */
+
+.empty-outline {
+  position: absolute;
+
+  width: 72px;
+  height: 72px;
+
+  top: 0;
+  left: 0;
+
+  pointer-events: none;
+}
+
+
+.empty-outline svg {
+  width: 72px;
+  height: 72px;
+
+  display: block;
+
+  overflow: visible;
+}
+
+
+/* =========================================================
+   GAME WON FILL
+========================================================= */
+
+.win-fill {
+  position: absolute;
+
+  width: 50px;
+  height: 50px;
+
+  top: 11px;
+  left: 11px;
+
+  object-fit: contain;
+
+  display: block;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: opacity 0.15s ease;
+}
+
+
+.tick.filled .win-fill {
+  opacity: 1;
+}
+
+
+/* =========================================================
+   WIN PULSE
+========================================================= */
+
+.pulse {
+  animation: winPulse 0.35s ease;
+}
+
+
+@keyframes winPulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
 }
 
 
@@ -486,7 +495,7 @@ body {
 
 
 /* =========================================================
-   ACTIVE / CURRENT LORE
+   ACTIVE LORE
 ========================================================= */
 
 .lore-point.active {
@@ -584,8 +593,6 @@ body {
 }
 
 
-/* CENTER 20 ACTIVE */
-
 .center-20.active {
 
   background:
@@ -639,9 +646,11 @@ body {
   z-index: 20;
 }
 
+
 .broadcast-bar::before {
   left: 0;
 }
+
 
 .broadcast-bar::after {
   right: 0;
@@ -718,19 +727,36 @@ body {
   <div class="broadcast-bar">
 
 
-    <!-- =====================================================
-         PLAYER 1 FACECAM BLOCK
-    ====================================================== -->
+    <!-- PLAYER 1 FACECAM -->
 
     <div class="player-panel left">
+    </div>
 
 
-      <div class="game-row">
 
-        <div class="game-icons">
+    <!-- CENTER -->
+
+    <div class="center-section">
 
 
-          <!-- GAME 1 -->
+      <div class="match-header">
+
+
+        <!-- PLAYER 1 NAME -->
+
+        <div
+          class="center-player-name p1-center-name"
+          id="p1Name"
+        >
+          Player 1
+        </div>
+
+
+
+        <!-- PLAYER 1 GAME WINS -->
+
+        <div class="header-game-icons p1-header-games">
+
 
           <div
             id="p1g1"
@@ -763,8 +789,6 @@ body {
           </div>
 
 
-
-          <!-- GAME 2 -->
 
           <div
             id="p1g2"
@@ -799,34 +823,6 @@ body {
 
         </div>
 
-      </div>
-
-
-    </div>
-
-
-
-    <!-- =====================================================
-         CENTER
-    ====================================================== -->
-
-    <div class="center-section">
-
-
-      <!-- MATCH HEADER -->
-
-      <div class="match-header">
-
-
-        <!-- PLAYER 1 NAME -->
-
-        <div
-          class="center-player-name p1-center-name"
-          id="p1Name"
-        >
-          Player 1
-        </div>
-
 
 
         <!-- ROUND + TIMER -->
@@ -857,49 +853,10 @@ body {
 
 
 
-        <!-- PLAYER 2 NAME -->
+        <!-- PLAYER 2 GAME WINS -->
 
-        <div
-          class="center-player-name p2-center-name"
-          id="p2Name"
-        >
-          Player 2
-        </div>
+        <div class="header-game-icons p2-header-games">
 
-
-      </div>
-
-
-
-      <!-- LORE -->
-
-      <div class="track-area">
-
-        <div
-          class="lore-track"
-          id="loreTrack"
-        ></div>
-
-      </div>
-
-
-    </div>
-
-
-
-    <!-- =====================================================
-         PLAYER 2 FACECAM BLOCK
-    ====================================================== -->
-
-    <div class="player-panel right">
-
-
-      <div class="game-row">
-
-        <div class="game-icons">
-
-
-          <!-- GAME 1 -->
 
           <div
             id="p2g1"
@@ -932,8 +889,6 @@ body {
           </div>
 
 
-
-          <!-- GAME 2 -->
 
           <div
             id="p2g2"
@@ -968,9 +923,41 @@ body {
 
         </div>
 
+
+
+        <!-- PLAYER 2 NAME -->
+
+        <div
+          class="center-player-name p2-center-name"
+          id="p2Name"
+        >
+          Player 2
+        </div>
+
+
       </div>
 
 
+
+      <!-- LORE TRACK -->
+
+      <div class="track-area">
+
+        <div
+          class="lore-track"
+          id="loreTrack"
+        ></div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- PLAYER 2 FACECAM -->
+
+    <div class="player-panel right">
     </div>
 
 
@@ -995,11 +982,6 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-
-
-/* =========================================================
-   FIREBASE
-========================================================= */
 
 const firebaseConfig = {
 
@@ -1027,10 +1009,6 @@ const db =
 
 
 
-/* =========================================================
-   VALUES
-========================================================= */
-
 let p1Lore = 0;
 
 let p2Lore = 0;
@@ -1038,7 +1016,6 @@ let p2Lore = 0;
 let p1Games = 0;
 
 let p2Games = 0;
-
 
 let lastP1Games = 0;
 
@@ -1119,8 +1096,6 @@ function renderLoreTrack() {
   loreTrack.innerHTML = "";
 
 
-  /* PLAYER 1 */
-
   for (
     let i = 0;
     i <= 19;
@@ -1139,8 +1114,6 @@ function renderLoreTrack() {
   }
 
 
-
-  /* CENTER 20 */
 
   const center =
     document.createElement("div");
@@ -1171,8 +1144,6 @@ function renderLoreTrack() {
   );
 
 
-
-  /* PLAYER 2 */
 
   for (
     let i = 19;
@@ -1376,11 +1347,8 @@ function renderTimer() {
 
 
 /* =========================================================
-   FIREBASE LISTENERS
+   FIREBASE
 ========================================================= */
-
-
-/* PLAYER 1 LORE */
 
 onValue(
   ref(db,"p1"),
@@ -1400,8 +1368,6 @@ onValue(
 
 
 
-/* PLAYER 2 LORE */
-
 onValue(
   ref(db,"p2"),
 
@@ -1419,8 +1385,6 @@ onValue(
 );
 
 
-
-/* PLAYER 1 GAME WINS */
 
 onValue(
   ref(db,"p1Games"),
@@ -1448,8 +1412,6 @@ onValue(
 
 
 
-/* PLAYER 2 GAME WINS */
-
 onValue(
   ref(db,"p2Games"),
 
@@ -1476,8 +1438,6 @@ onValue(
 
 
 
-/* PLAYER 1 NAME */
-
 onValue(
   ref(db,"p1Name"),
 
@@ -1499,8 +1459,6 @@ onValue(
 
 
 
-/* PLAYER 2 NAME */
-
 onValue(
   ref(db,"p2Name"),
 
@@ -1521,8 +1479,6 @@ onValue(
 );
 
 
-
-/* TIMER */
 
 onValue(
   ref(db,"timer"),
@@ -1554,18 +1510,12 @@ onValue(
 
 
 
-/* LIVE TIMER */
-
 setInterval(
   renderTimer,
   250
 );
 
 
-
-/* =========================================================
-   FIRST DRAW
-========================================================= */
 
 renderLoreTrack();
 
