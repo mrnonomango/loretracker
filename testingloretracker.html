@@ -60,14 +60,16 @@ body {
 
 
 /* =========================================================
-   PLAYER PANELS
+   SIDE FACECAM BLOCKS
 ========================================================= */
 
 .player-panel {
-  width: 330px;
+  width: 300px;
   height: 100%;
 
   position: relative;
+
+  flex-shrink: 0;
 
   z-index: 5;
 }
@@ -84,47 +86,7 @@ body {
 
 
 /* =========================================================
-   PLAYER NAMES
-========================================================= */
-
-.player-name {
-  position: absolute;
-
-  top: 10px;
-
-  max-width: 285px;
-
-  color: white;
-
-  font-size: 31px;
-  font-weight: 800;
-
-  /* Gives letters like y, g, p, j room underneath */
-  line-height: 1.15;
-
-  padding-bottom: 4px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  text-shadow:
-    0 2px 5px black;
-}
-
-.player-panel.left .player-name {
-  left: 22px;
-  text-align: left;
-}
-
-.player-panel.right .player-name {
-  right: 22px;
-  text-align: right;
-}
-
-
-/* =========================================================
-   GAME WIN ROW
+   GAME WIN ICON POSITION
 ========================================================= */
 
 .game-row {
@@ -134,6 +96,8 @@ body {
 
   display: flex;
   align-items: center;
+
+  z-index: 10;
 }
 
 .player-panel.left .game-row {
@@ -170,9 +134,6 @@ body {
   transition: transform 0.15s ease;
 }
 
-
-/* Pull second icon closer */
-
 .tick + .tick {
   margin-left: -30px;
 }
@@ -194,13 +155,11 @@ body {
   pointer-events: none;
 }
 
-
 .empty-outline svg {
   width: 72px;
   height: 72px;
 
   display: block;
-
   overflow: visible;
 }
 
@@ -229,7 +188,6 @@ body {
   transition: opacity 0.15s ease;
 }
 
-
 .tick.filled .win-fill {
   opacity: 1;
 }
@@ -242,7 +200,6 @@ body {
 .pulse {
   animation: pulse 0.35s ease;
 }
-
 
 @keyframes pulse {
 
@@ -279,20 +236,94 @@ body {
 
 
 /* =========================================================
-   ROUND + TIMER
+   TOP MATCH HEADER
 ========================================================= */
 
-.timer-area {
+.match-header {
+  width: 100%;
   height: 48px;
 
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 18px;
+}
+
+
+/* =========================================================
+   CENTER ROUND + TIMER GROUP
+========================================================= */
+
+.center-match-info {
   display: flex;
   align-items: center;
   justify-content: center;
 
   gap: 18px;
 
-  width: 100%;
+  position: relative;
+
+  z-index: 5;
 }
+
+
+/* =========================================================
+   PLAYER NAMES
+========================================================= */
+
+.center-player-name {
+  position: absolute;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: white;
+
+  font-size: 27px;
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  padding-bottom: 3px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  text-shadow:
+    0 2px 5px black;
+
+  width: 300px;
+}
+
+
+/* PLAYER 1 NAME - PUSHED LEFT */
+
+.p1-center-name {
+  left: 45px;
+
+  text-align: left;
+}
+
+
+/* PLAYER 2 NAME - PUSHED RIGHT */
+
+.p2-center-name {
+  right: 45px;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   ROUND NAME
+========================================================= */
 
 .round-name {
   color: #d8b45a;
@@ -303,7 +334,14 @@ body {
   text-transform: uppercase;
 
   letter-spacing: 1.3px;
+
+  white-space: nowrap;
 }
+
+
+/* =========================================================
+   TIMER DIVIDER
+========================================================= */
 
 .timer-divider {
   width: 2px;
@@ -311,7 +349,14 @@ body {
 
   background:
     rgba(216,180,90,0.65);
+
+  flex-shrink: 0;
 }
+
+
+/* =========================================================
+   TIMER
+========================================================= */
 
 .timer {
   color: white;
@@ -327,6 +372,8 @@ body {
 
   font-variant-numeric:
     tabular-nums;
+
+  white-space: nowrap;
 }
 
 
@@ -355,7 +402,7 @@ body {
   align-items: center;
   justify-content: center;
 
-  gap: 4px;
+  gap: 1px;
 }
 
 
@@ -364,26 +411,28 @@ body {
 ========================================================= */
 
 .lore-point {
-  width: 24px;
-  height: 24px;
+  width: 29px;
+  height: 29px;
 
   border-radius: 50%;
 
   border:
-    2px solid rgba(216,180,90,0.72);
+    2px solid rgba(216,180,90,0.82);
 
   background:
     rgba(4,6,10,0.90);
 
   color:
-    rgba(255,255,255,0.75);
+    rgba(255,255,255,0.88);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 11px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 800;
+
+  line-height: 1;
 
   flex-shrink: 0;
 
@@ -401,7 +450,7 @@ body {
 ========================================================= */
 
 .lore-point.active {
-  transform: scale(1.45);
+  transform: scale(1.50);
 
   background: #d8b45a;
 
@@ -409,15 +458,16 @@ body {
 
   color: #111;
 
-  font-size: 12px;
+  font-size: 15px;
 
   font-weight: 900;
 
   z-index: 10;
 
   box-shadow:
-    0 0 8px rgba(216,180,90,0.90),
-    0 0 18px rgba(216,180,90,0.55);
+    0 0 8px rgba(216,180,90,0.95),
+    0 0 18px rgba(216,180,90,0.65),
+    0 0 28px rgba(216,180,90,0.35);
 }
 
 
@@ -426,14 +476,14 @@ body {
 ========================================================= */
 
 .center-20 {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
 
   margin: 0 5px;
 
   border-width: 3px;
 
-  font-size: 18px;
+  font-size: 20px;
 
   color: white;
 
@@ -454,11 +504,11 @@ body {
 
   color: #111;
 
-  transform: scale(1.14);
+  transform: scale(1.12);
 
   box-shadow:
     0 0 10px rgba(216,180,90,1),
-    0 0 24px rgba(216,180,90,0.65);
+    0 0 24px rgba(216,180,90,0.70);
 }
 
 
@@ -526,9 +576,6 @@ body {
         fill="black"
       />
 
-
-      <!-- OUTER SHAPE -->
-
       <image
         href="./Illuminary%20Icon_White.png"
         x="0"
@@ -537,9 +584,6 @@ body {
         height="72"
         preserveAspectRatio="xMidYMid meet"
       />
-
-
-      <!-- INNER CUTOUT -->
 
       <image
         href="./Illuminary%20Icon_White.png"
@@ -566,26 +610,15 @@ body {
 
 
     <!-- =====================================================
-         PLAYER 1
+         PLAYER 1 FACECAM BLOCK
     ====================================================== -->
 
     <div class="player-panel left">
-
-
-      <div
-        class="player-name"
-        id="p1Name"
-      >
-        Player 1
-      </div>
-
 
       <div class="game-row">
 
         <div class="game-icons">
 
-
-          <!-- GAME 1 -->
 
           <div
             id="p1g1"
@@ -609,7 +642,6 @@ body {
 
             </div>
 
-
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -618,8 +650,6 @@ body {
           </div>
 
 
-
-          <!-- GAME 2 -->
 
           <div
             id="p1g2"
@@ -643,7 +673,6 @@ body {
 
             </div>
 
-
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -661,33 +690,63 @@ body {
 
 
     <!-- =====================================================
-         CENTER
+         CENTER SECTION
     ====================================================== -->
 
     <div class="center-section">
 
 
-      <!-- TIMER -->
+      <!-- MATCH HEADER -->
 
-      <div class="timer-area">
+      <div class="match-header">
 
+
+        <!-- PLAYER 1 NAME -->
 
         <div
-          class="round-name"
-          id="roundName"
+          class="center-player-name p1-center-name"
+          id="p1Name"
         >
-          Round 1
+          Player 1
         </div>
 
 
-        <div class="timer-divider"></div>
 
+        <!-- CENTER ROUND + TIMER -->
+
+        <div class="center-match-info">
+
+
+          <div
+            class="round-name"
+            id="roundName"
+          >
+            Round 1
+          </div>
+
+
+          <div class="timer-divider"></div>
+
+
+          <div
+            class="timer"
+            id="timer"
+          >
+            55:00
+          </div>
+
+
+        </div>
+
+
+
+        <!-- PLAYER 2 NAME -->
 
         <div
-          class="timer"
-          id="timer"
+          class="center-player-name p2-center-name"
+          id="p2Name"
         >
-          55:00
+          Player 2
         </div>
 
 
@@ -712,26 +771,15 @@ body {
 
 
     <!-- =====================================================
-         PLAYER 2
+         PLAYER 2 FACECAM BLOCK
     ====================================================== -->
 
     <div class="player-panel right">
-
-
-      <div
-        class="player-name"
-        id="p2Name"
-      >
-        Player 2
-      </div>
-
 
       <div class="game-row">
 
         <div class="game-icons">
 
-
-          <!-- GAME 1 -->
 
           <div
             id="p2g1"
@@ -755,7 +803,6 @@ body {
 
             </div>
 
-
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -764,8 +811,6 @@ body {
           </div>
 
 
-
-          <!-- GAME 2 -->
 
           <div
             id="p2g2"
@@ -788,7 +833,6 @@ body {
               </svg>
 
             </div>
-
 
             <img
               class="win-fill"
@@ -870,7 +914,6 @@ let p1Games = 0;
 
 let p2Games = 0;
 
-
 let lastP1Games = 0;
 
 let lastP2Games = 0;
@@ -950,10 +993,6 @@ function renderLoreTrack() {
   loreTrack.innerHTML = "";
 
 
-  /* PLAYER 1
-     0 → 19
-  */
-
   for (
     let i = 0;
     i <= 19;
@@ -972,8 +1011,6 @@ function renderLoreTrack() {
   }
 
 
-
-  /* CENTER 20 */
 
   const center =
     document.createElement("div");
@@ -1004,10 +1041,6 @@ function renderLoreTrack() {
   );
 
 
-
-  /* PLAYER 2
-     19 → 0
-  */
 
   for (
     let i = 19;
@@ -1063,9 +1096,6 @@ function renderGameIcons(
     wins >= 2
   );
 
-
-
-  /* PULSE ONLY WHEN WIN INCREASES */
 
   if (wins > lastWins) {
 
@@ -1217,9 +1247,6 @@ function renderTimer() {
    FIREBASE LISTENERS
 ========================================================= */
 
-
-/* PLAYER 1 LORE */
-
 onValue(
   ref(db,"p1"),
 
@@ -1238,8 +1265,6 @@ onValue(
 
 
 
-/* PLAYER 2 LORE */
-
 onValue(
   ref(db,"p2"),
 
@@ -1257,8 +1282,6 @@ onValue(
 );
 
 
-
-/* PLAYER 1 GAME WINS */
 
 onValue(
   ref(db,"p1Games"),
@@ -1286,8 +1309,6 @@ onValue(
 
 
 
-/* PLAYER 2 GAME WINS */
-
 onValue(
   ref(db,"p2Games"),
 
@@ -1314,8 +1335,6 @@ onValue(
 
 
 
-/* PLAYER 1 NAME */
-
 onValue(
   ref(db,"p1Name"),
 
@@ -1337,8 +1356,6 @@ onValue(
 
 
 
-/* PLAYER 2 NAME */
-
 onValue(
   ref(db,"p2Name"),
 
@@ -1359,8 +1376,6 @@ onValue(
 );
 
 
-
-/* TIMER */
 
 onValue(
   ref(db,"timer"),
@@ -1392,16 +1407,12 @@ onValue(
 
 
 
-/* LIVE TIMER */
-
 setInterval(
   renderTimer,
   250
 );
 
 
-
-/* FIRST DRAW */
 
 renderLoreTrack();
 
