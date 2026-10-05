@@ -29,6 +29,7 @@ body {
 
 /* =========================================================
    MAIN TOP BROADCAST BAR
+   PURPLE THEME
 ========================================================= */
 
 .broadcast-bar {
@@ -41,15 +42,23 @@ body {
   height: 125px;
 
   background:
+    radial-gradient(
+      circle at 50% 20%,
+      rgba(135, 70, 190, 0.55),
+      transparent 65%
+    ),
     linear-gradient(
       180deg,
-      rgba(17,17,17,0.96),
-      rgba(5,5,5,0.92)
+      #542a78 0%,
+      #3a1c59 32%,
+      #251238 65%,
+      #13091f 100%
     );
 
-  border: 2px solid #c9a646;
+  border: 2px solid #68d000;
 
   box-shadow:
+    0 0 10px rgba(105, 220, 0, 0.35),
     0 4px 16px rgba(0,0,0,0.75);
 
   display: flex;
@@ -61,6 +70,7 @@ body {
 
 /* =========================================================
    SIDE FACECAM BLOCKS
+   KEEPING 300PX
 ========================================================= */
 
 .player-panel {
@@ -72,16 +82,28 @@ body {
   flex-shrink: 0;
 
   z-index: 5;
+
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      rgba(135, 70, 190, 0.25),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(84,42,120,0.72),
+      rgba(19,9,31,0.88)
+    );
 }
 
 .player-panel.left {
   border-right:
-    2px solid rgba(201,166,70,0.55);
+    2px solid rgba(104,208,0,0.75);
 }
 
 .player-panel.right {
   border-left:
-    2px solid rgba(201,166,70,0.55);
+    2px solid rgba(104,208,0,0.75);
 }
 
 
@@ -140,7 +162,7 @@ body {
 
 
 /* =========================================================
-   EMPTY OUTLINE
+   EMPTY ILLUMINARY OUTLINE
 ========================================================= */
 
 .empty-outline {
@@ -160,6 +182,7 @@ body {
   height: 72px;
 
   display: block;
+
   overflow: visible;
 }
 
@@ -198,10 +221,10 @@ body {
 ========================================================= */
 
 .pulse {
-  animation: pulse 0.35s ease;
+  animation: winPulse 0.35s ease;
 }
 
-@keyframes pulse {
+@keyframes winPulse {
 
   0% {
     transform: scale(1);
@@ -254,7 +277,7 @@ body {
 
 
 /* =========================================================
-   CENTER ROUND + TIMER GROUP
+   ROUND + TIMER GROUP
 ========================================================= */
 
 .center-match-info {
@@ -281,6 +304,8 @@ body {
 
   transform: translateY(-50%);
 
+  width: 300px;
+
   color: white;
 
   font-size: 27px;
@@ -297,13 +322,11 @@ body {
   text-overflow: ellipsis;
 
   text-shadow:
-    0 2px 5px black;
-
-  width: 300px;
+    0 2px 5px rgba(0,0,0,0.95);
 }
 
 
-/* PLAYER 1 NAME - PUSHED LEFT */
+/* PLAYER 1 */
 
 .p1-center-name {
   left: 45px;
@@ -312,7 +335,7 @@ body {
 }
 
 
-/* PLAYER 2 NAME - PUSHED RIGHT */
+/* PLAYER 2 */
 
 .p2-center-name {
   right: 45px;
@@ -326,7 +349,7 @@ body {
 ========================================================= */
 
 .round-name {
-  color: #d8b45a;
+  color: white;
 
   font-size: 18px;
   font-weight: 800;
@@ -336,6 +359,10 @@ body {
   letter-spacing: 1.3px;
 
   white-space: nowrap;
+
+  text-shadow:
+    0 0 5px #d7f537,
+    0 0 12px rgba(105,220,0,0.70);
 }
 
 
@@ -347,8 +374,10 @@ body {
   width: 2px;
   height: 25px;
 
-  background:
-    rgba(216,180,90,0.65);
+  background: #68d000;
+
+  box-shadow:
+    0 0 7px rgba(105,220,0,0.65);
 
   flex-shrink: 0;
 }
@@ -374,6 +403,10 @@ body {
     tabular-nums;
 
   white-space: nowrap;
+
+  text-shadow:
+    0 0 5px #d7f537,
+    0 0 12px rgba(105,220,0,0.55);
 }
 
 
@@ -393,7 +426,7 @@ body {
 
 
 /* =========================================================
-   TRACK
+   LORE TRACK
 ========================================================= */
 
 .lore-track {
@@ -407,7 +440,7 @@ body {
 
 
 /* =========================================================
-   NORMAL LORE POINTS
+   NORMAL LORE POINT
 ========================================================= */
 
 .lore-point {
@@ -417,13 +450,17 @@ body {
   border-radius: 50%;
 
   border:
-    2px solid rgba(216,180,90,0.82);
+    2px solid #57b900;
 
   background:
-    rgba(4,6,10,0.90);
+    radial-gradient(
+      circle at 30% 30%,
+      #202520 0%,
+      #0c0f0c 60%,
+      #020302 100%
+    );
 
-  color:
-    rgba(255,255,255,0.88);
+  color: rgba(255,255,255,0.92);
 
   display: flex;
   align-items: center;
@@ -436,6 +473,9 @@ body {
 
   flex-shrink: 0;
 
+  text-shadow:
+    0 1px 3px rgba(0,0,0,0.95);
+
   transition:
     transform 0.18s ease,
     background 0.18s ease,
@@ -446,28 +486,69 @@ body {
 
 
 /* =========================================================
-   ACTIVE LORE
+   ACTIVE / CURRENT LORE
 ========================================================= */
 
 .lore-point.active {
+
   transform: scale(1.50);
 
-  background: #d8b45a;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #f7ff78 0%,
+      #bde500 28%,
+      #4d8c00 55%,
+      #142700 76%,
+      #020302 100%
+    );
 
-  border-color: #fff3bc;
+  border:
+    3px solid #efff55;
 
-  color: #111;
+  color: white;
 
   font-size: 15px;
-
   font-weight: 900;
 
   z-index: 10;
 
+  text-shadow:
+    0 1px 3px rgba(0,0,0,0.95);
+
   box-shadow:
-    0 0 8px rgba(216,180,90,0.95),
-    0 0 18px rgba(216,180,90,0.65),
-    0 0 28px rgba(216,180,90,0.35);
+    0 0 10px rgba(235,255,80,1),
+    0 0 22px rgba(185,235,0,0.95),
+    0 0 38px rgba(90,210,0,0.75);
+
+  animation:
+    lorePulse 1.2s infinite;
+}
+
+
+/* =========================================================
+   ACTIVE LORE PULSE
+========================================================= */
+
+@keyframes lorePulse {
+
+  0%,
+  100% {
+
+    box-shadow:
+      0 0 10px rgba(235,255,80,1),
+      0 0 22px rgba(185,235,0,0.95),
+      0 0 38px rgba(90,210,0,0.75);
+  }
+
+  50% {
+
+    box-shadow:
+      0 0 14px rgba(250,255,120,1),
+      0 0 30px rgba(210,245,20,1),
+      0 0 50px rgba(110,230,0,0.90);
+  }
+
 }
 
 
@@ -481,43 +562,66 @@ body {
 
   margin: 0 5px;
 
-  border-width: 3px;
+  border:
+    3px solid #76d900;
 
   font-size: 20px;
 
   color: white;
 
   background:
-    linear-gradient(
-      180deg,
-      #171717,
-      #050505
+    radial-gradient(
+      circle at 30% 30%,
+      #202520 0%,
+      #0c0f0c 60%,
+      #020302 100%
     );
 
-  border-color: #d8b45a;
-
   flex-shrink: 0;
+
+  box-shadow:
+    0 0 8px rgba(105,220,0,0.25);
 }
 
-.center-20.active {
-  background: #d8b45a;
 
-  color: #111;
+/* CENTER 20 ACTIVE */
+
+.center-20.active {
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #f7ff78 0%,
+      #bde500 28%,
+      #4d8c00 55%,
+      #142700 76%,
+      #020302 100%
+    );
+
+  border:
+    4px solid #efff55;
+
+  color: white;
 
   transform: scale(1.12);
 
   box-shadow:
-    0 0 10px rgba(216,180,90,1),
-    0 0 24px rgba(216,180,90,0.70);
+    0 0 12px rgba(235,255,80,1),
+    0 0 28px rgba(185,235,0,1),
+    0 0 48px rgba(90,210,0,0.85);
+
+  animation:
+    lorePulse 1.2s infinite;
 }
 
 
 /* =========================================================
-   DECORATIVE GOLD EDGES
+   GREEN OUTSIDE EDGES
 ========================================================= */
 
 .broadcast-bar::before,
 .broadcast-bar::after {
+
   content: "";
 
   position: absolute;
@@ -527,7 +631,10 @@ body {
   width: 6px;
   height: 100%;
 
-  background: #d8b45a;
+  background: #68d000;
+
+  box-shadow:
+    0 0 8px rgba(105,220,0,0.55);
 
   z-index: 20;
 }
@@ -576,6 +683,7 @@ body {
         fill="black"
       />
 
+
       <image
         href="./Illuminary%20Icon_White.png"
         x="0"
@@ -584,6 +692,7 @@ body {
         height="72"
         preserveAspectRatio="xMidYMid meet"
       />
+
 
       <image
         href="./Illuminary%20Icon_White.png"
@@ -615,10 +724,13 @@ body {
 
     <div class="player-panel left">
 
+
       <div class="game-row">
 
         <div class="game-icons">
 
+
+          <!-- GAME 1 -->
 
           <div
             id="p1g1"
@@ -642,6 +754,7 @@ body {
 
             </div>
 
+
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -650,6 +763,8 @@ body {
           </div>
 
 
+
+          <!-- GAME 2 -->
 
           <div
             id="p1g2"
@@ -673,6 +788,7 @@ body {
 
             </div>
 
+
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -685,12 +801,13 @@ body {
 
       </div>
 
+
     </div>
 
 
 
     <!-- =====================================================
-         CENTER SECTION
+         CENTER
     ====================================================== -->
 
     <div class="center-section">
@@ -712,7 +829,7 @@ body {
 
 
 
-        <!-- CENTER ROUND + TIMER -->
+        <!-- ROUND + TIMER -->
 
         <div class="center-match-info">
 
@@ -754,7 +871,7 @@ body {
 
 
 
-      <!-- LORE TRACK -->
+      <!-- LORE -->
 
       <div class="track-area">
 
@@ -776,10 +893,13 @@ body {
 
     <div class="player-panel right">
 
+
       <div class="game-row">
 
         <div class="game-icons">
 
+
+          <!-- GAME 1 -->
 
           <div
             id="p2g1"
@@ -803,6 +923,7 @@ body {
 
             </div>
 
+
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -811,6 +932,8 @@ body {
           </div>
 
 
+
+          <!-- GAME 2 -->
 
           <div
             id="p2g2"
@@ -834,6 +957,7 @@ body {
 
             </div>
 
+
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
@@ -845,6 +969,7 @@ body {
         </div>
 
       </div>
+
 
     </div>
 
@@ -913,6 +1038,7 @@ let p2Lore = 0;
 let p1Games = 0;
 
 let p2Games = 0;
+
 
 let lastP1Games = 0;
 
@@ -993,6 +1119,8 @@ function renderLoreTrack() {
   loreTrack.innerHTML = "";
 
 
+  /* PLAYER 1 */
+
   for (
     let i = 0;
     i <= 19;
@@ -1011,6 +1139,8 @@ function renderLoreTrack() {
   }
 
 
+
+  /* CENTER 20 */
 
   const center =
     document.createElement("div");
@@ -1041,6 +1171,8 @@ function renderLoreTrack() {
   );
 
 
+
+  /* PLAYER 2 */
 
   for (
     let i = 19;
@@ -1247,6 +1379,9 @@ function renderTimer() {
    FIREBASE LISTENERS
 ========================================================= */
 
+
+/* PLAYER 1 LORE */
+
 onValue(
   ref(db,"p1"),
 
@@ -1265,6 +1400,8 @@ onValue(
 
 
 
+/* PLAYER 2 LORE */
+
 onValue(
   ref(db,"p2"),
 
@@ -1282,6 +1419,8 @@ onValue(
 );
 
 
+
+/* PLAYER 1 GAME WINS */
 
 onValue(
   ref(db,"p1Games"),
@@ -1309,6 +1448,8 @@ onValue(
 
 
 
+/* PLAYER 2 GAME WINS */
+
 onValue(
   ref(db,"p2Games"),
 
@@ -1335,6 +1476,8 @@ onValue(
 
 
 
+/* PLAYER 1 NAME */
+
 onValue(
   ref(db,"p1Name"),
 
@@ -1356,6 +1499,8 @@ onValue(
 
 
 
+/* PLAYER 2 NAME */
+
 onValue(
   ref(db,"p2Name"),
 
@@ -1376,6 +1521,8 @@ onValue(
 );
 
 
+
+/* TIMER */
 
 onValue(
   ref(db,"timer"),
@@ -1407,6 +1554,8 @@ onValue(
 
 
 
+/* LIVE TIMER */
+
 setInterval(
   renderTimer,
   250
@@ -1414,7 +1563,12 @@ setInterval(
 
 
 
+/* =========================================================
+   FIRST DRAW
+========================================================= */
+
 renderLoreTrack();
+
 
 renderGameIcons(
   "p1",
@@ -1422,11 +1576,13 @@ renderGameIcons(
   p1Games
 );
 
+
 renderGameIcons(
   "p2",
   p2Games,
   p2Games
 );
+
 
 renderTimer();
 
