@@ -308,7 +308,7 @@ body {
 }
 
 
-/* SLIGHTLY FARTHER FROM ROUND/TIMER */
+/* LOCKED AT 360PX */
 
 .p1-header-games {
   left: 360px;
@@ -406,7 +406,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+
+  /* CHANGED FROM 1PX TO 0PX */
+  gap: 0px;
 }
 
 
@@ -415,8 +417,8 @@ body {
 ========================================================= */
 
 .lore-point {
-  width: 29px;
-  height: 29px;
+  width: 30px;
+  height: 30px;
 
   border-radius: 50%;
 
@@ -436,7 +438,7 @@ body {
   align-items: center;
   justify-content: center;
 
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1;
 
@@ -474,7 +476,8 @@ body {
   border: 3px solid #efff55;
 
   color: white;
-  font-size: 15px;
+
+  font-size: 16px;
   font-weight: 900;
 
   z-index: 10;
@@ -807,147 +810,372 @@ const loreTrack = document.getElementById("loreTrack");
 
 function createLorePoint(number, player) {
   const point = document.createElement("div");
+
   point.className = "lore-point";
+
   point.textContent = number;
 
-  if (player === "p1" && p1Lore === number) {
+  if (
+    player === "p1" &&
+    p1Lore === number
+  ) {
     point.classList.add("active");
   }
 
-  if (player === "p2" && p2Lore === number) {
+  if (
+    player === "p2" &&
+    p2Lore === number
+  ) {
     point.classList.add("active");
   }
 
   return point;
 }
 
+
 function renderLoreTrack() {
+
   loreTrack.innerHTML = "";
 
-  for (let i = 0; i <= 19; i++) {
-    loreTrack.appendChild(createLorePoint(i, "p1"));
+  for (
+    let i = 0;
+    i <= 19;
+    i++
+  ) {
+    loreTrack.appendChild(
+      createLorePoint(i, "p1")
+    );
   }
 
-  const center = document.createElement("div");
-  center.className = "lore-point center-20";
-  center.textContent = "20";
 
-  if (p1Lore >= 20 || p2Lore >= 20) {
+  const center =
+    document.createElement("div");
+
+  center.className =
+    "lore-point center-20";
+
+  center.textContent =
+    "20";
+
+
+  if (
+    p1Lore >= 20 ||
+    p2Lore >= 20
+  ) {
     center.classList.add("active");
   }
 
+
   loreTrack.appendChild(center);
 
-  for (let i = 19; i >= 0; i--) {
-    loreTrack.appendChild(createLorePoint(i, "p2"));
+
+  for (
+    let i = 19;
+    i >= 0;
+    i--
+  ) {
+    loreTrack.appendChild(
+      createLorePoint(i, "p2")
+    );
   }
 }
 
-function renderGameIcons(player, wins, lastWins) {
-  const game1 = document.getElementById(player + "g1");
-  const game2 = document.getElementById(player + "g2");
 
-  game1.classList.toggle("filled", wins >= 1);
-  game2.classList.toggle("filled", wins >= 2);
+function renderGameIcons(
+  player,
+  wins,
+  lastWins
+) {
+
+  const game1 =
+    document.getElementById(
+      player + "g1"
+    );
+
+  const game2 =
+    document.getElementById(
+      player + "g2"
+    );
+
+
+  game1.classList.toggle(
+    "filled",
+    wins >= 1
+  );
+
+  game2.classList.toggle(
+    "filled",
+    wins >= 2
+  );
+
 
   if (wins > lastWins) {
-    const target = wins === 1 ? game1 : game2;
 
-    target.classList.remove("pulse");
+    const target =
+      wins === 1
+        ? game1
+        : game2;
+
+    target.classList.remove(
+      "pulse"
+    );
+
     void target.offsetWidth;
-    target.classList.add("pulse");
 
-    setTimeout(() => {
-      target.classList.remove("pulse");
-    }, 350);
+    target.classList.add(
+      "pulse"
+    );
+
+    setTimeout(
+      () => {
+        target.classList.remove(
+          "pulse"
+        );
+      },
+      350
+    );
   }
 }
 
-function formatTime(totalSeconds) {
-  const safe = Math.max(0, Math.floor(Number(totalSeconds) || 0));
-  const minutes = Math.floor(safe / 60);
-  const seconds = safe % 60;
+
+function formatTime(
+  totalSeconds
+) {
+
+  const safe =
+    Math.max(
+      0,
+      Math.floor(
+        Number(totalSeconds) || 0
+      )
+    );
+
+  const minutes =
+    Math.floor(
+      safe / 60
+    );
+
+  const seconds =
+    safe % 60;
 
   return (
     minutes +
     ":" +
-    String(seconds).padStart(2, "0")
+    String(seconds)
+      .padStart(2, "0")
   );
 }
 
+
 function getTimerRemaining() {
-  let remaining = Number(timerData.remaining ?? 3300);
-  const running = Boolean(timerData.running);
-  const startedAt = Number(timerData.startedAt ?? 0);
 
-  if (running && startedAt > 0) {
+  let remaining =
+    Number(
+      timerData.remaining ?? 3300
+    );
+
+  const running =
+    Boolean(
+      timerData.running
+    );
+
+  const startedAt =
+    Number(
+      timerData.startedAt ?? 0
+    );
+
+
+  if (
+    running &&
+    startedAt > 0
+  ) {
+
     const elapsed =
-      Math.floor((Date.now() - startedAt) / 1000);
+      Math.floor(
+        (
+          Date.now() -
+          startedAt
+        ) / 1000
+      );
 
-    remaining = Math.max(0, remaining - elapsed);
+    remaining =
+      Math.max(
+        0,
+        remaining - elapsed
+      );
   }
 
   return remaining;
 }
 
-function renderTimer() {
-  document.getElementById("timer").textContent =
-    formatTime(getTimerRemaining());
 
-  document.getElementById("roundName").textContent =
-    timerData.roundName || "Round 1";
+function renderTimer() {
+
+  document
+    .getElementById("timer")
+    .textContent =
+      formatTime(
+        getTimerRemaining()
+      );
+
+  document
+    .getElementById("roundName")
+    .textContent =
+      timerData.roundName ||
+      "Round 1";
 }
 
-onValue(ref(db, "p1"), (snapshot) => {
-  p1Lore = Number(snapshot.val()) || 0;
-  renderLoreTrack();
-});
 
-onValue(ref(db, "p2"), (snapshot) => {
-  p2Lore = Number(snapshot.val()) || 0;
-  renderLoreTrack();
-});
+onValue(
+  ref(db, "p1"),
 
-onValue(ref(db, "p1Games"), (snapshot) => {
-  p1Games = Number(snapshot.val()) || 0;
-  renderGameIcons("p1", p1Games, lastP1Games);
-  lastP1Games = p1Games;
-});
+  snapshot => {
 
-onValue(ref(db, "p2Games"), (snapshot) => {
-  p2Games = Number(snapshot.val()) || 0;
-  renderGameIcons("p2", p2Games, lastP2Games);
-  lastP2Games = p2Games;
-});
+    p1Lore =
+      Number(
+        snapshot.val()
+      ) || 0;
 
-onValue(ref(db, "p1Name"), (snapshot) => {
-  const name = String(snapshot.val() || "").trim();
-  document.getElementById("p1Name").textContent =
-    name || "Player 1";
-});
+    renderLoreTrack();
+  }
+);
 
-onValue(ref(db, "p2Name"), (snapshot) => {
-  const name = String(snapshot.val() || "").trim();
-  document.getElementById("p2Name").textContent =
-    name || "Player 2";
-});
 
-onValue(ref(db, "timer"), (snapshot) => {
-  timerData = snapshot.val() || {
-    roundName: "Round 1",
-    remaining: 3300,
-    running: false,
-    startedAt: 0
-  };
+onValue(
+  ref(db, "p2"),
 
-  renderTimer();
-});
+  snapshot => {
 
-setInterval(renderTimer, 250);
+    p2Lore =
+      Number(
+        snapshot.val()
+      ) || 0;
+
+    renderLoreTrack();
+  }
+);
+
+
+onValue(
+  ref(db, "p1Games"),
+
+  snapshot => {
+
+    p1Games =
+      Number(
+        snapshot.val()
+      ) || 0;
+
+    renderGameIcons(
+      "p1",
+      p1Games,
+      lastP1Games
+    );
+
+    lastP1Games =
+      p1Games;
+  }
+);
+
+
+onValue(
+  ref(db, "p2Games"),
+
+  snapshot => {
+
+    p2Games =
+      Number(
+        snapshot.val()
+      ) || 0;
+
+    renderGameIcons(
+      "p2",
+      p2Games,
+      lastP2Games
+    );
+
+    lastP2Games =
+      p2Games;
+  }
+);
+
+
+onValue(
+  ref(db, "p1Name"),
+
+  snapshot => {
+
+    const name =
+      String(
+        snapshot.val() || ""
+      ).trim();
+
+    document
+      .getElementById("p1Name")
+      .textContent =
+        name ||
+        "Player 1";
+  }
+);
+
+
+onValue(
+  ref(db, "p2Name"),
+
+  snapshot => {
+
+    const name =
+      String(
+        snapshot.val() || ""
+      ).trim();
+
+    document
+      .getElementById("p2Name")
+      .textContent =
+        name ||
+        "Player 2";
+  }
+);
+
+
+onValue(
+  ref(db, "timer"),
+
+  snapshot => {
+
+    timerData =
+      snapshot.val() || {
+        roundName: "Round 1",
+        remaining: 3300,
+        running: false,
+        startedAt: 0
+      };
+
+    renderTimer();
+  }
+);
+
+
+setInterval(
+  renderTimer,
+  250
+);
+
 
 renderLoreTrack();
-renderGameIcons("p1", p1Games, p1Games);
-renderGameIcons("p2", p2Games, p2Games);
+
+renderGameIcons(
+  "p1",
+  p1Games,
+  p1Games
+);
+
+renderGameIcons(
+  "p2",
+  p2Games,
+  p2Games
+);
+
 renderTimer();
 
 </script>
