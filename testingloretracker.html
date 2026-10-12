@@ -28,15 +28,26 @@ body {
 
 
 /* =========================================================
-   MAIN TOP BROADCAST BAR
+   OVERALL BROADCAST AREA
+========================================================= */
+
+.broadcast-wrap {
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  width: 1880px;
+  height: 220px;
+}
+
+
+/* =========================================================
+   TOP BAR BEHIND EVERYTHING
 ========================================================= */
 
 .broadcast-bar {
   position: absolute;
-
-  top: 22px;
-  left: 20px;
-
+  top: 0;
+  left: 0;
   width: 1880px;
   height: 125px;
 
@@ -60,26 +71,43 @@ body {
     0 0 10px rgba(105, 220, 0, 0.35),
     0 4px 16px rgba(0,0,0,0.75);
 
-  display: flex;
-  align-items: stretch;
-
   overflow: hidden;
+
+  z-index: 1;
+}
+
+.broadcast-bar::before,
+.broadcast-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  background: #68d000;
+  box-shadow: 0 0 8px rgba(105,220,0,0.55);
+  z-index: 5;
+}
+
+.broadcast-bar::before {
+  left: 0;
+}
+
+.broadcast-bar::after {
+  right: 0;
 }
 
 
 /* =========================================================
-   SIDE FACECAM BLOCKS
+   LARGER FACE-CAM PODS
 ========================================================= */
 
 .player-panel {
+  position: absolute;
+  top: 0;
   width: 300px;
-  height: 100%;
+  height: 220px;
 
-  position: relative;
-
-  flex-shrink: 0;
-
-  z-index: 5;
+  z-index: 3;
 
   background:
     radial-gradient(
@@ -92,16 +120,24 @@ body {
       rgba(84,42,120,0.72),
       rgba(19,9,31,0.88)
     );
+
+  border: 2px solid #68d000;
+
+  box-shadow:
+    0 0 10px rgba(105,220,0,0.25),
+    0 4px 16px rgba(0,0,0,0.55);
+
+  overflow: hidden;
 }
 
 .player-panel.left {
-  border-right:
-    2px solid rgba(104,208,0,0.75);
+  left: 0;
+  border-right: 2px solid rgba(104,208,0,0.75);
 }
 
 .player-panel.right {
-  border-left:
-    2px solid rgba(104,208,0,0.75);
+  right: 0;
+  border-left: 2px solid rgba(104,208,0,0.75);
 }
 
 
@@ -110,15 +146,18 @@ body {
 ========================================================= */
 
 .center-section {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 300px;
+  width: 1280px;
+  height: 125px;
 
-  position: relative;
+  z-index: 4;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  min-width: 0;
+  justify-content: flex-start;
 }
 
 
@@ -146,47 +185,33 @@ body {
 
 .center-player-name {
   position: absolute;
-
   top: 50%;
-
   transform: translateY(-50%);
 
   width: 260px;
 
   color: white;
-
   font-size: 27px;
   font-weight: 800;
-
   line-height: 1.15;
 
   padding-bottom: 3px;
 
   white-space: nowrap;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
 
   text-shadow:
     0 2px 5px rgba(0,0,0,0.95);
 }
 
-
-/* PLAYER 1 */
-
 .p1-center-name {
   left: 45px;
-
   text-align: left;
 }
 
-
-/* PLAYER 2 */
-
 .p2-center-name {
   right: 45px;
-
   text-align: right;
 }
 
@@ -199,11 +224,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 18px;
 
   position: relative;
-
   z-index: 5;
 }
 
@@ -217,13 +240,10 @@ body {
 
   font-size: 35px;
   font-weight: 900;
-
   line-height: 1;
 
   text-transform: uppercase;
-
   letter-spacing: 1px;
-
   white-space: nowrap;
 
   text-shadow:
@@ -258,16 +278,12 @@ body {
 
   font-size: 35px;
   font-weight: 900;
-
   line-height: 1;
 
   min-width: 115px;
-
   text-align: center;
 
-  font-variant-numeric:
-    tabular-nums;
-
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 
   text-shadow:
@@ -282,12 +298,7 @@ body {
 
 .header-game-icons {
   position: absolute;
-
-  /* ONLY CHANGE:
-     MOVED DOWN 12PX
-  */
   top: calc(50% + 12px);
-
   transform: translateY(-50%);
 
   display: flex;
@@ -296,19 +307,9 @@ body {
   z-index: 10;
 }
 
-
-/* PLAYER 1
-   BETWEEN NAME AND ROUND
-*/
-
 .p1-header-games {
   left: 315px;
 }
-
-
-/* PLAYER 2
-   BETWEEN TIMER AND NAME
-*/
 
 .p2-header-games {
   right: 315px;
@@ -316,79 +317,49 @@ body {
 
 
 /* =========================================================
-   LARGE ILLUMINARY ICONS
+   ILLUMINARY ICONS
 ========================================================= */
 
 .tick {
   position: relative;
-
   width: 72px;
   height: 72px;
-
   flex-shrink: 0;
-
   transition: transform 0.15s ease;
 }
-
-
-/* Pull second icon closer */
 
 .tick + .tick {
   margin-left: -30px;
 }
 
-
-/* =========================================================
-   EMPTY OUTLINE
-========================================================= */
-
 .empty-outline {
   position: absolute;
-
   width: 72px;
   height: 72px;
-
   top: 0;
   left: 0;
-
   pointer-events: none;
 }
-
 
 .empty-outline svg {
   width: 72px;
   height: 72px;
-
   display: block;
-
   overflow: visible;
 }
 
-
-/* =========================================================
-   GAME WON FILL
-========================================================= */
-
 .win-fill {
   position: absolute;
-
   width: 50px;
   height: 50px;
-
   top: 11px;
   left: 11px;
-
   object-fit: contain;
-
   display: block;
-
   opacity: 0;
-
   pointer-events: none;
-
   transition: opacity 0.15s ease;
 }
-
 
 .tick.filled .win-fill {
   opacity: 1;
@@ -403,21 +374,10 @@ body {
   animation: winPulse 0.35s ease;
 }
 
-
 @keyframes winPulse {
-
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.18);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-
+  0% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
 
 
@@ -427,7 +387,6 @@ body {
 
 .track-area {
   width: 100%;
-
   height: 75px;
 
   display: flex;
@@ -442,10 +401,8 @@ body {
 
 .lore-track {
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   gap: 1px;
 }
 
@@ -460,8 +417,7 @@ body {
 
   border-radius: 50%;
 
-  border:
-    2px solid #57b900;
+  border: 2px solid #57b900;
 
   background:
     radial-gradient(
@@ -479,7 +435,6 @@ body {
 
   font-size: 13px;
   font-weight: 800;
-
   line-height: 1;
 
   flex-shrink: 0;
@@ -501,7 +456,6 @@ body {
 ========================================================= */
 
 .lore-point.active {
-
   transform: scale(1.50);
 
   background:
@@ -514,11 +468,9 @@ body {
       #020302 100%
     );
 
-  border:
-    3px solid #efff55;
+  border: 3px solid #efff55;
 
   color: white;
-
   font-size: 15px;
   font-weight: 900;
 
@@ -532,8 +484,7 @@ body {
     0 0 22px rgba(185,235,0,0.95),
     0 0 38px rgba(90,210,0,0.75);
 
-  animation:
-    lorePulse 1.2s infinite;
+  animation: lorePulse 1.2s infinite;
 }
 
 
@@ -542,10 +493,7 @@ body {
 ========================================================= */
 
 @keyframes lorePulse {
-
-  0%,
-  100% {
-
+  0%, 100% {
     box-shadow:
       0 0 10px rgba(235,255,80,1),
       0 0 22px rgba(185,235,0,0.95),
@@ -553,13 +501,11 @@ body {
   }
 
   50% {
-
     box-shadow:
       0 0 14px rgba(250,255,120,1),
       0 0 30px rgba(210,245,20,1),
       0 0 50px rgba(110,230,0,0.90);
   }
-
 }
 
 
@@ -573,9 +519,7 @@ body {
 
   margin: 0 5px;
 
-  border:
-    3px solid #76d900;
-
+  border: 3px solid #76d900;
   font-size: 20px;
 
   color: white;
@@ -594,9 +538,7 @@ body {
     0 0 8px rgba(105,220,0,0.25);
 }
 
-
 .center-20.active {
-
   background:
     radial-gradient(
       circle at 30% 30%,
@@ -607,11 +549,9 @@ body {
       #020302 100%
     );
 
-  border:
-    4px solid #efff55;
+  border: 4px solid #efff55;
 
   color: white;
-
   transform: scale(1.12);
 
   box-shadow:
@@ -619,64 +559,20 @@ body {
     0 0 28px rgba(185,235,0,1),
     0 0 48px rgba(90,210,0,0.85);
 
-  animation:
-    lorePulse 1.2s infinite;
-}
-
-
-/* =========================================================
-   GREEN OUTSIDE EDGES
-========================================================= */
-
-.broadcast-bar::before,
-.broadcast-bar::after {
-
-  content: "";
-
-  position: absolute;
-
-  top: 0;
-
-  width: 6px;
-  height: 100%;
-
-  background: #68d000;
-
-  box-shadow:
-    0 0 8px rgba(105,220,0,0.55);
-
-  z-index: 20;
-}
-
-
-.broadcast-bar::before {
-  left: 0;
-}
-
-
-.broadcast-bar::after {
-  right: 0;
+  animation: lorePulse 1.2s infinite;
 }
 
 </style>
 </head>
 
-
 <body>
-
-
-<!-- =========================================================
-     ILLUMINARY OUTLINE MASK
-========================================================= -->
 
 <svg
   width="0"
   height="0"
   style="position:absolute;"
 >
-
   <defs>
-
     <mask
       id="illuminaryOutlineMask"
       maskUnits="userSpaceOnUse"
@@ -685,7 +581,6 @@ body {
       width="72"
       height="72"
     >
-
       <rect
         x="0"
         y="0"
@@ -693,7 +588,6 @@ body {
         height="72"
         fill="black"
       />
-
 
       <image
         href="./Illuminary%20Icon_White.png"
@@ -703,7 +597,6 @@ body {
         height="72"
         preserveAspectRatio="xMidYMid meet"
       />
-
 
       <image
         href="./Illuminary%20Icon_White.png"
@@ -714,37 +607,24 @@ body {
         preserveAspectRatio="xMidYMid meet"
         style="filter:brightness(0);"
       />
-
     </mask>
-
   </defs>
-
 </svg>
-
 
 
 <div class="overlay">
 
+  <div class="broadcast-wrap">
 
-  <div class="broadcast-bar">
+    <div class="broadcast-bar"></div>
 
+    <div class="player-panel left"></div>
 
-    <!-- PLAYER 1 FACECAM -->
-
-    <div class="player-panel left">
-    </div>
-
-
-
-    <!-- CENTER -->
+    <div class="player-panel right"></div>
 
     <div class="center-section">
 
-
       <div class="match-header">
-
-
-        <!-- PLAYER 1 NAME -->
 
         <div
           class="center-player-name p1-center-name"
@@ -753,22 +633,11 @@ body {
           Player 1
         </div>
 
-
-
-        <!-- PLAYER 1 GAME WINS -->
-
         <div class="header-game-icons p1-header-games">
 
-
-          <div
-            id="p1g1"
-            class="tick"
-          >
-
+          <div id="p1g1" class="tick">
             <div class="empty-outline">
-
               <svg viewBox="0 0 72 72">
-
                 <rect
                   x="0"
                   y="0"
@@ -777,28 +646,18 @@ body {
                   fill="white"
                   mask="url(#illuminaryOutlineMask)"
                 />
-
               </svg>
-
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
-
           </div>
 
-
-          <div
-            id="p1g2"
-            class="tick"
-          >
-
+          <div id="p1g2" class="tick">
             <div class="empty-outline">
-
               <svg viewBox="0 0 72 72">
-
                 <rect
                   x="0"
                   y="0"
@@ -807,27 +666,18 @@ body {
                   fill="white"
                   mask="url(#illuminaryOutlineMask)"
                 />
-
               </svg>
-
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
-
           </div>
-
 
         </div>
 
-
-
-        <!-- ROUND + TIMER -->
-
         <div class="center-match-info">
-
 
           <div
             class="round-name"
@@ -836,9 +686,7 @@ body {
             Round 1
           </div>
 
-
           <div class="timer-divider"></div>
-
 
           <div
             class="timer"
@@ -847,25 +695,13 @@ body {
             55:00
           </div>
 
-
         </div>
-
-
-
-        <!-- PLAYER 2 GAME WINS -->
 
         <div class="header-game-icons p2-header-games">
 
-
-          <div
-            id="p2g1"
-            class="tick"
-          >
-
+          <div id="p2g1" class="tick">
             <div class="empty-outline">
-
               <svg viewBox="0 0 72 72">
-
                 <rect
                   x="0"
                   y="0"
@@ -874,28 +710,18 @@ body {
                   fill="white"
                   mask="url(#illuminaryOutlineMask)"
                 />
-
               </svg>
-
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
-
           </div>
 
-
-          <div
-            id="p2g2"
-            class="tick"
-          >
-
+          <div id="p2g2" class="tick">
             <div class="empty-outline">
-
               <svg viewBox="0 0 72 72">
-
                 <rect
                   x="0"
                   y="0"
@@ -904,24 +730,16 @@ body {
                   fill="white"
                   mask="url(#illuminaryOutlineMask)"
                 />
-
               </svg>
-
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
-
           </div>
-
 
         </div>
-
-
-
-        <!-- PLAYER 2 NAME -->
 
         <div
           class="center-player-name p2-center-name"
@@ -930,606 +748,203 @@ body {
           Player 2
         </div>
 
-
       </div>
 
-
-
-      <!-- LORE TRACK -->
-
       <div class="track-area">
-
         <div
           class="lore-track"
           id="loreTrack"
         ></div>
-
       </div>
 
-
     </div>
-
-
-
-    <!-- PLAYER 2 FACECAM -->
-
-    <div class="player-panel right">
-    </div>
-
 
   </div>
 
 </div>
 
 
-
 <script type="module">
 
 import {
   initializeApp
-}
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
   getDatabase,
   ref,
   onValue
-}
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
-
-  authDomain:
-    "lore-counter-4e654.firebaseapp.com",
-
-  databaseURL:
-    "https://lore-counter-4e654-default-rtdb.firebaseio.com",
-
-  projectId:
-    "lore-counter-4e654"
-
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL: "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
 };
 
-
-const app =
-  initializeApp(firebaseConfig);
-
-
-const db =
-  getDatabase(app);
-
-
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 let p1Lore = 0;
-
 let p2Lore = 0;
-
 let p1Games = 0;
-
 let p2Games = 0;
-
 let lastP1Games = 0;
-
 let lastP2Games = 0;
 
-
 let timerData = {
-
   roundName: "Round 1",
-
   remaining: 3300,
-
   running: false,
-
   startedAt: 0
-
 };
 
+const loreTrack = document.getElementById("loreTrack");
 
+function createLorePoint(number, player) {
+  const point = document.createElement("div");
+  point.className = "lore-point";
+  point.textContent = number;
 
-/* =========================================================
-   LORE TRACK
-========================================================= */
-
-const loreTrack =
-  document.getElementById("loreTrack");
-
-
-function createLorePoint(
-  number,
-  player
-) {
-
-  const point =
-    document.createElement("div");
-
-
-  point.className =
-    "lore-point";
-
-
-  point.textContent =
-    number;
-
-
-  if (
-    player === "p1" &&
-    p1Lore === number
-  ) {
-
-    point.classList.add(
-      "active"
-    );
-
+  if (player === "p1" && p1Lore === number) {
+    point.classList.add("active");
   }
 
-
-  if (
-    player === "p2" &&
-    p2Lore === number
-  ) {
-
-    point.classList.add(
-      "active"
-    );
-
+  if (player === "p2" && p2Lore === number) {
+    point.classList.add("active");
   }
-
 
   return point;
-
 }
-
-
 
 function renderLoreTrack() {
-
   loreTrack.innerHTML = "";
 
-
-  for (
-    let i = 0;
-    i <= 19;
-    i++
-  ) {
-
-    loreTrack.appendChild(
-
-      createLorePoint(
-        i,
-        "p1"
-      )
-
-    );
-
+  for (let i = 0; i <= 19; i++) {
+    loreTrack.appendChild(createLorePoint(i, "p1"));
   }
 
+  const center = document.createElement("div");
+  center.className = "lore-point center-20";
+  center.textContent = "20";
 
-
-  const center =
-    document.createElement("div");
-
-
-  center.className =
-    "lore-point center-20";
-
-
-  center.textContent =
-    "20";
-
-
-  if (
-    p1Lore >= 20 ||
-    p2Lore >= 20
-  ) {
-
-    center.classList.add(
-      "active"
-    );
-
+  if (p1Lore >= 20 || p2Lore >= 20) {
+    center.classList.add("active");
   }
 
+  loreTrack.appendChild(center);
 
-  loreTrack.appendChild(
-    center
-  );
-
-
-
-  for (
-    let i = 19;
-    i >= 0;
-    i--
-  ) {
-
-    loreTrack.appendChild(
-
-      createLorePoint(
-        i,
-        "p2"
-      )
-
-    );
-
+  for (let i = 19; i >= 0; i--) {
+    loreTrack.appendChild(createLorePoint(i, "p2"));
   }
-
 }
 
+function renderGameIcons(player, wins, lastWins) {
+  const game1 = document.getElementById(player + "g1");
+  const game2 = document.getElementById(player + "g2");
 
-
-/* =========================================================
-   GAME WIN ICONS
-========================================================= */
-
-function renderGameIcons(
-  player,
-  wins,
-  lastWins
-) {
-
-  const game1 =
-    document.getElementById(
-      player + "g1"
-    );
-
-
-  const game2 =
-    document.getElementById(
-      player + "g2"
-    );
-
-
-  game1.classList.toggle(
-    "filled",
-    wins >= 1
-  );
-
-
-  game2.classList.toggle(
-    "filled",
-    wins >= 2
-  );
-
+  game1.classList.toggle("filled", wins >= 1);
+  game2.classList.toggle("filled", wins >= 2);
 
   if (wins > lastWins) {
+    const target = wins === 1 ? game1 : game2;
 
-    const target =
-      wins === 1
-        ? game1
-        : game2;
-
-
-    target.classList.remove(
-      "pulse"
-    );
-
-
+    target.classList.remove("pulse");
     void target.offsetWidth;
+    target.classList.add("pulse");
 
-
-    target.classList.add(
-      "pulse"
-    );
-
-
-    setTimeout(
-      () => {
-
-        target.classList.remove(
-          "pulse"
-        );
-
-      },
-
-      350
-    );
-
+    setTimeout(() => {
+      target.classList.remove("pulse");
+    }, 350);
   }
-
 }
 
-
-
-/* =========================================================
-   TIMER
-========================================================= */
-
-function formatTime(
-  totalSeconds
-) {
-
-  const safe =
-    Math.max(
-      0,
-      Math.floor(
-        Number(totalSeconds) || 0
-      )
-    );
-
-
-  const minutes =
-    Math.floor(
-      safe / 60
-    );
-
-
-  const seconds =
-    safe % 60;
-
+function formatTime(totalSeconds) {
+  const safe = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+  const minutes = Math.floor(safe / 60);
+  const seconds = safe % 60;
 
   return (
     minutes +
     ":" +
-    String(seconds)
-      .padStart(2,"0")
+    String(seconds).padStart(2, "0")
   );
-
 }
-
-
 
 function getTimerRemaining() {
+  let remaining = Number(timerData.remaining ?? 3300);
+  const running = Boolean(timerData.running);
+  const startedAt = Number(timerData.startedAt ?? 0);
 
-  let remaining =
-    Number(
-      timerData.remaining ?? 3300
-    );
-
-
-  const running =
-    Boolean(
-      timerData.running
-    );
-
-
-  const startedAt =
-    Number(
-      timerData.startedAt ?? 0
-    );
-
-
-  if (
-    running &&
-    startedAt > 0
-  ) {
-
+  if (running && startedAt > 0) {
     const elapsed =
-      Math.floor(
-        (
-          Date.now() -
-          startedAt
-        ) / 1000
-      );
+      Math.floor((Date.now() - startedAt) / 1000);
 
-
-    remaining =
-      Math.max(
-        0,
-        remaining - elapsed
-      );
-
+    remaining = Math.max(0, remaining - elapsed);
   }
-
 
   return remaining;
-
 }
-
-
 
 function renderTimer() {
+  document.getElementById("timer").textContent =
+    formatTime(getTimerRemaining());
 
-  document
-    .getElementById("timer")
-    .textContent =
-      formatTime(
-        getTimerRemaining()
-      );
-
-
-  document
-    .getElementById("roundName")
-    .textContent =
-      timerData.roundName ||
-      "Round 1";
-
+  document.getElementById("roundName").textContent =
+    timerData.roundName || "Round 1";
 }
 
-
-
-/* =========================================================
-   FIREBASE
-========================================================= */
-
-onValue(
-  ref(db,"p1"),
-
-  snapshot => {
-
-    p1Lore =
-      Number(
-        snapshot.val()
-      ) || 0;
-
-
-    renderLoreTrack();
-
-  }
-);
-
-
-
-onValue(
-  ref(db,"p2"),
-
-  snapshot => {
-
-    p2Lore =
-      Number(
-        snapshot.val()
-      ) || 0;
-
-
-    renderLoreTrack();
-
-  }
-);
-
-
-
-onValue(
-  ref(db,"p1Games"),
-
-  snapshot => {
-
-    p1Games =
-      Number(
-        snapshot.val()
-      ) || 0;
-
-
-    renderGameIcons(
-      "p1",
-      p1Games,
-      lastP1Games
-    );
-
-
-    lastP1Games =
-      p1Games;
-
-  }
-);
-
-
-
-onValue(
-  ref(db,"p2Games"),
-
-  snapshot => {
-
-    p2Games =
-      Number(
-        snapshot.val()
-      ) || 0;
-
-
-    renderGameIcons(
-      "p2",
-      p2Games,
-      lastP2Games
-    );
-
-
-    lastP2Games =
-      p2Games;
-
-  }
-);
-
-
-
-onValue(
-  ref(db,"p1Name"),
-
-  snapshot => {
-
-    const name =
-      String(
-        snapshot.val() || ""
-      ).trim();
-
-
-    document
-      .getElementById("p1Name")
-      .textContent =
-        name || "Player 1";
-
-  }
-);
-
-
-
-onValue(
-  ref(db,"p2Name"),
-
-  snapshot => {
-
-    const name =
-      String(
-        snapshot.val() || ""
-      ).trim();
-
-
-    document
-      .getElementById("p2Name")
-      .textContent =
-        name || "Player 2";
-
-  }
-);
-
-
-
-onValue(
-  ref(db,"timer"),
-
-  snapshot => {
-
-    timerData =
-      snapshot.val() || {
-
-        roundName:
-          "Round 1",
-
-        remaining:
-          3300,
-
-        running:
-          false,
-
-        startedAt:
-          0
-
-      };
-
-
-    renderTimer();
-
-  }
-);
-
-
-
-setInterval(
-  renderTimer,
-  250
-);
-
-
+onValue(ref(db, "p1"), (snapshot) => {
+  p1Lore = Number(snapshot.val()) || 0;
+  renderLoreTrack();
+});
+
+onValue(ref(db, "p2"), (snapshot) => {
+  p2Lore = Number(snapshot.val()) || 0;
+  renderLoreTrack();
+});
+
+onValue(ref(db, "p1Games"), (snapshot) => {
+  p1Games = Number(snapshot.val()) || 0;
+  renderGameIcons("p1", p1Games, lastP1Games);
+  lastP1Games = p1Games;
+});
+
+onValue(ref(db, "p2Games"), (snapshot) => {
+  p2Games = Number(snapshot.val()) || 0;
+  renderGameIcons("p2", p2Games, lastP2Games);
+  lastP2Games = p2Games;
+});
+
+onValue(ref(db, "p1Name"), (snapshot) => {
+  const name = String(snapshot.val() || "").trim();
+  document.getElementById("p1Name").textContent =
+    name || "Player 1";
+});
+
+onValue(ref(db, "p2Name"), (snapshot) => {
+  const name = String(snapshot.val() || "").trim();
+  document.getElementById("p2Name").textContent =
+    name || "Player 2";
+});
+
+onValue(ref(db, "timer"), (snapshot) => {
+  timerData = snapshot.val() || {
+    roundName: "Round 1",
+    remaining: 3300,
+    running: false,
+    startedAt: 0
+  };
+
+  renderTimer();
+});
+
+setInterval(renderTimer, 250);
 
 renderLoreTrack();
-
-
-renderGameIcons(
-  "p1",
-  p1Games,
-  p1Games
-);
-
-
-renderGameIcons(
-  "p2",
-  p2Games,
-  p2Games
-);
-
-
+renderGameIcons("p1", p1Games, p1Games);
+renderGameIcons("p2", p2Games, p2Games);
 renderTimer();
 
 </script>
