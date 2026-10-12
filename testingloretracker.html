@@ -41,50 +41,76 @@ body {
 
 
 /* =========================================================
-   TOP BAR BEHIND EVERYTHING
+   TOP BAR
+   GOLD + BLUE CENTER THEME
 ========================================================= */
 
 .broadcast-bar {
   position: absolute;
   top: 0;
   left: 0;
+
   width: 1880px;
   height: 125px;
 
   background:
     radial-gradient(
-      circle at 50% 20%,
-      rgba(135, 70, 190, 0.55),
-      transparent 65%
+      circle at 50% 12%,
+      rgba(255, 234, 150, .26),
+      rgba(255, 234, 150, 0) 42%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(55, 145, 210, .22),
+      rgba(55, 145, 210, 0) 55%
     ),
     linear-gradient(
       180deg,
-      #542a78 0%,
-      #3a1c59 32%,
-      #251238 65%,
-      #13091f 100%
+      #214d78 0%,
+      #123150 34%,
+      #0b1e32 68%,
+      #050c15 100%
     );
 
-  border: 2px solid #68d000;
+  border: 2px solid #f0c85b;
 
   box-shadow:
-    0 0 10px rgba(105, 220, 0, 0.35),
-    0 4px 16px rgba(0,0,0,0.75);
+    inset 0 0 25px rgba(255, 240, 175, .06),
+    inset 0 0 45px rgba(35, 115, 180, .10),
+    inset 0 0 60px rgba(0, 0, 0, .80),
+    0 0 8px rgba(240, 200, 91, .24),
+    0 4px 16px rgba(0, 0, 0, .75);
 
   overflow: hidden;
 
   z-index: 1;
 }
 
+
+/* =========================================================
+   GOLD OUTER EDGES
+========================================================= */
+
 .broadcast-bar::before,
 .broadcast-bar::after {
   content: "";
+
   position: absolute;
   top: 0;
+
   width: 6px;
   height: 100%;
-  background: #68d000;
-  box-shadow: 0 0 8px rgba(105,220,0,0.55);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff0ad,
+      #d79a22
+    );
+
+  box-shadow:
+    0 0 8px rgba(255, 220, 120, .45);
+
   z-index: 5;
 }
 
@@ -98,12 +124,13 @@ body {
 
 
 /* =========================================================
-   LARGER FACE-CAM PODS
+   FACECAM PODS
 ========================================================= */
 
 .player-panel {
   position: absolute;
   top: 0;
+
   width: 300px;
   height: 220px;
 
@@ -111,33 +138,53 @@ body {
 
   background:
     radial-gradient(
-      circle at 50% 20%,
-      rgba(135, 70, 190, 0.25),
-      transparent 70%
+      circle at 50% 88%,
+      rgba(255, 238, 170, .20),
+      rgba(255, 238, 170, 0) 32%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(255, 204, 70, .18),
+      rgba(255, 204, 70, 0) 45%
     ),
     linear-gradient(
       180deg,
-      rgba(84,42,120,0.72),
-      rgba(19,9,31,0.88)
+      #f9d66d 0%,
+      #f3c44f 32%,
+      #eeb43a 68%,
+      #d99724 100%
     );
 
-  border: 2px solid #68d000;
+  border: 2px solid #f8dc82;
 
   box-shadow:
-    0 0 10px rgba(105,220,0,0.25),
-    0 4px 16px rgba(0,0,0,0.55);
+    inset 0 0 30px rgba(255, 245, 190, .12),
+    inset 0 0 70px rgba(128, 75, 0, .18),
+    0 0 8px rgba(255, 210, 90, .18),
+    0 4px 16px rgba(0, 0, 0, .55);
 
   overflow: hidden;
 }
 
+.player-panel::before {
+  content: "";
+
+  position: absolute;
+  inset: 10px;
+
+  border: 1px solid rgba(255, 243, 190, .50);
+
+  pointer-events: none;
+
+  z-index: 20;
+}
+
 .player-panel.left {
   left: 0;
-  border-right: 2px solid rgba(104,208,0,0.75);
 }
 
 .player-panel.right {
   right: 0;
-  border-left: 2px solid rgba(104,208,0,0.75);
 }
 
 
@@ -149,6 +196,7 @@ body {
   position: absolute;
   top: 0;
   left: 300px;
+
   width: 1280px;
   height: 125px;
 
@@ -162,7 +210,7 @@ body {
 
 
 /* =========================================================
-   TOP MATCH HEADER
+   MATCH HEADER
 ========================================================= */
 
 .match-header {
@@ -186,11 +234,13 @@ body {
 .center-player-name {
   position: absolute;
   top: 50%;
+
   transform: translateY(-50%);
 
   width: 260px;
 
-  color: white;
+  color: #ffffff;
+
   font-size: 27px;
   font-weight: 800;
   line-height: 1.15;
@@ -202,7 +252,8 @@ body {
   text-overflow: ellipsis;
 
   text-shadow:
-    0 2px 5px rgba(0,0,0,0.95);
+    0 2px 4px rgba(0, 0, 0, .95),
+    0 0 5px rgba(255, 230, 145, .18);
 }
 
 .p1-center-name {
@@ -217,13 +268,14 @@ body {
 
 
 /* =========================================================
-   CENTER ROUND + TIMER
+   ROUND + TIMER
 ========================================================= */
 
 .center-match-info {
   display: flex;
   align-items: center;
   justify-content: center;
+
   gap: 18px;
 
   position: relative;
@@ -236,7 +288,7 @@ body {
 ========================================================= */
 
 .round-name {
-  color: white;
+  color: #ffffff;
 
   font-size: 35px;
   font-weight: 900;
@@ -247,8 +299,9 @@ body {
   white-space: nowrap;
 
   text-shadow:
-    0 0 5px #d7f537,
-    0 0 12px rgba(105,220,0,0.70);
+    0 0 2px rgba(255, 255, 255, .95),
+    0 0 7px rgba(170, 245, 255, .65),
+    0 0 14px rgba(55, 205, 255, .32);
 }
 
 
@@ -260,10 +313,10 @@ body {
   width: 2px;
   height: 25px;
 
-  background: #68d000;
+  background: #f0c85b;
 
   box-shadow:
-    0 0 7px rgba(105,220,0,0.65);
+    0 0 7px rgba(240, 200, 91, .70);
 
   flex-shrink: 0;
 }
@@ -274,21 +327,23 @@ body {
 ========================================================= */
 
 .timer {
-  color: white;
+  color: #ffffff;
 
   font-size: 35px;
   font-weight: 900;
   line-height: 1;
 
   min-width: 115px;
+
   text-align: center;
 
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 
   text-shadow:
-    0 0 5px #d7f537,
-    0 0 12px rgba(105,220,0,0.55);
+    0 0 2px rgba(255, 255, 255, .95),
+    0 0 7px rgba(170, 245, 255, .65),
+    0 0 14px rgba(55, 205, 255, .32);
 }
 
 
@@ -298,7 +353,9 @@ body {
 
 .header-game-icons {
   position: absolute;
+
   top: calc(50% + 12px);
+
   transform: translateY(-50%);
 
   display: flex;
@@ -325,43 +382,67 @@ body {
 
 .tick {
   position: relative;
+
   width: 72px;
   height: 72px;
+
   flex-shrink: 0;
-  transition: transform 0.15s ease;
+
+  transition: transform .15s ease;
 }
 
 .tick + .tick {
   margin-left: -30px;
 }
 
+
+/* =========================================================
+   EMPTY OUTLINE
+========================================================= */
+
 .empty-outline {
   position: absolute;
+
   width: 72px;
   height: 72px;
+
   top: 0;
   left: 0;
+
   pointer-events: none;
 }
 
 .empty-outline svg {
   width: 72px;
   height: 72px;
+
   display: block;
   overflow: visible;
 }
 
+
+/* =========================================================
+   GAME WON FILL
+========================================================= */
+
 .win-fill {
   position: absolute;
+
   width: 50px;
   height: 50px;
+
   top: 11px;
   left: 11px;
+
   object-fit: contain;
+
   display: block;
+
   opacity: 0;
+
   pointer-events: none;
-  transition: opacity 0.15s ease;
+
+  transition: opacity .15s ease;
 }
 
 .tick.filled .win-fill {
@@ -374,13 +455,21 @@ body {
 ========================================================= */
 
 .pulse {
-  animation: winPulse 0.35s ease;
+  animation: winPulse .35s ease;
 }
 
 @keyframes winPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.18); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 
@@ -407,8 +496,7 @@ body {
   align-items: center;
   justify-content: center;
 
-  /* CHANGED FROM 1PX TO 0PX */
-  gap: 0px;
+  gap: 0;
 }
 
 
@@ -422,17 +510,17 @@ body {
 
   border-radius: 50%;
 
-  border: 2px solid #57b900;
+  border: 2px solid #c9962d;
 
   background:
     radial-gradient(
       circle at 30% 30%,
-      #202520 0%,
-      #0c0f0c 60%,
-      #020302 100%
+      #16324b 0%,
+      #0b1c2d 56%,
+      #040a11 100%
     );
 
-  color: rgba(255,255,255,0.92);
+  color: #ffffff;
 
   display: flex;
   align-items: center;
@@ -445,19 +533,24 @@ body {
   flex-shrink: 0;
 
   text-shadow:
-    0 1px 3px rgba(0,0,0,0.95);
+    0 1px 3px rgba(0, 0, 0, .95);
+
+  box-shadow:
+    inset 0 0 8px rgba(65, 165, 225, .08),
+    0 0 2px rgba(240, 200, 91, .08);
 
   transition:
-    transform 0.18s ease,
-    background 0.18s ease,
-    color 0.18s ease,
-    border 0.18s ease,
-    box-shadow 0.18s ease;
+    transform .18s ease,
+    background .18s ease,
+    color .18s ease,
+    border .18s ease,
+    box-shadow .18s ease;
 }
 
 
 /* =========================================================
    ACTIVE LORE
+   NEW ICY CYAN GLOW
 ========================================================= */
 
 .lore-point.active {
@@ -466,16 +559,17 @@ body {
   background:
     radial-gradient(
       circle at 30% 30%,
-      #f7ff78 0%,
-      #bde500 28%,
-      #4d8c00 55%,
-      #142700 76%,
-      #020302 100%
+      #fffdf1 0%,
+      #ffe9a0 20%,
+      #e8b83f 40%,
+      #2d8dbd 58%,
+      #0c4269 75%,
+      #03101e 100%
     );
 
-  border: 3px solid #efff55;
+  border: 3px solid #dffcff;
 
-  color: white;
+  color: #ffffff;
 
   font-size: 16px;
   font-weight: 900;
@@ -483,12 +577,15 @@ body {
   z-index: 10;
 
   text-shadow:
-    0 1px 3px rgba(0,0,0,0.95);
+    0 1px 3px rgba(0, 0, 0, .95),
+    0 0 4px rgba(0, 0, 0, .65);
 
   box-shadow:
-    0 0 10px rgba(235,255,80,1),
-    0 0 22px rgba(185,235,0,0.95),
-    0 0 38px rgba(90,210,0,0.75);
+    0 0 10px rgba(235, 255, 255, 1),
+    0 0 22px rgba(140, 245, 255, .95),
+    0 0 42px rgba(50, 205, 255, .85),
+    0 0 68px rgba(0, 135, 255, .55),
+    inset 0 0 14px rgba(230, 255, 255, .70);
 
   animation: lorePulse 1.2s infinite;
 }
@@ -496,22 +593,30 @@ body {
 
 /* =========================================================
    ACTIVE LORE PULSE
+   CYAN / BLUE
 ========================================================= */
 
 @keyframes lorePulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow:
-      0 0 10px rgba(235,255,80,1),
-      0 0 22px rgba(185,235,0,0.95),
-      0 0 38px rgba(90,210,0,0.75);
+      0 0 10px rgba(235, 255, 255, 1),
+      0 0 22px rgba(140, 245, 255, .95),
+      0 0 42px rgba(50, 205, 255, .85),
+      0 0 68px rgba(0, 135, 255, .55),
+      inset 0 0 14px rgba(230, 255, 255, .70);
   }
 
   50% {
     box-shadow:
-      0 0 14px rgba(250,255,120,1),
-      0 0 30px rgba(210,245,20,1),
-      0 0 50px rgba(110,230,0,0.90);
+      0 0 16px rgba(255, 255, 255, 1),
+      0 0 34px rgba(175, 250, 255, 1),
+      0 0 60px rgba(75, 220, 255, .95),
+      0 0 92px rgba(0, 145, 255, .72),
+      inset 0 0 20px rgba(235, 255, 255, .90);
   }
+
 }
 
 
@@ -525,45 +630,57 @@ body {
 
   margin: 0 5px;
 
-  border: 3px solid #76d900;
+  border: 3px solid #e1b447;
+
   font-size: 20px;
 
-  color: white;
+  color: #ffffff;
 
   background:
     radial-gradient(
       circle at 30% 30%,
-      #202520 0%,
-      #0c0f0c 60%,
-      #020302 100%
+      #17456a 0%,
+      #0b2944 48%,
+      #061525 72%,
+      #02070d 100%
     );
 
   flex-shrink: 0;
 
   box-shadow:
-    0 0 8px rgba(105,220,0,0.25);
+    0 0 6px rgba(218, 170, 55, .20),
+    inset 0 0 10px rgba(55, 160, 220, .20);
 }
+
+
+/* =========================================================
+   CENTER 20 ACTIVE
+========================================================= */
 
 .center-20.active {
   background:
     radial-gradient(
       circle at 30% 30%,
-      #f7ff78 0%,
-      #bde500 28%,
-      #4d8c00 55%,
-      #142700 76%,
-      #020302 100%
+      #fffdf1 0%,
+      #ffe9a0 20%,
+      #e8b83f 40%,
+      #2d8dbd 58%,
+      #0c4269 75%,
+      #03101e 100%
     );
 
-  border: 4px solid #efff55;
+  border: 4px solid #dffcff;
 
-  color: white;
+  color: #ffffff;
+
   transform: scale(1.12);
 
   box-shadow:
-    0 0 12px rgba(235,255,80,1),
-    0 0 28px rgba(185,235,0,1),
-    0 0 48px rgba(90,210,0,0.85);
+    0 0 10px rgba(235, 255, 255, 1),
+    0 0 22px rgba(140, 245, 255, .95),
+    0 0 42px rgba(50, 205, 255, .85),
+    0 0 68px rgba(0, 135, 255, .55),
+    inset 0 0 14px rgba(230, 255, 255, .70);
 
   animation: lorePulse 1.2s infinite;
 }
@@ -587,6 +704,7 @@ body {
       width="72"
       height="72"
     >
+
       <rect
         x="0"
         y="0"
@@ -613,6 +731,7 @@ body {
         preserveAspectRatio="xMidYMid meet"
         style="filter:brightness(0);"
       />
+
     </mask>
   </defs>
 </svg>
@@ -639,10 +758,13 @@ body {
           Player 1
         </div>
 
+
         <div class="header-game-icons p1-header-games">
 
           <div id="p1g1" class="tick">
+
             <div class="empty-outline">
+
               <svg viewBox="0 0 72 72">
                 <rect
                   x="0"
@@ -653,16 +775,21 @@ body {
                   mask="url(#illuminaryOutlineMask)"
                 />
               </svg>
+
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
+
           </div>
 
+
           <div id="p1g2" class="tick">
+
             <div class="empty-outline">
+
               <svg viewBox="0 0 72 72">
                 <rect
                   x="0"
@@ -673,15 +800,18 @@ body {
                   mask="url(#illuminaryOutlineMask)"
                 />
               </svg>
+
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
+
           </div>
 
         </div>
+
 
         <div class="center-match-info">
 
@@ -703,10 +833,13 @@ body {
 
         </div>
 
+
         <div class="header-game-icons p2-header-games">
 
           <div id="p2g1" class="tick">
+
             <div class="empty-outline">
+
               <svg viewBox="0 0 72 72">
                 <rect
                   x="0"
@@ -717,16 +850,21 @@ body {
                   mask="url(#illuminaryOutlineMask)"
                 />
               </svg>
+
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
+
           </div>
 
+
           <div id="p2g2" class="tick">
+
             <div class="empty-outline">
+
               <svg viewBox="0 0 72 72">
                 <rect
                   x="0"
@@ -737,15 +875,18 @@ body {
                   mask="url(#illuminaryOutlineMask)"
                 />
               </svg>
+
             </div>
 
             <img
               class="win-fill"
               src="./Illuminary%20Icon_White.png"
             >
+
           </div>
 
         </div>
+
 
         <div
           class="center-player-name p2-center-name"
@@ -756,11 +897,14 @@ body {
 
       </div>
 
+
       <div class="track-area">
+
         <div
           class="lore-track"
           id="loreTrack"
         ></div>
+
       </div>
 
     </div>
@@ -774,13 +918,17 @@ body {
 
 import {
   initializeApp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
 
 import {
   getDatabase,
   ref,
   onValue
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
@@ -789,15 +937,24 @@ const firebaseConfig = {
   projectId: "lore-counter-4e654"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+
+const app =
+  initializeApp(firebaseConfig);
+
+
+const db =
+  getDatabase(app);
+
 
 let p1Lore = 0;
 let p2Lore = 0;
+
 let p1Games = 0;
 let p2Games = 0;
+
 let lastP1Games = 0;
 let lastP2Games = 0;
+
 
 let timerData = {
   roundName: "Round 1",
@@ -806,14 +963,25 @@ let timerData = {
   startedAt: 0
 };
 
-const loreTrack = document.getElementById("loreTrack");
 
-function createLorePoint(number, player) {
-  const point = document.createElement("div");
+const loreTrack =
+  document.getElementById("loreTrack");
 
-  point.className = "lore-point";
 
-  point.textContent = number;
+function createLorePoint(
+  number,
+  player
+) {
+
+  const point =
+    document.createElement("div");
+
+  point.className =
+    "lore-point";
+
+  point.textContent =
+    number;
+
 
   if (
     player === "p1" &&
@@ -822,12 +990,14 @@ function createLorePoint(number, player) {
     point.classList.add("active");
   }
 
+
   if (
     player === "p2" &&
     p2Lore === number
   ) {
     point.classList.add("active");
   }
+
 
   return point;
 }
@@ -836,6 +1006,7 @@ function createLorePoint(number, player) {
 function renderLoreTrack() {
 
   loreTrack.innerHTML = "";
+
 
   for (
     let i = 0;
@@ -878,6 +1049,7 @@ function renderLoreTrack() {
       createLorePoint(i, "p2")
     );
   }
+
 }
 
 
@@ -903,6 +1075,7 @@ function renderGameIcons(
     wins >= 1
   );
 
+
   game2.classList.toggle(
     "filled",
     wins >= 2
@@ -916,25 +1089,22 @@ function renderGameIcons(
         ? game1
         : game2;
 
-    target.classList.remove(
-      "pulse"
-    );
+    target.classList.remove("pulse");
 
     void target.offsetWidth;
 
-    target.classList.add(
-      "pulse"
-    );
+    target.classList.add("pulse");
+
 
     setTimeout(
       () => {
-        target.classList.remove(
-          "pulse"
-        );
+        target.classList.remove("pulse");
       },
       350
     );
+
   }
+
 }
 
 
@@ -951,9 +1121,7 @@ function formatTime(
     );
 
   const minutes =
-    Math.floor(
-      safe / 60
-    );
+    Math.floor(safe / 60);
 
   const seconds =
     safe % 60;
@@ -961,9 +1129,9 @@ function formatTime(
   return (
     minutes +
     ":" +
-    String(seconds)
-      .padStart(2, "0")
+    String(seconds).padStart(2, "0")
   );
+
 }
 
 
@@ -975,14 +1143,10 @@ function getTimerRemaining() {
     );
 
   const running =
-    Boolean(
-      timerData.running
-    );
+    Boolean(timerData.running);
 
   const startedAt =
-    Number(
-      timerData.startedAt ?? 0
-    );
+    Number(timerData.startedAt ?? 0);
 
 
   if (
@@ -992,10 +1156,7 @@ function getTimerRemaining() {
 
     const elapsed =
       Math.floor(
-        (
-          Date.now() -
-          startedAt
-        ) / 1000
+        (Date.now() - startedAt) / 1000
       );
 
     remaining =
@@ -1003,6 +1164,7 @@ function getTimerRemaining() {
         0,
         remaining - elapsed
       );
+
   }
 
   return remaining;
@@ -1018,11 +1180,13 @@ function renderTimer() {
         getTimerRemaining()
       );
 
+
   document
     .getElementById("roundName")
     .textContent =
       timerData.roundName ||
       "Round 1";
+
 }
 
 
@@ -1032,11 +1196,10 @@ onValue(
   snapshot => {
 
     p1Lore =
-      Number(
-        snapshot.val()
-      ) || 0;
+      Number(snapshot.val()) || 0;
 
     renderLoreTrack();
+
   }
 );
 
@@ -1047,11 +1210,10 @@ onValue(
   snapshot => {
 
     p2Lore =
-      Number(
-        snapshot.val()
-      ) || 0;
+      Number(snapshot.val()) || 0;
 
     renderLoreTrack();
+
   }
 );
 
@@ -1062,9 +1224,7 @@ onValue(
   snapshot => {
 
     p1Games =
-      Number(
-        snapshot.val()
-      ) || 0;
+      Number(snapshot.val()) || 0;
 
     renderGameIcons(
       "p1",
@@ -1074,6 +1234,7 @@ onValue(
 
     lastP1Games =
       p1Games;
+
   }
 );
 
@@ -1084,9 +1245,7 @@ onValue(
   snapshot => {
 
     p2Games =
-      Number(
-        snapshot.val()
-      ) || 0;
+      Number(snapshot.val()) || 0;
 
     renderGameIcons(
       "p2",
@@ -1096,6 +1255,7 @@ onValue(
 
     lastP2Games =
       p2Games;
+
   }
 );
 
@@ -1113,8 +1273,8 @@ onValue(
     document
       .getElementById("p1Name")
       .textContent =
-        name ||
-        "Player 1";
+        name || "Player 1";
+
   }
 );
 
@@ -1132,8 +1292,8 @@ onValue(
     document
       .getElementById("p2Name")
       .textContent =
-        name ||
-        "Player 2";
+        name || "Player 2";
+
   }
 );
 
@@ -1152,6 +1312,7 @@ onValue(
       };
 
     renderTimer();
+
   }
 );
 
@@ -1164,17 +1325,20 @@ setInterval(
 
 renderLoreTrack();
 
+
 renderGameIcons(
   "p1",
   p1Games,
   p1Games
 );
 
+
 renderGameIcons(
   "p2",
   p2Games,
   p2Games
 );
+
 
 renderTimer();
 
