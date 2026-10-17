@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lorcana Tournament Overlay</title>
+
 <style>
 * {
   box-sizing: border-box;
@@ -36,7 +37,9 @@ html, body {
   transform-origin: top left;
 }
 
-/* 320PX SIDES */
+/* =========================
+   320PX SIDE LAYOUT
+========================= */
 
 .side {
   position: absolute;
@@ -46,10 +49,17 @@ html, body {
   display: flex;
 }
 
-.side.left { left: 0; }
-.side.right { right: 0; }
+.side.left {
+  left: 0;
+}
 
-/* GOLD PANELS */
+.side.right {
+  right: 0;
+}
+
+/* =========================
+   GOLD PLAYER PANELS
+========================= */
 
 .panel {
   position: relative;
@@ -57,6 +67,7 @@ html, body {
   height: 1080px;
   flex-shrink: 0;
   overflow: hidden;
+
   border: 2px solid #f8dc82;
 
   background:
@@ -92,13 +103,16 @@ html, body {
   pointer-events: none;
 }
 
-/* VERTICAL LORE TRACKS */
+/* =========================
+   VERTICAL LORE TRACKERS
+========================= */
 
 .track {
   position: relative;
   width: 80px;
   height: 1080px;
   flex-shrink: 0;
+
   border-left: 2px solid #f0c85b;
   border-right: 2px solid #f0c85b;
 
@@ -128,12 +142,14 @@ html, body {
   bottom: 0;
   left: 7px;
   right: 7px;
+
   border-left: 1px solid rgba(240,200,91,.55);
   border-right: 1px solid rgba(240,200,91,.55);
+
   pointer-events: none;
 }
 
-/* 30PX TOP AND BOTTOM SPACING */
+/* LORE POSITIONING */
 
 .markers {
   position: absolute;
@@ -148,8 +164,10 @@ html, body {
   left: 50%;
   width: 44px;
   height: 44px;
+
   transform: translate(-50%,-50%);
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,7 +184,9 @@ html, body {
   color: white;
   font-size: 16px;
   font-weight: bold;
-  text-shadow: 0 1px 3px rgba(0,0,0,.95);
+
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.95);
 
   box-shadow:
     inset 0 0 8px rgba(65,165,225,.08),
@@ -192,12 +212,11 @@ html, body {
     inset 0 0 12px rgba(70,180,235,.18);
 }
 
-/* ACTIVE LORE - NOW LARGER */
+/* ACTIVE LORE - 1.40X */
 
 .marker.current {
   z-index: 5;
 
-  /* CHANGED FROM 1.14 TO 1.27 */
   transform:
     translate(-50%,-50%) scale(1.40);
 
@@ -214,7 +233,10 @@ html, body {
 
   border: 4px solid #dffcff;
   color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,.95);
+
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.95);
+
   animation: lorePulse 1.2s infinite;
 }
 
@@ -238,13 +260,16 @@ html, body {
   }
 }
 
-/* PLAYER INFORMATION */
+/* =========================
+   PLAYER INFORMATION
+========================= */
 
 .player-info {
   position: absolute;
   top: 296px;
   left: 9px;
   right: 9px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -257,6 +282,7 @@ html, body {
   font-size: 25px;
   font-weight: 800;
   color: white;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -273,7 +299,9 @@ html, body {
   font-weight: 800;
   color: #123150;
   letter-spacing: 1px;
-  text-shadow: 0 1px 1px rgba(255,255,255,.45);
+
+  text-shadow:
+    0 1px 1px rgba(255,255,255,.45);
 }
 
 /* INK COMBINATIONS */
@@ -288,9 +316,11 @@ html, body {
 .ink-placeholder {
   width: 108px;
   height: 108px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: white;
   font-size: 14px;
 }
@@ -310,7 +340,10 @@ html, body {
   height: 85px;
   object-fit: contain;
   opacity: .32;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,.65));
+
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,.65));
+
   transition: opacity .15s;
 }
 
@@ -327,39 +360,52 @@ html, body {
 }
 
 @keyframes gamePulse {
-  50% { transform: scale(1.14); }
+  50% {
+    transform: scale(1.14);
+  }
 }
 
-/* PURPLE DISNEY LORCANA LOGOS */
+/* PURPLE DISNEY LOGOS */
 
 .lorcana-logo {
   position: absolute;
   bottom: 20px;
   left: 50%;
+
   transform: translateX(-50%);
+
   width: 216px;
   height: 125px;
+
   object-fit: contain;
   object-position: center bottom;
+
   pointer-events: none;
 }
 
-/* ROUND AND TIMER */
+/* =========================
+   NEW SMALLER TIMER
+   WIDTH: 220PX
+   HEIGHT: 90PX
+========================= */
 
 .timer-box {
   position: absolute;
   top: 3px;
   left: 50%;
+
   transform: translateX(-50%);
-  width: 260px;
-  height: 108px;
+
+  width: 220px;
+  height: 90px;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   text-align: center;
-  padding: 7px 14px 9px;
+  padding: 6px 12px 8px;
 
   background:
     radial-gradient(
@@ -403,7 +449,7 @@ html, body {
 }
 
 .round-name {
-  font-size: 32px;
+  font-size: 27px;
   line-height: 1.05;
   max-width: 100%;
   overflow: hidden;
@@ -411,14 +457,16 @@ html, body {
 }
 
 .time {
-  font-size: 54px;
+  font-size: 46px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
+
 </style>
 </head>
 
 <body>
+
 <div id="viewport">
 <div class="overlay" id="overlay">
 
@@ -529,7 +577,7 @@ html, body {
     </div>
   </div>
 
-  <!-- TIMER -->
+  <!-- ROUND + TIMER -->
 
   <div class="timer-box">
     <div id="roundName" class="round-name">
@@ -544,6 +592,7 @@ html, body {
 </div>
 
 <script type="module">
+
 import {
   initializeApp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -564,11 +613,13 @@ const config = {
 
 const app = initializeApp(config);
 const db = getDatabase(app);
+
 const $ = id => document.getElementById(id);
 
-/* FIT 1920 X 1080 OVERLAY */
+/* FIT TO SCREEN AT 1920 X 1080 */
 
 function fitOverlay() {
+
   const scale = Math.min(
     window.innerWidth / 1920,
     window.innerHeight / 1080
@@ -587,10 +638,12 @@ function fitOverlay() {
 window.addEventListener("resize", fitOverlay);
 fitOverlay();
 
-/* BUILD LORE TRACKERS */
+/* LORE TRACKERS */
 
 function buildTrack(container) {
+
   for (let i = 20; i >= 0; i--) {
+
     const marker = document.createElement("div");
     marker.className = "marker";
     marker.textContent = i;
@@ -606,23 +659,25 @@ function buildTrack(container) {
 buildTrack($("leftTrack"));
 buildTrack($("rightTrack"));
 
-/* LIVE LORE */
-
 function showLore(container, raw) {
+
   const value = Math.max(
     0,
     Math.min(20, Math.floor(Number(raw) || 0))
   );
 
   for (const marker of container.children) {
+
     const number = Number(marker.dataset.lore);
 
     marker.classList.toggle(
-      "lit", number <= value
+      "lit",
+      number <= value
     );
 
     marker.classList.toggle(
-      "current", number === value
+      "current",
+      number === value
     );
   }
 }
@@ -635,7 +690,7 @@ onValue(ref(db, "p2"), snapshot => {
   showLore($("rightTrack"), snapshot.val());
 });
 
-/* INK IMAGES */
+/* INK COMBINATIONS */
 
 const validImages = new Set([
   "amber amethyst.png",
@@ -656,12 +711,15 @@ const validImages = new Set([
 ]);
 
 function showInk(player, filename) {
+
   const image = $(player + "InkImage");
   const placeholder = $(player + "InkPlaceholder");
 
   if (!validImages.has(filename)) {
+
     image.removeAttribute("src");
     image.style.display = "none";
+
     placeholder.textContent = "Select inks";
     placeholder.style.display = "flex";
     return;
@@ -694,11 +752,14 @@ onValue(ref(db, "p2Ink"), snapshot => {
 /* GAME WIN ICONS */
 
 function renderGames(player, raw) {
+
   const wins = Math.max(
-    0, Math.min(2, Number(raw) || 0)
+    0,
+    Math.min(2, Number(raw) || 0)
   );
 
   for (let i = 1; i <= 2; i++) {
+
     const icon = $(player + "g" + i);
 
     const newlyWon =
@@ -708,6 +769,7 @@ function renderGames(player, raw) {
     icon.classList.toggle("won", wins >= i);
 
     if (newlyWon) {
+
       icon.classList.remove("just-won");
       void icon.offsetWidth;
       icon.classList.add("just-won");
@@ -727,12 +789,14 @@ onValue(ref(db, "p2Games"), snapshot => {
   renderGames("p2", snapshot.val());
 });
 
-/* NAMES AND RECORDS */
+/* PLAYER NAMES + RECORDS */
 
 for (const player of ["p1", "p2"]) {
+
   onValue(
     ref(db, player + "Name"),
     snapshot => {
+
       const name =
         String(snapshot.val() ?? "").trim();
 
@@ -745,6 +809,7 @@ for (const player of ["p1", "p2"]) {
   onValue(
     ref(db, player + "Record"),
     snapshot => {
+
       const record =
         String(snapshot.val() ?? "").trim();
 
@@ -756,7 +821,7 @@ for (const player of ["p1", "p2"]) {
   );
 }
 
-/* ROUND AND TIMER */
+/* ROUND + TIMER */
 
 let timerState = {
   roundName: "Round 1",
@@ -766,9 +831,12 @@ let timerState = {
 };
 
 function renderTimer() {
+
   const base = Math.max(
     0,
-    Math.floor(Number(timerState.remaining) || 0)
+    Math.floor(
+      Number(timerState.remaining) || 0
+    )
   );
 
   const startedAt =
@@ -778,11 +846,14 @@ function renderTimer() {
     timerState.running && startedAt > 0
       ? Math.max(
           0,
-          Math.floor((Date.now() - startedAt) / 1000)
+          Math.floor(
+            (Date.now() - startedAt) / 1000
+          )
         )
       : 0;
 
-  const remaining = Math.max(0, base - elapsed);
+  const remaining =
+    Math.max(0, base - elapsed);
 
   $("roundName").textContent =
     timerState.roundName || "Round 1";
@@ -793,17 +864,20 @@ function renderTimer() {
 }
 
 onValue(ref(db, "timer"), snapshot => {
+
   timerState = snapshot.val() || {
     roundName: "Round 1",
     remaining: 3600,
     running: false,
     startedAt: 0
   };
+
   renderTimer();
 });
 
 setInterval(renderTimer, 250);
 renderTimer();
+
 </script>
 </body>
 </html>
