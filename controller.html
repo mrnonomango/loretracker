@@ -1,382 +1,417 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Lorcana Controller</title>
+<meta charset="UTF-8">
+<title>Lorcana Player Controller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <meta name="viewport" content="
-    width=device-width,
-    initial-scale=1.0,
-    maximum-scale=1.0,
-    user-scalable=no
-  ">
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  <style>
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color: transparent;
-      user-select:none;
-    }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+  color: white;
+  font-family: Arial, sans-serif;
+}
 
-    body{
-      margin:0;
-      width:100vw;
-      height:100vh;
-      overflow:hidden;
-      background:#111;
-      color:white;
-      font-family:Arial, sans-serif;
-      display:flex;
-      flex-direction:column;
-      touch-action:manipulation;
-    }
+body {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  touch-action: manipulation;
+}
 
-    .playerHalf{
-      flex:1;
-      min-height:0;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      padding:2px 6px;
-      gap:0;
-    }
+.playerHalf {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1px, 0.4vh, 4px);
+  padding: 3px 8px;
+}
 
-    .topHalf{
-      transform:rotate(180deg);
-      border-bottom:2px solid #333;
-    }
+.topHalf {
+  transform: rotate(180deg);
+  border-bottom: 2px solid #333;
+}
 
-    .roundTimerBox{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      margin-bottom:1px;
-      padding:2px 10px;
-      border:2px solid #555;
-      border-radius:10px;
-      background:#181818;
-    }
+/* TIMER */
 
-    .roundTimerName{
-      font-size:15px;
-      font-weight:bold;
-      color:#ddd;
-      white-space:nowrap;
-      line-height:1;
-    }
+.roundTimerBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: min(94%, 270px);
+  padding: 3px 8px;
+  border: 2px solid #555;
+  border-radius: 10px;
+  background: #181818;
+  flex-shrink: 0;
+}
 
-    .roundTimerTime{
-      text-align:center;
-      font-size:42px;
-      font-weight:bold;
-      color:white;
-      line-height:0.9;
-    }
+.roundTimerName {
+  font-size: clamp(11px, 1.6vh, 15px);
+  font-weight: bold;
+  color: #ddd;
+  white-space: nowrap;
+}
 
-    .smallText{
-      font-size:12px;
-      color:#aaa;
-      line-height:1;
-      font-weight:bold;
-    }
+.roundTimerTime {
+  font-size: clamp(24px, 4.2vh, 42px);
+  font-weight: bold;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
 
-    .playerLabel{
-      font-size:12px;
-      color:#aaa;
-      line-height:1;
-      font-weight:bold;
-    }
+/* LORE STACK */
 
-    .loreNumber{
-      font-size:70px;
-      font-weight:bold;
-      line-height:0.88;
-      color:white;
-    }
+.loreStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 280px);
+  flex-shrink: 0;
+  line-height: 1;
+}
 
-    .yourLore{
-      text-shadow:
-        0 0 7px rgba(0,140,255,0.95),
-        0 0 17px rgba(0,140,255,0.70),
-        0 0 30px rgba(0,90,255,0.45);
-    }
+.smallText {
+  font-size: clamp(9px, 1.35vh, 12px);
+  color: #aaa;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
 
-    .opponentLore{
-      text-shadow:
-        0 0 7px rgba(255,0,0,0.95),
-        0 0 17px rgba(255,0,0,0.70),
-        0 0 30px rgba(180,0,0,0.45);
-    }
+.loreNumber {
+  font-size: clamp(34px, 6vh, 60px);
+  font-weight: bold;
+  line-height: 0.95;
+}
 
-    .nameInput{
-      width:190px;
-      height:32px;
-      padding:3px;
-      font-size:18px;
-      border:none;
-      border-radius:8px;
-      text-align:center;
-      background:white;
-      color:black;
-      font-weight:bold;
-    }
+.opponentLore {
+  text-shadow:
+    0 0 7px rgba(255,0,0,0.95),
+    0 0 17px rgba(255,0,0,0.70),
+    0 0 30px rgba(180,0,0,0.45);
+}
 
-    .gameDots{
-      display:flex;
-      gap:6px;
-      margin:1px 0;
-    }
+.yourLore {
+  text-shadow:
+    0 0 7px rgba(0,140,255,0.95),
+    0 0 17px rgba(0,140,255,0.70),
+    0 0 30px rgba(0,90,255,0.45);
+}
 
-    .dot{
-      width:13px;
-      height:13px;
-      border:2px solid gold;
-      border-radius:50%;
-      background:transparent;
-    }
+.loreGap {
+  height: clamp(1px, 0.5vh, 6px);
+}
 
-    .buttonRow{
-      display:flex;
-      gap:8px;
-    }
+/* MAIN LORE BUTTONS */
 
-    .loreButton{
-      width:80px;
-      height:62px;
-      border:none;
-      border-radius:14px;
-      font-size:42px;
-      color:white;
-      font-weight:bold;
-      line-height:1;
-    }
+.loreButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min(94%, 270px);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  line-height: 1;
+  flex-shrink: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
 
-    .plusBtn{
-      background:green;
-    }
+.plusBtn {
+  background: #16852a;
+  height: clamp(44px, 8vh, 78px);
+  font-size: clamp(40px, 6.5vh, 64px);
+}
 
-    .minusBtn{
-      background:red;
-    }
+.minusBtn {
+  background: #b92828;
+  height: clamp(36px, 6vh, 60px);
+  font-size: clamp(36px, 5.4vh, 54px);
+}
 
-    .resetLoreBtn{
-      width:190px;
-      height:32px;
-      border:none;
-      border-radius:10px;
-      background:#7a2020;
-      color:white;
-      font-size:13px;
-      font-weight:bold;
-      margin-top:1px;
-      position:relative;
-      overflow:hidden;
-      flex-shrink:0;
-    }
+.loreButton:active {
+  filter: brightness(1.3);
+}
 
-    .resetFill{
-      position:absolute;
-      left:0;
-      top:0;
-      height:100%;
-      width:0%;
-      background:rgba(255,255,255,0.25);
-      transition:none;
-      z-index:1;
-    }
+/* PLAYER NAME */
 
-    .resetText{
-      position:relative;
-      z-index:2;
-    }
+.nameInput {
+  width: min(88%, 240px);
+  height: clamp(24px, 3.8vh, 34px);
+  padding: 3px 6px;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  color: black;
+  text-align: center;
+  font-size: clamp(13px, 2vh, 18px);
+  font-weight: bold;
+  flex-shrink: 0;
+  user-select: text;
+}
 
-    .gameButtonRow{
-      display:flex;
-      gap:6px;
-      margin-top:1px;
-      flex-shrink:0;
-    }
+.topNameInput {
+  transform: rotate(180deg);
+}
 
-    .gameBtn{
-      width:128px;
-      height:34px;
-      border:none;
-      border-radius:10px;
-      font-size:15px;
-      font-weight:bold;
-      color:white;
-    }
+/* GAME WIN INDICATORS */
 
-    .goldBtn{
-      background:#d4af37;
-      color:black;
-    }
+.gameDots {
+  display: flex;
+  gap: 8px;
+  margin: 2px 0;
+  flex-shrink: 0;
+}
 
-    .resetBtn{
-      background:#444;
-      color:white;
-    }
-  </style>
+.dot {
+  width: clamp(10px, 1.7vh, 14px);
+  height: clamp(10px, 1.7vh, 14px);
+  border: 2px solid gold;
+  border-radius: 50%;
+  background: transparent;
+}
+
+/* RESET LORE */
+
+.resetLoreBtn {
+  position: relative;
+  overflow: hidden;
+  width: min(88%, 240px);
+  height: clamp(24px, 3.5vh, 32px);
+  border: none;
+  border-radius: 9px;
+  background: #7a2020;
+  color: white;
+  font-size: clamp(11px, 1.6vh, 13px);
+  font-weight: bold;
+  flex-shrink: 0;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.resetFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: rgba(255,255,255,0.25);
+  z-index: 1;
+}
+
+.resetText {
+  position: relative;
+  z-index: 2;
+}
+
+/* GAME CONTROLS */
+
+.gameButtonRow {
+  display: flex;
+  justify-content: center;
+  width: min(94%, 270px);
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.gameBtn {
+  flex: 1;
+  min-width: 0;
+  height: clamp(26px, 4vh, 34px);
+  border: none;
+  border-radius: 9px;
+  font-size: clamp(11px, 1.7vh, 15px);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.goldBtn {
+  background: #d4af37;
+  color: black;
+}
+
+.resetBtn {
+  background: #444;
+  color: white;
+}
+
+/* SHORT PHONE SCREENS */
+
+@media (max-height: 700px) {
+  .playerHalf {
+    gap: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+
+  .roundTimerBox {
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+
+  .gameDots {
+    margin: 0;
+  }
+}
+
+@media (max-height: 560px) {
+  .plusBtn {
+    height: 36px;
+    font-size: 36px;
+  }
+
+  .minusBtn {
+    height: 30px;
+    font-size: 30px;
+  }
+
+  .loreNumber {
+    font-size: 30px;
+  }
+
+  .roundTimerTime {
+    font-size: 23px;
+  }
+
+  .nameInput {
+    height: 22px;
+  }
+
+  .resetLoreBtn {
+    height: 22px;
+  }
+
+  .gameBtn {
+    height: 24px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- TOP PLAYER -->
-  <div class="playerHalf topHalf">
+<!-- PLAYER 2 - TOP -->
 
-    <div class="roundTimerBox">
-      <div id="roundNameTop" class="roundTimerName">Round 1</div>
-      <div id="roundTimeTop" class="roundTimerTime">55:00</div>
-    </div>
+<div class="playerHalf topHalf">
 
-    <div class="smallText">Opponent Lore</div>
+  <div class="roundTimerBox">
+    <div id="roundNameTop" class="roundTimerName">Round 1</div>
+    <div id="roundTimeTop" class="roundTimerTime">55:00</div>
+  </div>
 
+  <div class="loreStack">
+    <div class="smallText">OPPONENT LORE</div>
     <div id="p1_top" class="loreNumber opponentLore">0</div>
 
-    <div style="text-align:center;">
+    <div class="loreGap"></div>
 
-      <div class="playerLabel">Player 2</div>
-
-      <div class="smallText">YOUR LORE</div>
-
-      <div id="p2" class="loreNumber yourLore">0</div>
-
-    </div>
-
-    <input
-      id="p2NameInput"
-      class="nameInput"
-      value="Player 2"
-      style="transform:rotate(180deg);"
-    >
-
-    <div class="gameDots">
-      <div id="p2g1" class="dot"></div>
-      <div id="p2g2" class="dot"></div>
-    </div>
-
-    <div class="buttonRow">
-
-      <button class="loreButton minusBtn" onclick="updateLore('p2',-1)">
-        -
-      </button>
-
-      <button class="loreButton plusBtn" onclick="updateLore('p2',1)">
-        +
-      </button>
-
-    </div>
-
-    <button
-      class="resetLoreBtn"
-      onmousedown="startResetHold()"
-      onmouseup="cancelResetHold()"
-      onmouseleave="cancelResetHold()"
-      ontouchstart="startResetHold()"
-      ontouchend="cancelResetHold()"
-    >
-
-      <div class="resetFill" id="resetFill1"></div>
-
-      <span class="resetText" id="resetText1">
-        Hold To Reset Lore
-      </span>
-
-    </button>
-
-    <div class="gameButtonRow">
-
-      <button class="gameBtn goldBtn" onclick="addGameWin('p2')">
-        Add Win
-      </button>
-
-      <button class="gameBtn resetBtn" onclick="resetGames()">
-        Reset Games
-      </button>
-
-    </div>
-
+    <div class="smallText">YOUR LORE</div>
+    <div id="p2" class="loreNumber yourLore">0</div>
   </div>
 
-  <!-- BOTTOM PLAYER -->
-  <div class="playerHalf">
+  <button class="loreButton plusBtn" onclick="updateLore('p2',1)">+</button>
 
-    <div class="roundTimerBox">
-      <div id="roundNameBottom" class="roundTimerName">Round 1</div>
-      <div id="roundTimeBottom" class="roundTimerTime">55:00</div>
-    </div>
+  <button class="loreButton minusBtn" onclick="updateLore('p2',-1)">−</button>
 
-    <div class="smallText">Opponent Lore</div>
+  <input
+    id="p2NameInput"
+    class="nameInput topNameInput"
+    value="Player 2"
+    aria-label="Player 2 name"
+  >
 
+  <div class="gameDots">
+    <div id="p2g1" class="dot"></div>
+    <div id="p2g2" class="dot"></div>
+  </div>
+
+  <button class="resetLoreBtn" type="button">
+    <div class="resetFill" id="resetFill1"></div>
+    <span class="resetText" id="resetText1">Hold To Reset Lore</span>
+  </button>
+
+  <div class="gameButtonRow">
+    <button class="gameBtn goldBtn" onclick="addGameWin('p2')">
+      Add Win
+    </button>
+
+    <button class="gameBtn resetBtn" onclick="resetGames()">
+      Reset Games
+    </button>
+  </div>
+
+</div>
+
+<!-- PLAYER 1 - BOTTOM -->
+
+<div class="playerHalf">
+
+  <div class="roundTimerBox">
+    <div id="roundNameBottom" class="roundTimerName">Round 1</div>
+    <div id="roundTimeBottom" class="roundTimerTime">55:00</div>
+  </div>
+
+  <div class="loreStack">
+    <div class="smallText">OPPONENT LORE</div>
     <div id="p2_bottom" class="loreNumber opponentLore">0</div>
 
-    <div style="text-align:center;">
+    <div class="loreGap"></div>
 
-      <div class="playerLabel">Player 1</div>
-
-      <div class="smallText">YOUR LORE</div>
-
-      <div id="p1" class="loreNumber yourLore">0</div>
-
-    </div>
-
-    <input
-      id="p1NameInput"
-      class="nameInput"
-      value="Player 1"
-    >
-
-    <div class="gameDots">
-      <div id="p1g1" class="dot"></div>
-      <div id="p1g2" class="dot"></div>
-    </div>
-
-    <div class="buttonRow">
-
-      <button class="loreButton minusBtn" onclick="updateLore('p1',-1)">
-        -
-      </button>
-
-      <button class="loreButton plusBtn" onclick="updateLore('p1',1)">
-        +
-      </button>
-
-    </div>
-
-    <button
-      class="resetLoreBtn"
-      onmousedown="startResetHold()"
-      onmouseup="cancelResetHold()"
-      onmouseleave="cancelResetHold()"
-      ontouchstart="startResetHold()"
-      ontouchend="cancelResetHold()"
-    >
-
-      <div class="resetFill" id="resetFill2"></div>
-
-      <span class="resetText" id="resetText2">
-        Hold To Reset Lore
-      </span>
-
-    </button>
-
-    <div class="gameButtonRow">
-
-      <button class="gameBtn goldBtn" onclick="addGameWin('p1')">
-        Add Win
-      </button>
-
-      <button class="gameBtn resetBtn" onclick="resetGames()">
-        Reset Games
-      </button>
-
-    </div>
-
+    <div class="smallText">YOUR LORE</div>
+    <div id="p1" class="loreNumber yourLore">0</div>
   </div>
 
-<script type="module">
+  <button class="loreButton plusBtn" onclick="updateLore('p1',1)">+</button>
 
+  <button class="loreButton minusBtn" onclick="updateLore('p1',-1)">−</button>
+
+  <input
+    id="p1NameInput"
+    class="nameInput"
+    value="Player 1"
+    aria-label="Player 1 name"
+  >
+
+  <div class="gameDots">
+    <div id="p1g1" class="dot"></div>
+    <div id="p1g2" class="dot"></div>
+  </div>
+
+  <button class="resetLoreBtn" type="button">
+    <div class="resetFill" id="resetFill2"></div>
+    <span class="resetText" id="resetText2">Hold To Reset Lore</span>
+  </button>
+
+  <div class="gameButtonRow">
+    <button class="gameBtn goldBtn" onclick="addGameWin('p1')">
+      Add Win
+    </button>
+
+    <button class="gameBtn resetBtn" onclick="resetGames()">
+      Reset Games
+    </button>
+  </div>
+
+</div>
+
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
@@ -384,9 +419,8 @@ import {
   ref,
   set,
   onValue,
-  get
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
@@ -395,10 +429,8 @@ const firebaseConfig = {
   projectId: "lore-counter-4e654"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
 
 const p1Ref = ref(db, "p1");
 const p2Ref = ref(db, "p2");
@@ -411,10 +443,8 @@ const p2NameRef = ref(db, "p2Name");
 
 const timerRef = ref(db, "timer");
 
-
 const DEFAULT_RESET = 3300;
 const DEFAULT_ROUND_NAME = "Round 1";
-
 
 let timerData = {
   roundName: DEFAULT_ROUND_NAME,
@@ -423,78 +453,42 @@ let timerData = {
   startedAt: 0
 };
 
+/* ROUND TIMER */
 
-let resetTimer;
-let fillInterval;
-
-
-/* ----------------------------
-   ROUND TIMER
------------------------------ */
-
-function formatTime(totalSeconds){
-
-  const safe = Math.max(
-    0,
-    Math.floor(Number(totalSeconds) || 0)
-  );
-
+function formatTime(totalSeconds) {
+  const safe = Math.max(0, Math.floor(Number(totalSeconds) || 0));
   const minutes = Math.floor(safe / 60);
   const seconds = safe % 60;
 
-  return `${minutes}:${String(seconds).padStart(2,"0")}`;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+function getTimerRemaining() {
+  let remaining = Number(timerData.remaining ?? DEFAULT_RESET);
 
-function getTimerRemaining(){
+  if (timerData.running && Number(timerData.startedAt) > 0) {
+    const elapsed = Math.floor(
+      (Date.now() - Number(timerData.startedAt)) / 1000
+    );
 
-  let remaining =
-    Number(timerData.remaining ?? DEFAULT_RESET);
-
-  const running =
-    Boolean(timerData.running);
-
-  const startedAt =
-    Number(timerData.startedAt ?? 0);
-
-  if(running && startedAt > 0){
-
-    const elapsed =
-      Math.floor((Date.now() - startedAt) / 1000);
-
-    remaining =
-      Math.max(0, remaining - elapsed);
+    remaining = Math.max(0, remaining - elapsed);
   }
 
   return remaining;
 }
 
+function renderRoundTimer() {
+  const formatted = formatTime(getTimerRemaining());
+  const roundName = timerData.roundName || DEFAULT_ROUND_NAME;
 
-function renderRoundTimer(){
+  document.getElementById("roundTimeTop").textContent = formatted;
+  document.getElementById("roundTimeBottom").textContent = formatted;
 
-  const remaining = getTimerRemaining();
-
-  const formatted = formatTime(remaining);
-
-  const roundName =
-    timerData.roundName || DEFAULT_ROUND_NAME;
-
-  document.getElementById("roundTimeTop").textContent =
-    formatted;
-
-  document.getElementById("roundTimeBottom").textContent =
-    formatted;
-
-  document.getElementById("roundNameTop").textContent =
-    roundName;
-
-  document.getElementById("roundNameBottom").textContent =
-    roundName;
+  document.getElementById("roundNameTop").textContent = roundName;
+  document.getElementById("roundNameBottom").textContent = roundName;
 }
 
-
 onValue(timerRef, snap => {
-
   timerData = snap.val() || {
     roundName: DEFAULT_ROUND_NAME,
     remaining: DEFAULT_RESET,
@@ -505,20 +499,11 @@ onValue(timerRef, snap => {
   renderRoundTimer();
 });
 
+setInterval(renderRoundTimer, 250);
 
-setInterval(() => {
+/* GAME WIN DOTS */
 
-  renderRoundTimer();
-
-}, 250);
-
-
-/* ----------------------------
-   GAME WIN DOTS
------------------------------ */
-
-function renderDots(player, wins){
-
+function renderDots(player, wins) {
   document.getElementById(player + "g1").style.background =
     wins >= 1 ? "gold" : "transparent";
 
@@ -526,254 +511,189 @@ function renderDots(player, wins){
     wins >= 2 ? "gold" : "transparent";
 }
 
-
-/* ----------------------------
-   LORE LISTENERS
------------------------------ */
+/* FIREBASE LORE LISTENERS */
 
 onValue(p1Ref, snap => {
-
-  const v = snap.val() || 0;
-
-  document.getElementById("p1").innerText = v;
-  document.getElementById("p1_top").innerText = v;
+  const value = snap.val() || 0;
+  document.getElementById("p1").textContent = value;
+  document.getElementById("p1_top").textContent = value;
 });
-
 
 onValue(p2Ref, snap => {
-
-  const v = snap.val() || 0;
-
-  document.getElementById("p2").innerText = v;
-  document.getElementById("p2_bottom").innerText = v;
+  const value = snap.val() || 0;
+  document.getElementById("p2").textContent = value;
+  document.getElementById("p2_bottom").textContent = value;
 });
-
 
 onValue(p1GamesRef, snap => {
-
   renderDots("p1", snap.val() || 0);
-
 });
-
 
 onValue(p2GamesRef, snap => {
-
   renderDots("p2", snap.val() || 0);
-
 });
 
+/* PLAYER NAME AUTO SAVE */
 
-/* ----------------------------
-   PLAYER NAME AUTO SAVE
------------------------------ */
-
-const p1NameInput =
-  document.getElementById("p1NameInput");
-
-const p2NameInput =
-  document.getElementById("p2NameInput");
-
+const p1NameInput = document.getElementById("p1NameInput");
+const p2NameInput = document.getElementById("p2NameInput");
 
 onValue(p1NameRef, snap => {
+  const name = String(snap.val() || "").trim() || "Player 1";
 
-  const name =
-    String(snap.val() || "").trim() || "Player 1";
-
-  if(document.activeElement !== p1NameInput){
+  if (document.activeElement !== p1NameInput) {
     p1NameInput.value = name;
   }
-
 });
-
 
 onValue(p2NameRef, snap => {
+  const name = String(snap.val() || "").trim() || "Player 2";
 
-  const name =
-    String(snap.val() || "").trim() || "Player 2";
-
-  if(document.activeElement !== p2NameInput){
+  if (document.activeElement !== p2NameInput) {
     p2NameInput.value = name;
   }
-
 });
 
-
-async function savePlayerName(input, nameRef, defaultName){
-
+async function savePlayerName(input, nameRef, defaultName) {
   let name = input.value.trim();
 
-  if(!name){
-    name = defaultName;
-  }
+  if (!name) name = defaultName;
 
   input.value = name;
-
   await set(nameRef, name);
 }
 
-
 p1NameInput.addEventListener("blur", () => {
-
-  savePlayerName(
-    p1NameInput,
-    p1NameRef,
-    "Player 1"
-  );
-
+  savePlayerName(p1NameInput, p1NameRef, "Player 1");
 });
-
 
 p2NameInput.addEventListener("blur", () => {
-
-  savePlayerName(
-    p2NameInput,
-    p2NameRef,
-    "Player 2"
-  );
-
+  savePlayerName(p2NameInput, p2NameRef, "Player 2");
 });
 
-
-p1NameInput.addEventListener("keydown", event => {
-
-  if(event.key === "Enter"){
-
-    event.preventDefault();
-    p1NameInput.blur();
-
-  }
-
+[p1NameInput, p2NameInput].forEach(input => {
+  input.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      input.blur();
+    }
+  });
 });
 
+/* LORE BUTTONS */
 
-p2NameInput.addEventListener("keydown", event => {
+window.updateLore = async (player, change) => {
+  const loreRef = player === "p1" ? p1Ref : p2Ref;
 
-  if(event.key === "Enter"){
-
-    event.preventDefault();
-    p2NameInput.blur();
-
-  }
-
-});
-
-
-/* ----------------------------
-   LORE BUTTONS
------------------------------ */
-
-window.updateLore = async (p,c) => {
-
-  const r =
-    p === "p1"
-      ? p1Ref
-      : p2Ref;
-
-  let v =
-    (await get(r)).val() || 0;
-
-  v =
-    Math.max(
-      0,
-      Math.min(20, v + c)
-    );
-
-  set(r, v);
+  await runTransaction(loreRef, current => {
+    const value = Number(current) || 0;
+    return Math.max(0, Math.min(20, value + change));
+  });
 };
 
+/* HOLD TO RESET LORE */
 
-/* ----------------------------
-   HOLD TO RESET LORE
------------------------------ */
+let resetTimer = null;
+let fillInterval = null;
+let resetStartedAt = 0;
+let resetCompleted = false;
 
-window.startResetHold = () => {
+function updateResetDisplay(progress, label) {
+  const width = Math.max(0, Math.min(100, progress)) + "%";
 
-  let progress = 0;
+  document.getElementById("resetFill1").style.width = width;
+  document.getElementById("resetFill2").style.width = width;
 
-  document.getElementById("resetText1").innerText =
-    "Resetting...";
+  document.getElementById("resetText1").textContent = label;
+  document.getElementById("resetText2").textContent = label;
+}
 
-  document.getElementById("resetText2").innerText =
-    "Resetting...";
+function resetButtonDisplay() {
+  updateResetDisplay(0, "Hold To Reset Lore");
+}
 
-  fillInterval = setInterval(() => {
-
-    progress += 3;
-
-    document.getElementById("resetFill1").style.width =
-      progress + "%";
-
-    document.getElementById("resetFill2").style.width =
-      progress + "%";
-
-  }, 30);
-
-
-  resetTimer = setTimeout(() => {
-
-    set(p1Ref, 0);
-    set(p2Ref, 0);
-
-    resetButtons();
-
-  }, 1000);
-};
-
-
-window.cancelResetHold = () => {
-
+function cancelResetHold() {
   clearTimeout(resetTimer);
   clearInterval(fillInterval);
 
-  resetButtons();
-};
+  resetTimer = null;
+  fillInterval = null;
 
-
-function resetButtons(){
-
-  document.getElementById("resetFill1").style.width =
-    "0%";
-
-  document.getElementById("resetFill2").style.width =
-    "0%";
-
-  document.getElementById("resetText1").innerText =
-    "Hold To Reset Lore";
-
-  document.getElementById("resetText2").innerText =
-    "Hold To Reset Lore";
+  resetButtonDisplay();
 }
 
+function startResetHold() {
+  if (resetTimer !== null || resetCompleted) return;
 
-/* ----------------------------
-   GAME WINS
------------------------------ */
+  resetStartedAt = Date.now();
+  updateResetDisplay(0, "Resetting...");
 
-window.addGameWin = async p => {
+  fillInterval = setInterval(() => {
+    const elapsed = Date.now() - resetStartedAt;
+    updateResetDisplay(elapsed / 10, "Resetting...");
+  }, 30);
 
-  const r =
-    p === "p1"
-      ? p1GamesRef
-      : p2GamesRef;
+  resetTimer = setTimeout(async () => {
+    resetCompleted = true;
+    clearInterval(fillInterval);
 
-  let v =
-    (await get(r)).val() || 0;
+    fillInterval = null;
+    resetTimer = null;
 
-  set(
-    r,
-    Math.min(2, v + 1)
-  );
+    updateResetDisplay(100, "Lore Reset!");
+
+    try {
+      await Promise.all([
+        set(p1Ref, 0),
+        set(p2Ref, 0)
+      ]);
+    } catch (error) {
+      console.error("Unable to reset lore:", error);
+    }
+
+    resetButtonDisplay();
+  }, 1000);
+}
+
+document.querySelectorAll(".resetLoreBtn").forEach(button => {
+  button.addEventListener("pointerdown", event => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    resetCompleted = false;
+
+    if (button.setPointerCapture) {
+      button.setPointerCapture(event.pointerId);
+    }
+
+    startResetHold();
+  });
+
+  button.addEventListener("pointerup", cancelResetHold);
+  button.addEventListener("pointercancel", cancelResetHold);
+  button.addEventListener("lostpointercapture", cancelResetHold);
+});
+
+window.addEventListener("blur", cancelResetHold);
+
+/* GAME WINS */
+
+window.addEventListener("blur", cancelResetHold);
+
+window.addGameWin = async player => {
+  const gamesRef = player === "p1" ? p1GamesRef : p2GamesRef;
+
+  await runTransaction(gamesRef, current => {
+    const wins = Number(current) || 0;
+    return Math.min(2, wins + 1);
+  });
 };
 
-
-window.resetGames = () => {
-
-  set(p1GamesRef, 0);
-  set(p2GamesRef, 0);
-
+window.resetGames = async () => {
+  await Promise.all([
+    set(p1GamesRef, 0),
+    set(p2GamesRef, 0)
+  ]);
 };
-
 </script>
-
 </body>
 </html>
