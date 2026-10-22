@@ -167,7 +167,7 @@ input:focus {
   text-align: center;
 }
 
-/* CLICKABLE INK COLORS SELECTOR */
+/* INK COLORS */
 
 .inkField {
   margin-top: 11px;
@@ -207,7 +207,7 @@ input:focus {
   outline-offset: 2px;
 }
 
-/* POPUP GALLERY */
+/* INK POPUP */
 
 .inkModal {
   position: fixed;
@@ -471,12 +471,154 @@ input:focus {
   margin-top: 10px;
 }
 
+/* =========================
+   LEFT PANEL ARTWORK
+   OVERLAYHUB-STYLE GALLERY
+========================= */
+
+.artworkSection {
+  border-color: #b99445;
+}
+
+.artworkDescription {
+  font-size: 12px;
+  color: #b9c9d6;
+  margin-bottom: 12px;
+}
+
+.artworkModes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.artworkMode {
+  height: 43px;
+  border: 1px solid #c39a3e;
+  border-radius: 8px;
+  background: #234563;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.artworkMode.active {
+  background: #b99a50;
+  color: #080d14;
+}
+
+.cardSearchArea {
+  display: none;
+}
+
+.cardSearchArea.open {
+  display: block;
+}
+
+.cardSearchInput {
+  width: 100%;
+  height: 45px;
+  margin-bottom: 7px;
+  border: 2px solid #c9a444;
+  border-radius: 9px;
+}
+
+.cardSearchBtn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 9px;
+  background: #d6af40;
+  color: #111;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.cardSearchBtn:disabled {
+  opacity: .55;
+}
+
+/* COMPACT CARD GALLERY */
+
+.cardResults {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fill,minmax(88px,1fr));
+  gap: 8px;
+  margin-top: 16px;
+  width: 100%;
+  align-items: start;
+}
+
+.cardChoice {
+  min-width: 0;
+  padding: 5px;
+  border: 2px solid #98762f;
+  border-radius: 8px;
+  background: #0c1929;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+.cardChoice:hover {
+  border-color: #f0c85b;
+}
+
+.cardChoice.active {
+  border-color: #f0c85b;
+  box-shadow: 0 0 9px rgba(240,200,91,.55);
+}
+
+.cardChoice img {
+  display: block;
+  width: 100%;
+  height: 119px;
+  object-fit: contain;
+}
+
+.cardChoice span {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  overflow: hidden;
+  width: 100%;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.cardSearchStatus {
+  font-size: 12px;
+  text-align: center;
+  color: #b9c9d6;
+  margin-top: 11px;
+  min-height: 17px;
+}
+
 @media(max-width:370px) {
   .inkImageGrid {
     gap: 4px;
   }
+
   .inkImageOption {
     padding: 2px;
+  }
+
+  .cardResults {
+    grid-template-columns:
+      repeat(auto-fill,minmax(76px,1fr));
+    gap: 6px;
+  }
+
+  .cardChoice img {
+    height: 106px;
   }
 }
 
@@ -484,15 +626,19 @@ input:focus {
   body {
     padding: 7px;
   }
+
   .player {
     padding: 10px;
   }
+
   .controlsRow {
     gap: 7px;
   }
+
   .loreBtn {
     font-size: 26px;
   }
+
   .timerInputs {
     grid-template-columns: 1fr 90px;
   }
@@ -511,9 +657,9 @@ input:focus {
 <!-- PLAYER 2 -->
 
 <div class="player p2">
-
   <div class="playerHeader">
     <div class="playerTitle">PLAYER 2</div>
+
     <div class="loreDisplay">
       <span class="loreLabel">LORE</span>
       <span id="p2Lore" class="loreNumber">0</span>
@@ -525,19 +671,26 @@ input:focus {
       <label for="p2Name">Player Name</label>
       <input id="p2Name" placeholder="Player 2">
     </div>
+
     <div class="field">
       <label for="p2Record">W-L-D</label>
-      <input id="p2Record" class="recordInput" placeholder="0-0-0">
+      <input
+        id="p2Record"
+        class="recordInput"
+        placeholder="0-0-0"
+      >
     </div>
   </div>
 
   <div class="inkField">
     <label for="p2InkButton">Ink Colors</label>
+
     <button
       id="p2InkButton"
       type="button"
       class="inkSelectButton"
-      aria-haspopup="dialog">
+      aria-haspopup="dialog"
+    >
       <span id="p2InkPreview">
         Tap to Choose Ink Colors
       </span>
@@ -548,24 +701,32 @@ input:focus {
   <div class="controlsRow">
     <div>
       <div class="controlLabel">ADJUST LORE</div>
+
       <div class="loreButtons">
-        <button class="loreBtn minusBtn"
-          onclick="changeLore('p2',-1)">−</button>
-        <button class="loreBtn plusBtn"
-          onclick="changeLore('p2',1)">+</button>
+        <button
+          class="loreBtn minusBtn"
+          onclick="changeLore('p2',-1)"
+        >−</button>
+
+        <button
+          class="loreBtn plusBtn"
+          onclick="changeLore('p2',1)"
+        >+</button>
       </div>
     </div>
 
     <div>
       <div class="controlLabel">GAME WINS</div>
+
       <div class="gameDots">
         <div id="p2g1" class="dot"></div>
         <div id="p2g2" class="dot"></div>
       </div>
-      <button class="gameBtn"
-        onclick="addGameWin('p2')">
-        + Game Win
-      </button>
+
+      <button
+        class="gameBtn"
+        onclick="addGameWin('p2')"
+      >+ Game Win</button>
     </div>
   </div>
 </div>
@@ -573,9 +734,9 @@ input:focus {
 <!-- PLAYER 1 -->
 
 <div class="player p1">
-
   <div class="playerHeader">
     <div class="playerTitle">PLAYER 1</div>
+
     <div class="loreDisplay">
       <span class="loreLabel">LORE</span>
       <span id="p1Lore" class="loreNumber">0</span>
@@ -587,19 +748,26 @@ input:focus {
       <label for="p1Name">Player Name</label>
       <input id="p1Name" placeholder="Player 1">
     </div>
+
     <div class="field">
       <label for="p1Record">W-L-D</label>
-      <input id="p1Record" class="recordInput" placeholder="0-0-0">
+      <input
+        id="p1Record"
+        class="recordInput"
+        placeholder="0-0-0"
+      >
     </div>
   </div>
 
   <div class="inkField">
     <label for="p1InkButton">Ink Colors</label>
+
     <button
       id="p1InkButton"
       type="button"
       class="inkSelectButton"
-      aria-haspopup="dialog">
+      aria-haspopup="dialog"
+    >
       <span id="p1InkPreview">
         Tap to Choose Ink Colors
       </span>
@@ -610,24 +778,32 @@ input:focus {
   <div class="controlsRow">
     <div>
       <div class="controlLabel">ADJUST LORE</div>
+
       <div class="loreButtons">
-        <button class="loreBtn minusBtn"
-          onclick="changeLore('p1',-1)">−</button>
-        <button class="loreBtn plusBtn"
-          onclick="changeLore('p1',1)">+</button>
+        <button
+          class="loreBtn minusBtn"
+          onclick="changeLore('p1',-1)"
+        >−</button>
+
+        <button
+          class="loreBtn plusBtn"
+          onclick="changeLore('p1',1)"
+        >+</button>
       </div>
     </div>
 
     <div>
       <div class="controlLabel">GAME WINS</div>
+
       <div class="gameDots">
         <div id="p1g1" class="dot"></div>
         <div id="p1g2" class="dot"></div>
       </div>
-      <button class="gameBtn"
-        onclick="addGameWin('p1')">
-        + Game Win
-      </button>
+
+      <button
+        class="gameBtn"
+        onclick="addGameWin('p1')"
+      >+ Game Win</button>
     </div>
   </div>
 </div>
@@ -663,14 +839,25 @@ input:focus {
   <div class="timerInputs">
     <div>
       <label for="roundInput">Round Name</label>
-      <input id="roundInput" type="text"
-        placeholder="Round 1" enterkeyhint="done">
+      <input
+        id="roundInput"
+        type="text"
+        placeholder="Round 1"
+        enterkeyhint="done"
+      >
     </div>
+
     <div>
       <label for="minutesInput">Minutes</label>
-      <input id="minutesInput" type="number"
-        min="0" max="999" step="1"
-        value="60" enterkeyhint="done">
+      <input
+        id="minutesInput"
+        type="number"
+        min="0"
+        max="999"
+        step="1"
+        value="60"
+        enterkeyhint="done"
+      >
     </div>
   </div>
 
@@ -682,9 +869,11 @@ input:focus {
     <button id="startTimer" class="timerBtn start">
       Start
     </button>
+
     <button id="pauseTimer" class="timerBtn pause">
       Pause
     </button>
+
     <button id="resetTimer" class="timerBtn reset">
       Reset
     </button>
@@ -696,15 +885,64 @@ input:focus {
   </div>
 </div>
 
+<!-- LEFT PANEL ARTWORK -->
+
+<div class="section artworkSection">
+  <div class="sectionTitle">Left Panel Artwork</div>
+
+  <div class="artworkDescription">
+    Choose a featured Lorcana card or leave the left gold panel empty.
+  </div>
+
+  <div class="artworkModes">
+    <button
+      id="artworkEmpty"
+      class="artworkMode active"
+      type="button"
+    >Empty</button>
+
+    <button
+      id="artworkCard"
+      class="artworkMode"
+      type="button"
+    >Lorcana Card</button>
+  </div>
+
+  <div id="cardSearchArea" class="cardSearchArea">
+    <input
+      id="cardSearchInput"
+      class="cardSearchInput"
+      type="search"
+      placeholder="Search for a Lorcana card"
+      enterkeyhint="search"
+      maxlength="70"
+    >
+
+    <button
+      id="cardSearchButton"
+      class="cardSearchBtn"
+      type="button"
+    >Search Cards</button>
+
+    <div id="cardSearchResults" class="cardResults"></div>
+
+    <div
+      id="cardSearchStatus"
+      class="cardSearchStatus"
+    >Enter a card name to search.</div>
+  </div>
+</div>
+
 <!-- INK SELECTION POPUP -->
 
-<div id="inkModal" class="inkModal"
-     role="dialog"
-     aria-modal="true"
-     aria-label="Choose Ink Colors">
-
+<div
+  id="inkModal"
+  class="inkModal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Choose Ink Colors"
+>
   <div class="inkModalBody">
-
     <div id="inkModalTitle" class="inkModalTitle">
       Choose Ink Colors
     </div>
@@ -712,17 +950,18 @@ input:focus {
     <div id="inkImageGrid" class="inkImageGrid"></div>
 
     <div class="inkModalActions">
-      <button id="inkClear" type="button"
-        class="inkModalAction clear">
-        Clear
-      </button>
+      <button
+        id="inkClear"
+        type="button"
+        class="inkModalAction clear"
+      >Clear</button>
 
-      <button id="inkCancel" type="button"
-        class="inkModalAction">
-        Cancel
-      </button>
+      <button
+        id="inkCancel"
+        type="button"
+        class="inkModalAction"
+      >Cancel</button>
     </div>
-
   </div>
 </div>
 
@@ -894,10 +1133,7 @@ async function chooseInk(player,filename) {
 
   const changes = {};
 
-  // Original OBS overlay format
   changes[player+"Ink"] = filename;
-
-  // Player Tablet format
   changes[player+"Inks"] =
     option ? option[2] : [];
 
@@ -920,12 +1156,9 @@ function setupInkGallery(player) {
     () => openInkModal(player)
   );
 
-  // Original filename used by OBS
   onValue(ref(db,player+"Ink"),snapshot => {
     latestInkFiles[player] = snapshot.val() || "";
 
-    // Use original format as a fallback if no
-    // tablet selection has been received.
     if(latestInkPairs[player] === null) {
       renderInkSelection(
         player,
@@ -934,7 +1167,6 @@ function setupInkGallery(player) {
     }
   },() => setStatus("Ink sync error",true));
 
-  // Current Player Tablet format
   onValue(ref(db,player+"Inks"),snapshot => {
     const pair = snapshot.val();
 
@@ -951,7 +1183,7 @@ function setupInkGallery(player) {
   },() => setStatus("Ink sync error",true));
 }
 
-/* CREATE THE POPUP IMAGE BUTTONS */
+/* CREATE INK POPUP BUTTONS */
 
 for(const [filename,label] of inkOptions) {
   const button = document.createElement("button");
@@ -1005,6 +1237,290 @@ document.addEventListener("keydown",event => {
   if(event.key === "Escape") closeInkModal();
 });
 
+/* =========================
+   FEATURED CARD ARTWORK
+========================= */
+
+const featuredRef = ref(db,"featuredDisplay");
+
+const artworkEmpty = $("artworkEmpty");
+const artworkCard = $("artworkCard");
+const cardSearchArea = $("cardSearchArea");
+const cardSearchInput = $("cardSearchInput");
+const cardSearchButton = $("cardSearchButton");
+const cardSearchResults = $("cardSearchResults");
+const cardSearchStatus = $("cardSearchStatus");
+
+let featuredCardUrl = "";
+let featuredMode = "empty";
+let searchCounter = 0;
+
+function validCardUrl(value) {
+  try {
+    const url = new URL(value);
+
+    return url.protocol === "https:" &&
+      url.hostname === "cards.lorcast.io" &&
+      url.pathname.startsWith("/card/");
+  } catch(error) {
+    return false;
+  }
+}
+
+function setCardSearchStatus(message,error=false) {
+  cardSearchStatus.textContent = message;
+  cardSearchStatus.style.color =
+    error ? "#ff9b9b" : "#b9c9d6";
+}
+
+function updateArtworkMode(mode) {
+  featuredMode = mode === "card" ? "card" : "empty";
+
+  const isCard = featuredMode === "card";
+
+  artworkEmpty.classList.toggle("active",!isCard);
+  artworkCard.classList.toggle("active",isCard);
+
+  cardSearchArea.classList.toggle("open",isCard);
+
+  artworkEmpty.setAttribute(
+    "aria-pressed",
+    String(!isCard)
+  );
+
+  artworkCard.setAttribute(
+    "aria-pressed",
+    String(isCard)
+  );
+}
+
+function updateSelectedCard() {
+  cardSearchResults.querySelectorAll(".cardChoice")
+    .forEach(button => {
+      const active =
+        featuredMode === "card" &&
+        button.dataset.url === featuredCardUrl;
+
+      button.classList.toggle("active",active);
+      button.setAttribute("aria-pressed",String(active));
+    });
+}
+
+onValue(featuredRef,snapshot => {
+  const value = snapshot.val();
+
+  if(
+    value &&
+    value.mode === "card" &&
+    validCardUrl(value.cardUrl)
+  ) {
+    featuredCardUrl = value.cardUrl;
+    updateArtworkMode("card");
+  } else {
+    featuredCardUrl = "";
+    updateArtworkMode("empty");
+  }
+
+  updateSelectedCard();
+},() => {
+  setCardSearchStatus(
+    "Unable to read selected card from Firebase.",
+    true
+  );
+});
+
+async function saveFeaturedCard(url) {
+  if(url && !validCardUrl(url)) return;
+
+  try {
+    await set(
+      featuredRef,
+      url
+        ? {mode:"card",cardUrl:url}
+        : {mode:"empty"}
+    );
+
+    setStatus(
+      url
+        ? "Featured card saved"
+        : "Featured card cleared"
+    );
+
+    if(url) {
+      setCardSearchStatus(
+        "Card selected — displaying on the overlay."
+      );
+    }
+  } catch(error) {
+    setCardSearchStatus(
+      "Could not save featured card.",
+      true
+    );
+
+    setStatus("Card save failed",true);
+  }
+}
+
+/* EMPTY OPTION */
+
+artworkEmpty.addEventListener("click",async () => {
+  await saveFeaturedCard("");
+});
+
+/* LORCANA CARD OPTION */
+
+artworkCard.addEventListener("click",() => {
+  updateArtworkMode("card");
+
+  if(!featuredCardUrl) {
+    setCardSearchStatus(
+      "Search for a card and tap it to display."
+    );
+  }
+});
+
+/* SEARCH CARDS */
+
+async function searchCards() {
+  const query = cardSearchInput.value.trim();
+
+  if(query.length < 2) {
+    setCardSearchStatus(
+      "Enter at least two characters.",
+      true
+    );
+    return;
+  }
+
+  const requestId = ++searchCounter;
+
+  cardSearchButton.disabled = true;
+  cardSearchResults.replaceChildren();
+
+  setCardSearchStatus("Searching Lorcana cards...");
+
+  try {
+    const url = new URL(
+      "https://api.lorcast.com/v0/cards/search"
+    );
+
+    url.searchParams.set("q",query);
+    url.searchParams.set("unique","cards");
+
+    const response = await fetch(
+      url.toString(),
+      {mode:"cors"}
+    );
+
+    if(!response.ok) {
+      throw new Error(
+        "Card search returned HTTP " +
+        response.status
+      );
+    }
+
+    const payload = await response.json();
+
+    if(requestId !== searchCounter) return;
+
+    const cards = (
+      Array.isArray(payload.results)
+        ? payload.results
+        : []
+    ).filter(card => {
+      const images = card.image_uris?.digital;
+
+      return validCardUrl(
+        images?.normal || images?.large || ""
+      );
+    });
+
+    for(const card of cards) {
+      const imageUrl =
+        card.image_uris.digital.normal ||
+        card.image_uris.digital.large;
+
+      const imageThumb =
+        card.image_uris.digital.small ||
+        imageUrl;
+
+      const button = document.createElement("button");
+
+      button.type = "button";
+      button.className = "cardChoice";
+      button.dataset.url = imageUrl;
+      button.setAttribute("aria-pressed","false");
+
+      button.title = [
+        card.name,
+        card.version,
+        card.set?.name
+      ].filter(Boolean).join(" — ");
+
+      const image = document.createElement("img");
+
+      image.src = imageThumb;
+      image.alt = card.name || "Lorcana card";
+      image.loading = "lazy";
+
+      const label = document.createElement("span");
+
+      label.textContent = [
+        card.name,
+        card.version
+      ].filter(Boolean).join(" — ");
+
+      button.append(image,label);
+
+      button.addEventListener("click",() => {
+        saveFeaturedCard(imageUrl);
+      });
+
+      cardSearchResults.appendChild(button);
+    }
+
+    updateSelectedCard();
+
+    setCardSearchStatus(
+      cards.length
+        ? cards.length +
+          " cards found — tap a card to display it."
+        : "No matching cards found."
+    );
+
+  } catch(error) {
+    if(requestId !== searchCounter) return;
+
+    console.error("Lorcast search failed:",error);
+
+    setCardSearchStatus(
+      "Card search couldn't load. Check your connection or browser access settings.",
+      true
+    );
+
+  } finally {
+    if(requestId === searchCounter) {
+      cardSearchButton.disabled = false;
+    }
+  }
+}
+
+cardSearchButton.addEventListener(
+  "click",
+  searchCards
+);
+
+cardSearchInput.addEventListener("keydown",event => {
+  if(event.key === "Enter") {
+    event.preventDefault();
+    searchCards();
+  }
+});
+
+/* =========================
+   EXISTING STAFF CONTROLS
+========================= */
+
 /* SAVE HELPER */
 
 async function save(path,value) {
@@ -1013,7 +1529,10 @@ async function save(path,value) {
     setStatus("Saved");
     return true;
   } catch(error) {
-    setStatus("Save failed. Check connection.",true);
+    setStatus(
+      "Save failed. Check connection.",
+      true
+    );
     return false;
   }
 }
@@ -1093,7 +1612,6 @@ for(const player of ["p2","p1"]) {
   );
 
   setupTextField(player,"Record","0-0-0");
-
   setupInkGallery(player);
 
   onValue(ref(db,player),snapshot => {
@@ -1126,6 +1644,7 @@ window.changeLore = async (player,change) => {
       ref(db,player),
       current => {
         const lore = Number(current) || 0;
+
         return Math.max(
           0,
           Math.min(20,lore+change)
@@ -1364,7 +1883,9 @@ async function applyMinutes() {
       startedAt:0
     });
 
-    setStatus("Timer set to "+formatTime(minutes*60));
+    setStatus(
+      "Timer set to "+formatTime(minutes*60)
+    );
   } catch(error) {
     setStatus("Could not set timer",true);
   }
