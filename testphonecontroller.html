@@ -21,11 +21,10 @@ html, body {
 }
 
 body {
-  padding: 12px;
-  padding-bottom: 30px;
+  padding: 12px 12px 30px;
 }
 
-button, input, select {
+button, input {
   font-family: inherit;
 }
 
@@ -128,7 +127,7 @@ button {
   text-shadow: 0 0 10px rgba(175,100,240,.65);
 }
 
-/* NAME AND RECORD */
+/* NAMES AND RECORDS */
 
 .infoRow {
   display: grid;
@@ -148,7 +147,7 @@ label {
   font-weight: bold;
 }
 
-input, select {
+input {
   width: 100%;
   min-width: 0;
   height: 42px;
@@ -160,7 +159,7 @@ input, select {
   font-size: 16px;
 }
 
-input:focus, select:focus {
+input:focus {
   outline: 2px solid #f0c85b;
 }
 
@@ -168,16 +167,133 @@ input:focus, select:focus {
   text-align: center;
 }
 
+/* CLICKABLE INK COLORS SELECTOR */
+
 .inkField {
   margin-top: 11px;
 }
 
-select {
+.inkSelectButton {
+  width: 100%;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #b99445;
+  border-radius: 9px;
   background: #183851;
-  color: white;
+  color: #f0c85b;
+  font-size: 15px;
+  font-weight: bold;
 }
 
-/* GAME AND LORE CONTROLS */
+.inkSelectButton img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+}
+
+.inkSelectArrow {
+  margin-left: auto;
+  margin-right: 10px;
+  color: #f0c85b;
+  font-size: 20px;
+}
+
+.inkSelectButton:focus-visible,
+.inkImageOption:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 2px;
+}
+
+/* POPUP GALLERY */
+
+.inkModal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(3,7,12,.96);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
+
+.inkModal.open {
+  display: flex;
+}
+
+.inkModalBody {
+  width: min(95vw,580px);
+  max-height: 94dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+}
+
+.inkModalTitle {
+  color: #f0c85b;
+  font-weight: 800;
+  text-align: center;
+}
+
+.inkImageGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: 7px;
+  max-height: 73dvh;
+  overflow: auto;
+}
+
+.inkImageOption {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1;
+  border: 2px solid #53647b;
+  border-radius: 9px;
+  background: #172132;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.inkImageOption img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.inkImageOption.selected {
+  border-color: #f0c85b;
+  box-shadow: 0 0 0 1px #f0c85b;
+}
+
+.inkModalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.inkModalAction {
+  padding: 9px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: #444;
+  color: white;
+  font-weight: bold;
+}
+
+.inkModalAction.clear {
+  background: #792e32;
+}
+
+/* GAME AND LORE */
 
 .controlsRow {
   display: grid;
@@ -244,7 +360,7 @@ select {
   font-weight: bold;
 }
 
-/* SHARED SECTIONS */
+/* MATCH CONTROLS */
 
 .section {
   margin-top: 13px;
@@ -260,8 +376,6 @@ select {
   color: #f0c85b;
   margin-bottom: 12px;
 }
-
-/* MATCH RESET CONTROLS */
 
 .resetRow {
   display: flex;
@@ -357,23 +471,28 @@ select {
   margin-top: 10px;
 }
 
+@media(max-width:370px) {
+  .inkImageGrid {
+    gap: 4px;
+  }
+  .inkImageOption {
+    padding: 2px;
+  }
+}
+
 @media(max-width:360px) {
   body {
     padding: 7px;
   }
-
   .player {
     padding: 10px;
   }
-
   .controlsRow {
     gap: 7px;
   }
-
   .loreBtn {
     font-size: 26px;
   }
-
   .timerInputs {
     grid-template-columns: 1fr 90px;
   }
@@ -389,13 +508,12 @@ select {
   <div id="status" class="status">Connecting...</div>
 </div>
 
-<!-- PLAYER 2 - TOP -->
+<!-- PLAYER 2 -->
 
 <div class="player p2">
 
   <div class="playerHeader">
     <div class="playerTitle">PLAYER 2</div>
-
     <div class="loreDisplay">
       <span class="loreLabel">LORE</span>
       <span id="p2Lore" class="loreNumber">0</span>
@@ -407,27 +525,32 @@ select {
       <label for="p2Name">Player Name</label>
       <input id="p2Name" placeholder="Player 2">
     </div>
-
     <div class="field">
       <label for="p2Record">W-L-D</label>
-      <input id="p2Record"
-        class="recordInput" placeholder="0-0-0">
+      <input id="p2Record" class="recordInput" placeholder="0-0-0">
     </div>
   </div>
 
   <div class="inkField">
-    <label for="p2Ink">Ink Combination</label>
-    <select id="p2Ink"></select>
+    <label for="p2InkButton">Ink Colors</label>
+    <button
+      id="p2InkButton"
+      type="button"
+      class="inkSelectButton"
+      aria-haspopup="dialog">
+      <span id="p2InkPreview">
+        Tap to Choose Ink Colors
+      </span>
+      <span class="inkSelectArrow">⌄</span>
+    </button>
   </div>
 
   <div class="controlsRow">
     <div>
       <div class="controlLabel">ADJUST LORE</div>
-
       <div class="loreButtons">
         <button class="loreBtn minusBtn"
           onclick="changeLore('p2',-1)">−</button>
-
         <button class="loreBtn plusBtn"
           onclick="changeLore('p2',1)">+</button>
       </div>
@@ -435,12 +558,10 @@ select {
 
     <div>
       <div class="controlLabel">GAME WINS</div>
-
       <div class="gameDots">
         <div id="p2g1" class="dot"></div>
         <div id="p2g2" class="dot"></div>
       </div>
-
       <button class="gameBtn"
         onclick="addGameWin('p2')">
         + Game Win
@@ -449,13 +570,12 @@ select {
   </div>
 </div>
 
-<!-- PLAYER 1 - BOTTOM -->
+<!-- PLAYER 1 -->
 
 <div class="player p1">
 
   <div class="playerHeader">
     <div class="playerTitle">PLAYER 1</div>
-
     <div class="loreDisplay">
       <span class="loreLabel">LORE</span>
       <span id="p1Lore" class="loreNumber">0</span>
@@ -467,27 +587,32 @@ select {
       <label for="p1Name">Player Name</label>
       <input id="p1Name" placeholder="Player 1">
     </div>
-
     <div class="field">
       <label for="p1Record">W-L-D</label>
-      <input id="p1Record"
-        class="recordInput" placeholder="0-0-0">
+      <input id="p1Record" class="recordInput" placeholder="0-0-0">
     </div>
   </div>
 
   <div class="inkField">
-    <label for="p1Ink">Ink Combination</label>
-    <select id="p1Ink"></select>
+    <label for="p1InkButton">Ink Colors</label>
+    <button
+      id="p1InkButton"
+      type="button"
+      class="inkSelectButton"
+      aria-haspopup="dialog">
+      <span id="p1InkPreview">
+        Tap to Choose Ink Colors
+      </span>
+      <span class="inkSelectArrow">⌄</span>
+    </button>
   </div>
 
   <div class="controlsRow">
     <div>
       <div class="controlLabel">ADJUST LORE</div>
-
       <div class="loreButtons">
         <button class="loreBtn minusBtn"
           onclick="changeLore('p1',-1)">−</button>
-
         <button class="loreBtn plusBtn"
           onclick="changeLore('p1',1)">+</button>
       </div>
@@ -495,12 +620,10 @@ select {
 
     <div>
       <div class="controlLabel">GAME WINS</div>
-
       <div class="gameDots">
         <div id="p1g1" class="dot"></div>
         <div id="p1g2" class="dot"></div>
       </div>
-
       <button class="gameBtn"
         onclick="addGameWin('p1')">
         + Game Win
@@ -512,11 +635,9 @@ select {
 <!-- MATCH CONTROLS -->
 
 <div class="section">
-
   <div class="sectionTitle">Match Controls</div>
 
   <div class="resetRow">
-
     <button id="resetLoreBtn" class="resetBtn">
       <div id="resetLoreFill" class="resetFill"></div>
       <span class="resetText">Hold: Reset Lore</span>
@@ -525,7 +646,6 @@ select {
     <button id="resetGamesBtn" class="resetBtn games">
       Reset Games
     </button>
-
   </div>
 
   <div class="hint">
@@ -533,52 +653,38 @@ select {
     Tap Reset Games once.
     Names and records save automatically.
   </div>
-
 </div>
 
-<!-- ROUND TIMER - BOTTOM -->
+<!-- ROUND TIMER -->
 
 <div class="section">
-
   <div class="sectionTitle">Round Timer</div>
 
   <div class="timerInputs">
     <div>
       <label for="roundInput">Round Name</label>
-      <input
-        id="roundInput"
-        type="text"
-        placeholder="Round 1"
-        enterkeyhint="done"
-      >
+      <input id="roundInput" type="text"
+        placeholder="Round 1" enterkeyhint="done">
     </div>
-
     <div>
       <label for="minutesInput">Minutes</label>
-      <input
-        id="minutesInput"
-        type="number"
-        min="0"
-        max="999"
-        step="1"
-        value="60"
-        enterkeyhint="done"
-      >
+      <input id="minutesInput" type="number"
+        min="0" max="999" step="1"
+        value="60" enterkeyhint="done">
     </div>
   </div>
 
-  <div id="timerDisplay"
-    class="timerDisplay">60:00</div>
+  <div id="timerDisplay" class="timerDisplay">
+    60:00
+  </div>
 
   <div class="timerButtons">
     <button id="startTimer" class="timerBtn start">
       Start
     </button>
-
     <button id="pauseTimer" class="timerBtn pause">
       Pause
     </button>
-
     <button id="resetTimer" class="timerBtn reset">
       Reset
     </button>
@@ -588,7 +694,36 @@ select {
     Enter minutes and press Done to set the timer.
     The countdown will stay paused until you press Start.
   </div>
+</div>
 
+<!-- INK SELECTION POPUP -->
+
+<div id="inkModal" class="inkModal"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Choose Ink Colors">
+
+  <div class="inkModalBody">
+
+    <div id="inkModalTitle" class="inkModalTitle">
+      Choose Ink Colors
+    </div>
+
+    <div id="inkImageGrid" class="inkImageGrid"></div>
+
+    <div class="inkModalActions">
+      <button id="inkClear" type="button"
+        class="inkModalAction clear">
+        Clear
+      </button>
+
+      <button id="inkCancel" type="button"
+        class="inkModalAction">
+        Cancel
+      </button>
+    </div>
+
+  </div>
 </div>
 
 <script type="module">
@@ -628,28 +763,247 @@ function setStatus(message,error=false) {
 
 /* INK COMBINATIONS */
 
+const INK_IMAGE_BASE =
+  "https://overlayhub.pages.dev/Ink%20combinations/";
+
 const inkOptions = [
-  ["", "No Ink Selected"],
-  ["amber amethyst.png", "Amber / Amethyst"],
-  ["amber emerald.png", "Amber / Emerald"],
-  ["amber sapphire.png", "Amber / Sapphire"],
-  ["amber steel.png", "Amber / Steel"],
-  ["amethyst emerald.png", "Amethyst / Emerald"],
-  ["amethyst ruby.png", "Amethyst / Ruby"],
-  ["amethyst sapphire.png", "Amethyst / Sapphire"],
-  ["amethyst steel.png", "Amethyst / Steel"],
-  ["blue steel 1.png", "Sapphire / Steel"],
-  ["emerald ruby.png", "Emerald / Ruby"],
-  ["emerald sapphire.png", "Emerald / Sapphire"],
-  ["green steel.png", "Emerald / Steel"],
-  ["ruby amber.png", "Ruby / Amber"],
-  ["ruby sapphire.png", "Ruby / Sapphire"],
-  ["ruby steel.png", "Ruby / Steel"]
+  ["amber amethyst.png","Amber / Amethyst",["amber","amethyst"]],
+  ["amber emerald.png","Amber / Emerald",["amber","emerald"]],
+  ["amber sapphire.png","Amber / Sapphire",["amber","sapphire"]],
+  ["amber steel.png","Amber / Steel",["amber","steel"]],
+  ["amethyst emerald.png","Amethyst / Emerald",["amethyst","emerald"]],
+  ["amethyst ruby.png","Amethyst / Ruby",["amethyst","ruby"]],
+  ["amethyst sapphire.png","Amethyst / Sapphire",["amethyst","sapphire"]],
+  ["amethyst steel.png","Amethyst / Steel",["amethyst","steel"]],
+  ["blue steel 1.png","Sapphire / Steel",["sapphire","steel"]],
+  ["emerald ruby.png","Emerald / Ruby",["emerald","ruby"]],
+  ["emerald sapphire.png","Emerald / Sapphire",["emerald","sapphire"]],
+  ["green steel.png","Emerald / Steel",["emerald","steel"]],
+  ["ruby amber.png","Ruby / Amber",["ruby","amber"]],
+  ["ruby sapphire.png","Ruby / Sapphire",["ruby","sapphire"]],
+  ["ruby steel.png","Ruby / Steel",["ruby","steel"]]
 ];
 
-const validInks = new Set(
-  inkOptions.map(option => option[0])
+const inkByFile = new Map(
+  inkOptions.map(option => [option[0],option])
 );
+
+const selectedInks = {
+  p1: "",
+  p2: ""
+};
+
+const latestInkFiles = {
+  p1: "",
+  p2: ""
+};
+
+const latestInkPairs = {
+  p1: null,
+  p2: null
+};
+
+let activeInkPlayer = null;
+
+const inkModal = $("inkModal");
+const inkImageGrid = $("inkImageGrid");
+
+function validPair(value) {
+  return Array.isArray(value) &&
+    value.length === 2 &&
+    value[0] !== value[1] &&
+    value.every(color => typeof color === "string");
+}
+
+function fileForPair(value) {
+  if(!validPair(value)) return "";
+
+  const option = inkOptions.find(([, , pair]) =>
+    pair.includes(value[0]) &&
+    pair.includes(value[1])
+  );
+
+  return option ? option[0] : "";
+}
+
+function renderInkSelection(player,filename) {
+  const chosen = inkByFile.has(filename) ? filename : "";
+
+  selectedInks[player] = chosen;
+
+  const preview = $(player+"InkPreview");
+  const option = inkByFile.get(chosen);
+
+  preview.replaceChildren();
+
+  if(option) {
+    const image = document.createElement("img");
+
+    image.src =
+      INK_IMAGE_BASE + encodeURIComponent(chosen);
+
+    image.alt = option[1];
+
+    const text = document.createElement("span");
+    text.textContent = option[1];
+
+    preview.appendChild(image);
+    preview.appendChild(text);
+  } else {
+    preview.textContent = "Tap to Choose Ink Colors";
+  }
+
+  if(activeInkPlayer === player) {
+    refreshInkModalSelection();
+  }
+}
+
+function refreshInkModalSelection() {
+  const selected =
+    activeInkPlayer ? selectedInks[activeInkPlayer] : "";
+
+  inkImageGrid.querySelectorAll(".inkImageOption")
+    .forEach(button => {
+      const active = button.dataset.file === selected;
+
+      button.classList.toggle("selected",active);
+      button.setAttribute("aria-pressed",String(active));
+    });
+}
+
+function closeInkModal() {
+  inkModal.classList.remove("open");
+  activeInkPlayer = null;
+}
+
+function openInkModal(player) {
+  activeInkPlayer = player;
+
+  $("inkModalTitle").textContent =
+    (player === "p1" ? "Player 1" : "Player 2") +
+    " — Choose Ink Colors";
+
+  refreshInkModalSelection();
+  inkModal.classList.add("open");
+}
+
+async function chooseInk(player,filename) {
+  const option = inkByFile.get(filename);
+
+  if(filename && !option) return;
+
+  const changes = {};
+
+  // Original OBS overlay format
+  changes[player+"Ink"] = filename;
+
+  // Player Tablet format
+  changes[player+"Inks"] =
+    option ? option[2] : [];
+
+  try {
+    await update(ref(db),changes);
+
+    setStatus(
+      option
+        ? option[1]+" saved"
+        : "Ink colors cleared"
+    );
+  } catch(error) {
+    setStatus("Could not save ink colors",true);
+  }
+}
+
+function setupInkGallery(player) {
+  $(player+"InkButton").addEventListener(
+    "click",
+    () => openInkModal(player)
+  );
+
+  // Original filename used by OBS
+  onValue(ref(db,player+"Ink"),snapshot => {
+    latestInkFiles[player] = snapshot.val() || "";
+
+    // Use original format as a fallback if no
+    // tablet selection has been received.
+    if(latestInkPairs[player] === null) {
+      renderInkSelection(
+        player,
+        latestInkFiles[player]
+      );
+    }
+  },() => setStatus("Ink sync error",true));
+
+  // Current Player Tablet format
+  onValue(ref(db,player+"Inks"),snapshot => {
+    const pair = snapshot.val();
+
+    if(validPair(pair)) {
+      latestInkPairs[player] = pair;
+      renderInkSelection(player,fileForPair(pair));
+    } else if(Array.isArray(pair)) {
+      latestInkPairs[player] = [];
+      renderInkSelection(player,latestInkFiles[player]);
+    } else {
+      latestInkPairs[player] = null;
+      renderInkSelection(player,latestInkFiles[player]);
+    }
+  },() => setStatus("Ink sync error",true));
+}
+
+/* CREATE THE POPUP IMAGE BUTTONS */
+
+for(const [filename,label] of inkOptions) {
+  const button = document.createElement("button");
+
+  button.type = "button";
+  button.className = "inkImageOption";
+  button.dataset.file = filename;
+  button.setAttribute("aria-label",label);
+  button.setAttribute("aria-pressed","false");
+
+  const image = document.createElement("img");
+
+  image.src =
+    INK_IMAGE_BASE + encodeURIComponent(filename);
+
+  image.alt = label;
+  image.loading = "lazy";
+
+  button.appendChild(image);
+
+  button.addEventListener("click",() => {
+    const player = activeInkPlayer;
+
+    closeInkModal();
+
+    if(player) {
+      chooseInk(player,filename);
+    }
+  });
+
+  inkImageGrid.appendChild(button);
+}
+
+$("inkClear").addEventListener("click",() => {
+  const player = activeInkPlayer;
+  closeInkModal();
+
+  if(player) chooseInk(player,"");
+});
+
+$("inkCancel").addEventListener(
+  "click",
+  closeInkModal
+);
+
+inkModal.addEventListener("click",event => {
+  if(event.target === inkModal) closeInkModal();
+});
+
+document.addEventListener("keydown",event => {
+  if(event.key === "Escape") closeInkModal();
+});
 
 /* SAVE HELPER */
 
@@ -669,8 +1023,7 @@ async function save(path,value) {
 const recordPattern = /^\d{1,3}-\d{1,3}-\d{1,3}$/;
 
 function setupTextField(player,type,fallback) {
-
-  const id = player + type;
+  const id = player+type;
   const input = $(id);
 
   let saved = fallback;
@@ -678,17 +1031,15 @@ function setupTextField(player,type,fallback) {
   let pending = false;
 
   onValue(ref(db,id),snapshot => {
-
-    saved = String(
-      snapshot.val() ?? ""
-    ).trim() || fallback;
+    saved =
+      String(snapshot.val() ?? "").trim() ||
+      fallback;
 
     if(!editing && !pending) {
       input.value = saved;
     }
 
     setStatus("Connected");
-
   },() => {
     setStatus("Firebase connection error",true);
   });
@@ -698,14 +1049,12 @@ function setupTextField(player,type,fallback) {
   });
 
   async function commit() {
-
     editing = false;
 
     let value = input.value.trim() || fallback;
 
     if(type === "Record" &&
        !recordPattern.test(value)) {
-
       input.value = saved;
       setStatus("Record format: 3-0-1",true);
       return;
@@ -737,7 +1086,6 @@ function setupTextField(player,type,fallback) {
 /* LIVE PLAYER DATA */
 
 for(const player of ["p2","p1"]) {
-
   setupTextField(
     player,
     "Name",
@@ -746,25 +1094,7 @@ for(const player of ["p2","p1"]) {
 
   setupTextField(player,"Record","0-0-0");
 
-  const select = $(player+"Ink");
-
-  for(const [filename,label] of inkOptions) {
-    const option = document.createElement("option");
-    option.value = filename;
-    option.textContent = label;
-    select.appendChild(option);
-  }
-
-  select.addEventListener("change",() => {
-    if(validInks.has(select.value)) {
-      save(player+"Ink",select.value);
-    }
-  });
-
-  onValue(ref(db,player+"Ink"),snapshot => {
-    const value = snapshot.val() || "";
-    select.value = validInks.has(value) ? value : "";
-  });
+  setupInkGallery(player);
 
   onValue(ref(db,player),snapshot => {
     const lore = Math.max(
@@ -776,7 +1106,6 @@ for(const player of ["p2","p1"]) {
   });
 
   onValue(ref(db,player+"Games"),snapshot => {
-
     const wins = Math.max(
       0,
       Math.min(2,Number(snapshot.val()) || 0)
@@ -824,7 +1153,7 @@ window.addGameWin = async player => {
   }
 };
 
-/* RESET FUNCTIONS */
+/* RESET LORE */
 
 async function resetLore() {
   try {
@@ -839,6 +1168,8 @@ async function resetLore() {
   }
 }
 
+/* RESET GAMES */
+
 async function resetGames() {
   try {
     await update(ref(db),{
@@ -852,10 +1183,9 @@ async function resetGames() {
   }
 }
 
-/* HOLD TO RESET LORE ONLY */
+/* HOLD TO RESET LORE */
 
 function setupHold(buttonId,fillId,action) {
-
   const button = $(buttonId);
   const fill = $(fillId);
 
@@ -873,13 +1203,13 @@ function setupHold(buttonId,fillId,action) {
   }
 
   button.addEventListener("pointerdown",event => {
-
     if(active) return;
 
     if(event.button !== undefined &&
        event.button !== 0) return;
 
     active = true;
+
     fill.style.transition = "none";
     fill.style.width = "0%";
 
@@ -887,13 +1217,16 @@ function setupHold(buttonId,fillId,action) {
 
     requestAnimationFrame(() => {
       if(active) {
-        fill.style.transition = "width 1.5s linear";
+        fill.style.transition =
+          "width 1.5s linear";
+
         fill.style.width = "100%";
       }
     });
 
     timer = setTimeout(() => {
       if(!active) return;
+
       cancel();
       action();
     },1500);
@@ -915,9 +1248,12 @@ setupHold(
   resetLore
 );
 
-/* RESET GAMES - SINGLE TAP */
+/* RESET GAMES — SINGLE TAP */
 
-$("resetGamesBtn").addEventListener("click",resetGames);
+$("resetGamesBtn").addEventListener(
+  "click",
+  resetGames
+);
 
 /* ROUND TIMER */
 
@@ -933,7 +1269,6 @@ let timerState = {
 const timerRef = ref(db,"timer");
 
 function currentRemaining() {
-
   const base = Math.max(
     0,
     Number(timerState.remaining) || 0
@@ -964,7 +1299,6 @@ function formatTime(seconds) {
 }
 
 function renderTimer() {
-
   $("timerDisplay").textContent =
     formatTime(currentRemaining());
 
@@ -975,7 +1309,6 @@ function renderTimer() {
 }
 
 onValue(timerRef,snapshot => {
-
   timerState = snapshot.val() || {
     roundName:"Round 1",
     remaining:DEFAULT_SECONDS,
@@ -984,7 +1317,6 @@ onValue(timerRef,snapshot => {
   };
 
   renderTimer();
-
 },() => {
   setStatus("Timer connection error",true);
 });
@@ -995,7 +1327,6 @@ renderTimer();
 /* ROUND NAME */
 
 $("roundInput").addEventListener("blur",async () => {
-
   const name =
     $("roundInput").value.trim() || "Round 1";
 
@@ -1013,10 +1344,9 @@ $("roundInput").addEventListener("keydown",event => {
   }
 });
 
-/* SET MINUTES BY PRESSING ENTER / DONE */
+/* SET MINUTES */
 
 async function applyMinutes() {
-
   const entered = Number($("minutesInput").value);
 
   const minutes = Number.isFinite(entered)
@@ -1027,14 +1357,14 @@ async function applyMinutes() {
 
   try {
     await update(timerRef,{
-      roundName:$("roundInput").value.trim() || "Round 1",
+      roundName:
+        $("roundInput").value.trim() || "Round 1",
       remaining:minutes*60,
       running:false,
       startedAt:0
     });
 
     setStatus("Timer set to "+formatTime(minutes*60));
-
   } catch(error) {
     setStatus("Could not set timer",true);
   }
@@ -1048,9 +1378,6 @@ $("minutesInput").addEventListener("keydown",event => {
   }
 });
 
-/* Also save when leaving the minutes field.
-   This helps on phone keyboards without an Enter key. */
-
 $("minutesInput").addEventListener("change",() => {
   applyMinutes();
 });
@@ -1058,7 +1385,6 @@ $("minutesInput").addEventListener("change",() => {
 /* START TIMER */
 
 $("startTimer").addEventListener("click",async () => {
-
   if(timerState.running) return;
 
   const remaining = currentRemaining();
@@ -1070,14 +1396,14 @@ $("startTimer").addEventListener("click",async () => {
 
   try {
     await update(timerRef,{
-      roundName:$("roundInput").value.trim() || "Round 1",
+      roundName:
+        $("roundInput").value.trim() || "Round 1",
       remaining,
       running:true,
       startedAt:Date.now()
     });
 
     setStatus("Timer started");
-
   } catch(error) {
     setStatus("Could not start timer",true);
   }
@@ -1086,7 +1412,6 @@ $("startTimer").addEventListener("click",async () => {
 /* PAUSE TIMER */
 
 $("pauseTimer").addEventListener("click",async () => {
-
   if(!timerState.running) return;
 
   try {
@@ -1097,7 +1422,6 @@ $("pauseTimer").addEventListener("click",async () => {
     });
 
     setStatus("Timer paused");
-
   } catch(error) {
     setStatus("Could not pause timer",true);
   }
