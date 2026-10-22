@@ -325,6 +325,24 @@ html, body {
   font-size: 14px;
 }
 
+/* =========================
+   FEATURED CARD - LEFT ONLY
+========================= */
+
+.featured-card {
+  position: absolute;
+  top: 626px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 205px;
+  height: 278px;
+
+  object-fit: contain;
+  display: none;
+  pointer-events: none;
+}
+
 /* GAME WIN ICONS */
 
 .games {
@@ -384,7 +402,7 @@ html, body {
 }
 
 /* =========================
-   NEW SMALLER TIMER
+   ROUND TIMER
    WIDTH: 220PX
    HEIGHT: 90PX
 ========================= */
@@ -512,6 +530,13 @@ html, body {
         </div>
       </div>
 
+      <!-- SELECTABLE CARD ART ONLY -->
+      <img
+        class="featured-card"
+        id="featuredCard"
+        alt="Featured Lorcana Card"
+      >
+
       <img
         class="lorcana-logo"
         src="./purple%20disney%20logo.png"
@@ -619,7 +644,6 @@ const $ = id => document.getElementById(id);
 /* FIT TO SCREEN AT 1920 X 1080 */
 
 function fitOverlay() {
-
   const scale = Math.min(
     window.innerWidth / 1920,
     window.innerHeight / 1080
@@ -641,9 +665,7 @@ fitOverlay();
 /* LORE TRACKERS */
 
 function buildTrack(container) {
-
   for (let i = 20; i >= 0; i--) {
-
     const marker = document.createElement("div");
     marker.className = "marker";
     marker.textContent = i;
@@ -660,14 +682,12 @@ buildTrack($("leftTrack"));
 buildTrack($("rightTrack"));
 
 function showLore(container, raw) {
-
   const value = Math.max(
     0,
     Math.min(20, Math.floor(Number(raw) || 0))
   );
 
   for (const marker of container.children) {
-
     const number = Number(marker.dataset.lore);
 
     marker.classList.toggle(
@@ -711,12 +731,10 @@ const validImages = new Set([
 ]);
 
 function showInk(player, filename) {
-
   const image = $(player + "InkImage");
   const placeholder = $(player + "InkPlaceholder");
 
   if (!validImages.has(filename)) {
-
     image.removeAttribute("src");
     image.style.display = "none";
 
@@ -749,17 +767,79 @@ onValue(ref(db, "p2Ink"), snapshot => {
   showInk("p2", snapshot.val());
 });
 
+/* =========================
+   FEATURED CARD DISPLAY
+
+   Listens to personal Firebase:
+   featuredDisplay
+
+   Expected value:
+   {
+     mode: "card",
+     cardUrl: "https://cards.lorcast.io/card/..."
+   }
+
+   Nothing is shown until a card
+   is selected.
+========================= */
+
+const featuredCard = $("featuredCard");
+
+function showFeaturedCard(data) {
+  let cardUrl = "";
+
+  if (
+    data &&
+    typeof data === "object" &&
+    data.mode === "card" &&
+    typeof data.cardUrl === "string"
+  ) {
+    try {
+      const url = new URL(data.cardUrl);
+
+      if (
+        url.protocol === "https:" &&
+        url.hostname === "cards.lorcast.io" &&
+        url.pathname.startsWith("/card/")
+      ) {
+        cardUrl = url.href;
+      }
+    } catch (_) {}
+  }
+
+  if (!cardUrl) {
+    featuredCard.style.display = "none";
+    featuredCard.removeAttribute("src");
+    return;
+  }
+
+  featuredCard.onload = () => {
+    featuredCard.style.display = "block";
+  };
+
+  featuredCard.onerror = () => {
+    featuredCard.style.display = "none";
+  };
+
+  if (featuredCard.getAttribute("src") !== cardUrl) {
+    featuredCard.style.display = "none";
+    featuredCard.src = cardUrl;
+  }
+}
+
+onValue(ref(db, "featuredDisplay"), snapshot => {
+  showFeaturedCard(snapshot.val());
+});
+
 /* GAME WIN ICONS */
 
 function renderGames(player, raw) {
-
   const wins = Math.max(
     0,
     Math.min(2, Number(raw) || 0)
   );
 
   for (let i = 1; i <= 2; i++) {
-
     const icon = $(player + "g" + i);
 
     const newlyWon =
@@ -769,7 +849,6 @@ function renderGames(player, raw) {
     icon.classList.toggle("won", wins >= i);
 
     if (newlyWon) {
-
       icon.classList.remove("just-won");
       void icon.offsetWidth;
       icon.classList.add("just-won");
@@ -792,11 +871,9 @@ onValue(ref(db, "p2Games"), snapshot => {
 /* PLAYER NAMES + RECORDS */
 
 for (const player of ["p1", "p2"]) {
-
   onValue(
     ref(db, player + "Name"),
     snapshot => {
-
       const name =
         String(snapshot.val() ?? "").trim();
 
@@ -809,7 +886,6 @@ for (const player of ["p1", "p2"]) {
   onValue(
     ref(db, player + "Record"),
     snapshot => {
-
       const record =
         String(snapshot.val() ?? "").trim();
 
@@ -831,12 +907,9 @@ let timerState = {
 };
 
 function renderTimer() {
-
   const base = Math.max(
     0,
-    Math.floor(
-      Number(timerState.remaining) || 0
-    )
+    Math.floor(Number(timerState.remaining) || 0)
   );
 
   const startedAt =
@@ -852,8 +925,7 @@ function renderTimer() {
         )
       : 0;
 
-  const remaining =
-    Math.max(0, base - elapsed);
+  const remaining = Math.max(0, base - elapsed);
 
   $("roundName").textContent =
     timerState.roundName || "Round 1";
@@ -864,7 +936,6 @@ function renderTimer() {
 }
 
 onValue(ref(db, "timer"), snapshot => {
-
   timerState = snapshot.val() || {
     roundName: "Round 1",
     remaining: 3600,
