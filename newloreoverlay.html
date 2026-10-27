@@ -22,6 +22,11 @@
   .emblem {position:absolute; top:5px; width:52px; height:55px; clip-path:polygon(50% 0,100% 25%,100% 76%,50% 100%,0 76%,0 25%); background:#101920; border:0; filter:drop-shadow(0 0 2px #eee); color:#fff; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;}
   .emblem::before {content:""; position:absolute; inset:4px; clip-path:inherit; border:2px solid #d6b963; background:linear-gradient(135deg,#0b141c,#24394a); z-index:-1;}
   .emblem.left {left:261px; color:#42a36d;} .emblem.right {right:261px; color:#1597c7;}
+  .emblem {clip-path:none;background:transparent;filter:drop-shadow(0 0 4px #e6c576);overflow:visible;}
+  .emblem::before {display:none;}
+  .ink-img {width:100%;height:100%;object-fit:contain;display:block;}
+  .game-score {position:absolute;top:7px;width:42px;height:45px;border:2px solid #e8c463;border-radius:8px;color:#fff;background:linear-gradient(160deg,#2a4e68,#091a2d);display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:900;box-shadow:0 0 6px #e0c05d60;}
+  .game-score.left {left:207px;} .game-score.right {right:207px;}
   .center-title {position:absolute; left:50%; top:4px; transform:translateX(-50%); white-space:nowrap; display:flex; align-items:center; gap:16px; color:#fff; font-weight:900; font-size:29px; letter-spacing:.5px; text-shadow:0 0 7px #aee9f9,0 0 14px #78bed7;}
   .center-title .separator {width:2px; height:26px; background:#f2ce6a; box-shadow:0 0 8px #e8ce65;}
   .sparkles {position:absolute; top:6px; font-size:42px; font-family:Georgia,serif; line-height:43px; letter-spacing:10px; color:#e6eef6; text-shadow:0 0 7px #b6eafa;}
@@ -39,11 +44,11 @@
   <div class="scoreboard">
     <div class="header">
       <div class="player left"><div class="name">Mrnonomango</div><div class="record">0-0-0</div></div>
-      <div class="emblem left">✦</div>
+      <div class="game-score left" id="scoreLeft">0</div><div class="emblem left"><img id="inkLeft" class="ink-img" alt="Left ink combination" src="Ink%20combinations/amber%20amethyst.png"></div>
       <div class="sparkles left">✧✧</div>
       <div class="center-title"><span>FINALS</span><span class="separator"></span><span id="clock">60:00</span></div>
       <div class="sparkles right">✧✧</div>
-      <div class="emblem right">✦</div>
+      <div class="emblem right"><img id="inkRight" class="ink-img" alt="Right ink combination" src="Ink%20combinations/ruby%20sapphire.png"></div><div class="game-score right" id="scoreRight">0</div>
       <div class="player right"><div class="name">Eddie</div><div class="record">0-0-0</div></div>
     </div>
     <div id="loreTrack" class="lore-track"></div>
@@ -67,11 +72,32 @@
     track.appendChild(dot);
   });
   const dots = Array.from(track.children);
+  // Set ink images and scores via URL parameters while controller integration is pending.
+  const inkFiles={
+    'amber-amethyst':'amber amethyst.png','amber-emerald':'amber emerald.png',
+    'amber-ruby':'ruby amber.png','amber-sapphire':'amber sapphire.png','amber-steel':'amber steel.png',
+    'amethyst-emerald':'amethyst emerald.png','amethyst-ruby':'amethyst ruby.png',
+    'amethyst-sapphire':'amethyst sapphire.png','amethyst-steel':'amethyst steel.png',
+    'emerald-ruby':'emerald ruby.png','emerald-sapphire':'emerald sapphire.png',
+    'emerald-steel':'green steel.png','ruby-sapphire':'ruby sapphire.png',
+    'ruby-steel':'ruby steel.png','sapphire-steel':'blue steel 1.png'
+  };
+  const params=new URLSearchParams(location.search);
+  for(const side of ['Left','Right']){
+    const name=params.get(side.toLowerCase()+'Ink');
+    if(name && inkFiles[name.toLowerCase()]){
+      document.getElementById('ink'+side).src='Ink%20combinations/'+encodeURIComponent(inkFiles[name.toLowerCase()]);
+    }
+  }
+  let gamesLeft=Math.max(0,Math.min(9,Number(params.get('leftGames'))||0));
+  let gamesRight=Math.max(0,Math.min(9,Number(params.get('rightGames'))||0));
   const clock = document.getElementById('clock');
   let loreLeft = 0, loreRight = 0, remaining = 60 * 60;
   let timerRunning = false;
   let lastTick = Date.now();
   function render() {
+    document.getElementById('scoreLeft').textContent=gamesLeft;
+    document.getElementById('scoreRight').textContent=gamesRight;
     dots.forEach((dot, index) => {
       dot.classList.toggle('current', index === loreLeft || index === 40 - loreRight);
     });
@@ -90,6 +116,10 @@
       case 'Space': timerRunning = !timerRunning; lastTick = Date.now(); break;
       case 'KeyR': loreLeft = 0; loreRight = 0; break;
       case 'KeyT': remaining = 3600; timerRunning = false; break;
+      case 'KeyQ': gamesLeft = Math.min(9,gamesLeft+1); break;
+      case 'KeyA': gamesLeft = Math.max(0,gamesLeft-1); break;
+      case 'KeyP': gamesRight = Math.min(9,gamesRight+1); break;
+      case 'KeyL': gamesRight = Math.max(0,gamesRight-1); break;
     }
     render();
   });
