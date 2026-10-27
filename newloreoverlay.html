@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LoreTracker — Broadcast Overlay</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { width:100%; height:100%; padding:0; margin:0; overflow:hidden; background:transparent; font-family:Arial,Helvetica,sans-serif; }
+  #stage { position:absolute; width:1650px; height:928px; transform-origin:top left; overflow:hidden; }
+  .camera { position:absolute; top:0; width:260px; height:196px; border:2px solid #eac35d; box-shadow:inset 0 0 0 1px #684a13; background:transparent; }
+  .camera.left { left:0; }
+  .camera.right { right:0; background:linear-gradient(125deg,#f9dc80 0%,#f2c152 65%,#d49c25 100%); }
+  .camera.right::after { content:""; position:absolute; inset:9px; border:1px solid rgba(255,250,202,.45); }
+  .scoreboard { position:absolute; top:0; left:260px; width:1132px; height:112px; border:2px solid #ecc454; background:radial-gradient(ellipse at center top,rgba(102,174,204,.45),transparent 58%),linear-gradient(#23425a 0%,#07243e 62%,#0d2636 100%); box-shadow:inset 0 -10px 14px rgba(0,0,0,.40),0 3px 15px #0008; }
+  .scoreboard::after {content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:linear-gradient(90deg,#a87c2b,#ffdb71,#a87c2b);}
+  .header { position:absolute; top:1px; width:100%; height:59px; }
+  .player { position:absolute; top:5px; width:195px; color:#fff; text-align:center; text-shadow:0 0 5px #91b3c6,0 2px 2px #000; }
+  .player.left {left:0;} .player.right{right:0;}
+  .name {font-size:25px; font-weight:900; line-height:28px; white-space:nowrap;}
+  .record {font-size:20px; line-height:24px; font-weight:400;}
+  .emblem {position:absolute; top:5px; width:52px; height:55px; clip-path:polygon(50% 0,100% 25%,100% 76%,50% 100%,0 76%,0 25%); background:#101920; border:0; filter:drop-shadow(0 0 2px #eee); color:#fff; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;}
+  .emblem::before {content:""; position:absolute; inset:4px; clip-path:inherit; border:2px solid #d6b963; background:linear-gradient(135deg,#0b141c,#24394a); z-index:-1;}
+  .emblem.left {left:261px; color:#42a36d;} .emblem.right {right:261px; color:#1597c7;}
+  .center-title {position:absolute; left:50%; top:4px; transform:translateX(-50%); white-space:nowrap; display:flex; align-items:center; gap:16px; color:#fff; font-weight:900; font-size:29px; letter-spacing:.5px; text-shadow:0 0 7px #aee9f9,0 0 14px #78bed7;}
+  .center-title .separator {width:2px; height:26px; background:#f2ce6a; box-shadow:0 0 8px #e8ce65;}
+  .sparkles {position:absolute; top:6px; font-size:42px; font-family:Georgia,serif; line-height:43px; letter-spacing:10px; color:#e6eef6; text-shadow:0 0 7px #b6eafa;}
+  .sparkles.left {left:337px;} .sparkles.right {right:322px;}
+  .lore-track {position:absolute; bottom:13px; left:3px; right:3px; height:38px; display:flex; align-items:center; justify-content:space-between; gap:1px;}
+  .lore-dot {width:25px; height:25px; flex:0 0 25px; border:2px solid #c69a44; background:linear-gradient(150deg,#153b59,#091c30); border-radius:50%; display:flex; justify-content:center; align-items:center; color:#f5f6fa; font-size:15px; font-weight:800; line-height:1; text-shadow:0 1px 2px #000;}
+  .lore-dot.current {width:41px; height:41px; flex-basis:41px; border:3px solid #f2d678; background:radial-gradient(circle,#e8f3f2 0%,#a9cde1 36%,#5e8ba2 65%,#254b68 100%); color:#fff; font-size:24px; text-shadow:0 0 5px #fff,0 1px 2px #123; box-shadow:0 0 9px 5px #dcfaffb0,0 0 21px 9px #c6e8ff8a; z-index:2;}
+  .lore-dot.twenty {width:42px; height:42px; flex-basis:42px; font-size:20px; border:3px solid #d7ad51; background:#142d44;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="camera left" aria-label="Left OBS camera outline"></div>
+  <div class="camera right" aria-label="Right gold frame"></div>
+  <div class="scoreboard">
+    <div class="header">
+      <div class="player left"><div class="name">Mrnonomango</div><div class="record">0-0-0</div></div>
+      <div class="emblem left">✦</div>
+      <div class="sparkles left">✧✧</div>
+      <div class="center-title"><span>FINALS</span><span class="separator"></span><span id="clock">60:00</span></div>
+      <div class="sparkles right">✧✧</div>
+      <div class="emblem right">✦</div>
+      <div class="player right"><div class="name">Eddie</div><div class="record">0-0-0</div></div>
+    </div>
+    <div id="loreTrack" class="lore-track"></div>
+  </div>
+</div>
+<script>
+  const stage = document.getElementById('stage');
+  function resizeStage() {
+    const sx = innerWidth / 1650;
+    const sy = innerHeight / 928;
+    stage.style.transform = 'scale(' + sx + ', ' + sy + ')';
+  }
+  window.addEventListener('resize', resizeStage);
+  resizeStage();
+  const track = document.getElementById('loreTrack');
+  const values = [...Array(21).keys(), ...Array.from({length:20}, (_,i)=>19-i)];
+  values.forEach((value,index)=>{
+    const dot = document.createElement('div');
+    dot.className = 'lore-dot' + (index===20 ? ' twenty' : '');
+    dot.textContent = value;
+    track.appendChild(dot);
+  });
+  const dots = Array.from(track.children);
+  const clock = document.getElementById('clock');
+  let loreLeft = 0, loreRight = 0, remaining = 60 * 60;
+  let timerRunning = false;
+  let lastTick = Date.now();
+  function render() {
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('current', index === loreLeft || index === 40 - loreRight);
+    });
+    clock.textContent = String(Math.floor(remaining / 60)).padStart(2,'0') + ':' + String(remaining % 60).padStart(2,'0');
+  }
+  // Testing in a focused browser tab: Up/Down left lore, Right/Left right lore,
+  // Space start/pause timer, R reset lore, T reset timer.
+  document.addEventListener('keydown', (ev) => {
+    const keys = ['ArrowUp','ArrowDown','ArrowRight','ArrowLeft','Space'];
+    if (keys.includes(ev.code)) ev.preventDefault();
+    switch (ev.code) {
+      case 'ArrowUp': loreLeft = Math.min(20, loreLeft + 1); break;
+      case 'ArrowDown': loreLeft = Math.max(0, loreLeft - 1); break;
+      case 'ArrowRight': loreRight = Math.min(20, loreRight + 1); break;
+      case 'ArrowLeft': loreRight = Math.max(0, loreRight - 1); break;
+      case 'Space': timerRunning = !timerRunning; lastTick = Date.now(); break;
+      case 'KeyR': loreLeft = 0; loreRight = 0; break;
+      case 'KeyT': remaining = 3600; timerRunning = false; break;
+    }
+    render();
+  });
+  setInterval(() => {
+    const now = Date.now();
+    if (timerRunning && remaining > 0) {
+      const elapsed = Math.floor((now - lastTick)/1000);
+      if (elapsed > 0) {
+        remaining = Math.max(0, remaining-elapsed);
+        lastTick += elapsed * 1000;
+        if (remaining === 0) timerRunning = false;
+        render();
+      }
+    } else { lastTick = now; }
+  }, 200);
+  render();
+</script>
+</body>
+</html>
