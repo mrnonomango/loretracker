@@ -25,14 +25,12 @@
   .emblem {clip-path:none;background:transparent;filter:drop-shadow(0 0 4px #e6c576);overflow:visible;}
   .emblem::before {display:none;}
   .ink-img {width:100%;height:100%;object-fit:contain;display:block;}
-  .game-score {position:absolute;top:4px;width:46px;height:50px;display:flex;align-items:center;justify-content:center;}
-  .game-score.left {left:203px;} .game-score.right {right:203px;}
-  .game-score img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 5px rgba(255,255,255,.28));}
-  .game-score span {position:relative;z-index:2;font-size:28px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 5px rgba(155,217,255,.9),0 1px 2px #000,0 0 10px #ffffff59;}
+  .win-icons {position:absolute;top:5px;display:flex;align-items:center;gap:8px;height:48px;}
+  .win-icons.left {left:337px;} .win-icons.right {right:322px;}
+  .win-icon {width:34px;height:43px;object-fit:contain;opacity:.30;filter:drop-shadow(0 0 2px #b8dcee);}
+  .win-icon.won {opacity:1;filter:drop-shadow(0 0 7px #d7f2ff);}
   .center-title {position:absolute; left:50%; top:4px; transform:translateX(-50%); white-space:nowrap; display:flex; align-items:center; gap:16px; color:#fff; font-weight:900; font-size:29px; letter-spacing:.5px; text-shadow:0 0 7px #aee9f9,0 0 14px #78bed7;}
   .center-title .separator {width:2px; height:26px; background:#f2ce6a; box-shadow:0 0 8px #e8ce65;}
-  .sparkles {position:absolute; top:6px; font-size:42px; font-family:Georgia,serif; line-height:43px; letter-spacing:10px; color:#e6eef6; text-shadow:0 0 7px #b6eafa;}
-  .sparkles.left {left:337px;} .sparkles.right {right:322px;}
   .lore-track {position:absolute; bottom:13px; left:3px; right:3px; height:38px; display:flex; align-items:center; justify-content:space-between; gap:1px;}
   .lore-dot {width:25px; height:25px; flex:0 0 25px; border:2px solid #c69a44; background:linear-gradient(150deg,#153b59,#091c30); border-radius:50%; display:flex; justify-content:center; align-items:center; color:#f5f6fa; font-size:15px; font-weight:800; line-height:1; text-shadow:0 1px 2px #000;}
   .lore-dot.current {width:41px; height:41px; flex-basis:41px; border:3px solid #f2d678; background:radial-gradient(circle,#e8f3f2 0%,#a9cde1 36%,#5e8ba2 65%,#254b68 100%); color:#fff; font-size:24px; text-shadow:0 0 5px #fff,0 1px 2px #123; box-shadow:0 0 9px 5px #dcfaffb0,0 0 21px 9px #c6e8ff8a; z-index:2;}
@@ -46,11 +44,11 @@
   <div class="scoreboard">
     <div class="header">
       <div class="player left"><div class="name">Mrnonomango</div><div class="record">0-0-0</div></div>
-      <div class="game-score left"><img src="Illuminary%20Icon_White.png" alt=""><span id="scoreLeft">0</span></div><div class="emblem left"><img id="inkLeft" class="ink-img" alt="Left ink combination" src="Ink%20combinations/amber%20amethyst.png"></div>
-      <div class="sparkles left">✧✧</div>
+      <div class="emblem left"><img id="inkLeft" class="ink-img" alt="Left ink combination" src="Ink%20combinations/amber%20amethyst.png"></div>
+      <div class="win-icons left" id="leftWinIcons"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 1"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 2"></div>
       <div class="center-title"><span>FINALS</span><span class="separator"></span><span id="clock">60:00</span></div>
-      <div class="sparkles right">✧✧</div>
-      <div class="emblem right"><img id="inkRight" class="ink-img" alt="Right ink combination" src="Ink%20combinations/ruby%20sapphire.png"></div><div class="game-score right"><img src="Illuminary%20Icon_White.png" alt=""><span id="scoreRight">0</span></div>
+      <div class="win-icons right" id="rightWinIcons"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 1"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 2"></div>
+      <div class="emblem right"><img id="inkRight" class="ink-img" alt="Right ink combination" src="Ink%20combinations/ruby%20sapphire.png"></div>
       <div class="player right"><div class="name">Eddie</div><div class="record">0-0-0</div></div>
     </div>
     <div id="loreTrack" class="lore-track"></div>
@@ -98,8 +96,8 @@
   let timerRunning = false;
   let lastTick = Date.now();
   function render() {
-    document.getElementById('scoreLeft').textContent=gamesLeft;
-    document.getElementById('scoreRight').textContent=gamesRight;
+    document.querySelectorAll('#leftWinIcons .win-icon').forEach((el,i)=>el.classList.toggle('won',i<gamesLeft));
+    document.querySelectorAll('#rightWinIcons .win-icon').forEach((el,i)=>el.classList.toggle('won',i<gamesRight));
     dots.forEach((dot, index) => {
       dot.classList.toggle('current', index === loreLeft || index === 40 - loreRight);
     });
@@ -118,9 +116,9 @@
       case 'Space': timerRunning = !timerRunning; lastTick = Date.now(); break;
       case 'KeyR': loreLeft = 0; loreRight = 0; break;
       case 'KeyT': remaining = 3600; timerRunning = false; break;
-      case 'KeyQ': gamesLeft = Math.min(9,gamesLeft+1); break;
+      case 'KeyQ': gamesLeft = Math.min(2,gamesLeft+1); break;
       case 'KeyA': gamesLeft = Math.max(0,gamesLeft-1); break;
-      case 'KeyP': gamesRight = Math.min(9,gamesRight+1); break;
+      case 'KeyP': gamesRight = Math.min(2,gamesRight+1); break;
       case 'KeyL': gamesRight = Math.max(0,gamesRight-1); break;
     }
     render();
