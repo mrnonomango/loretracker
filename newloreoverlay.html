@@ -25,8 +25,10 @@
   .emblem {clip-path:none;background:transparent;filter:drop-shadow(0 0 4px #e6c576);overflow:visible;}
   .emblem::before {display:none;}
   .ink-img {width:100%;height:100%;object-fit:contain;display:block;}
-  .game-score {position:absolute;top:7px;width:42px;height:45px;border:2px solid #e8c463;border-radius:8px;color:#fff;background:linear-gradient(160deg,#2a4e68,#091a2d);display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:900;box-shadow:0 0 6px #e0c05d60;}
-  .game-score.left {left:207px;} .game-score.right {right:207px;}
+  .game-score {position:absolute;top:4px;width:46px;height:50px;display:flex;align-items:center;justify-content:center;}
+  .game-score.left {left:203px;} .game-score.right {right:203px;}
+  .game-score img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 5px rgba(255,255,255,.28));}
+  .game-score span {position:relative;z-index:2;font-size:28px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 5px rgba(155,217,255,.9),0 1px 2px #000,0 0 10px #ffffff59;}
   .center-title {position:absolute; left:50%; top:4px; transform:translateX(-50%); white-space:nowrap; display:flex; align-items:center; gap:16px; color:#fff; font-weight:900; font-size:29px; letter-spacing:.5px; text-shadow:0 0 7px #aee9f9,0 0 14px #78bed7;}
   .center-title .separator {width:2px; height:26px; background:#f2ce6a; box-shadow:0 0 8px #e8ce65;}
   .sparkles {position:absolute; top:6px; font-size:42px; font-family:Georgia,serif; line-height:43px; letter-spacing:10px; color:#e6eef6; text-shadow:0 0 7px #b6eafa;}
@@ -44,11 +46,11 @@
   <div class="scoreboard">
     <div class="header">
       <div class="player left"><div class="name">Mrnonomango</div><div class="record">0-0-0</div></div>
-      <div class="game-score left" id="scoreLeft">0</div><div class="emblem left"><img id="inkLeft" class="ink-img" alt="Left ink combination" src="Ink%20combinations/amber%20amethyst.png"></div>
+      <div class="game-score left"><img src="Illuminary%20Icon_White.png" alt=""><span id="scoreLeft">0</span></div><div class="emblem left"><img id="inkLeft" class="ink-img" alt="Left ink combination" src="Ink%20combinations/amber%20amethyst.png"></div>
       <div class="sparkles left">✧✧</div>
       <div class="center-title"><span>FINALS</span><span class="separator"></span><span id="clock">60:00</span></div>
       <div class="sparkles right">✧✧</div>
-      <div class="emblem right"><img id="inkRight" class="ink-img" alt="Right ink combination" src="Ink%20combinations/ruby%20sapphire.png"></div><div class="game-score right" id="scoreRight">0</div>
+      <div class="emblem right"><img id="inkRight" class="ink-img" alt="Right ink combination" src="Ink%20combinations/ruby%20sapphire.png"></div><div class="game-score right"><img src="Illuminary%20Icon_White.png" alt=""><span id="scoreRight">0</span></div>
       <div class="player right"><div class="name">Eddie</div><div class="record">0-0-0</div></div>
     </div>
     <div id="loreTrack" class="lore-track"></div>
