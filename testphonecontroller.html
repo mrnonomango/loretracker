@@ -825,7 +825,7 @@ input:focus {
   </div>
 
   <div class="hint">
-    Hold Reset Lore for 1.5 seconds.
+    Hold Reset Lore for 1 second.
     Tap Reset Games once.
     Names and records save automatically.
   </div>
@@ -1737,7 +1737,7 @@ function setupHold(buttonId,fillId,action) {
     requestAnimationFrame(() => {
       if(active) {
         fill.style.transition =
-          "width 1.5s linear";
+          "width 1s linear";
 
         fill.style.width = "100%";
       }
@@ -1748,7 +1748,7 @@ function setupHold(buttonId,fillId,action) {
 
       cancel();
       action();
-    },1500);
+    },1000);
   });
 
   button.addEventListener("pointerup",cancel);
