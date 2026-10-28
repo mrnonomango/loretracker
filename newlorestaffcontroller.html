@@ -1138,7 +1138,7 @@ async function chooseInk(player,filename) {
     option ? option[2] : [];
 
   try {
-    await update(ref(db),changes);
+    await update(ref(db,"newlore"),changes);
 
     setStatus(
       option
@@ -1156,7 +1156,7 @@ function setupInkGallery(player) {
     () => openInkModal(player)
   );
 
-  onValue(ref(db,player+"Ink"),snapshot => {
+  onValue(ref(db,"newlore/"+(player+"Ink")),snapshot => {
     latestInkFiles[player] = snapshot.val() || "";
 
     if(latestInkPairs[player] === null) {
@@ -1167,7 +1167,7 @@ function setupInkGallery(player) {
     }
   },() => setStatus("Ink sync error",true));
 
-  onValue(ref(db,player+"Inks"),snapshot => {
+  onValue(ref(db,"newlore/"+(player+"Inks")),snapshot => {
     const pair = snapshot.val();
 
     if(validPair(pair)) {
@@ -1241,7 +1241,7 @@ document.addEventListener("keydown",event => {
    FEATURED CARD ARTWORK
 ========================= */
 
-const featuredRef = ref(db,"featuredDisplay");
+const featuredRef = ref(db,"newlore/"+("featuredDisplay"));
 
 const artworkEmpty = $("artworkEmpty");
 const artworkCard = $("artworkCard");
@@ -1525,7 +1525,7 @@ cardSearchInput.addEventListener("keydown",event => {
 
 async function save(path,value) {
   try {
-    await set(ref(db,path),value);
+    await set(ref(db,"newlore/"+(path)),value);
     setStatus("Saved");
     return true;
   } catch(error) {
@@ -1549,7 +1549,7 @@ function setupTextField(player,type,fallback) {
   let editing = false;
   let pending = false;
 
-  onValue(ref(db,id),snapshot => {
+  onValue(ref(db,"newlore/"+(id)),snapshot => {
     saved =
       String(snapshot.val() ?? "").trim() ||
       fallback;
@@ -1614,7 +1614,7 @@ for(const player of ["p2","p1"]) {
   setupTextField(player,"Record","0-0-0");
   setupInkGallery(player);
 
-  onValue(ref(db,player),snapshot => {
+  onValue(ref(db,"newlore/"+(player)),snapshot => {
     const lore = Math.max(
       0,
       Math.min(20,Number(snapshot.val()) || 0)
@@ -1623,7 +1623,7 @@ for(const player of ["p2","p1"]) {
     $(player+"Lore").textContent = lore;
   });
 
-  onValue(ref(db,player+"Games"),snapshot => {
+  onValue(ref(db,"newlore/"+(player+"Games")),snapshot => {
     const wins = Math.max(
       0,
       Math.min(2,Number(snapshot.val()) || 0)
@@ -1641,7 +1641,7 @@ for(const player of ["p2","p1"]) {
 window.changeLore = async (player,change) => {
   try {
     await runTransaction(
-      ref(db,player),
+      ref(db,"newlore/"+(player)),
       current => {
         const lore = Number(current) || 0;
 
@@ -1661,7 +1661,7 @@ window.changeLore = async (player,change) => {
 window.addGameWin = async player => {
   try {
     await runTransaction(
-      ref(db,player+"Games"),
+      ref(db,"newlore/"+(player+"Games")),
       current => {
         const wins = Number(current) || 0;
         return Math.min(2,wins+1);
@@ -1676,7 +1676,7 @@ window.addGameWin = async player => {
 
 async function resetLore() {
   try {
-    await update(ref(db),{
+    await update(ref(db,"newlore"),{
       p1:0,
       p2:0
     });
@@ -1691,7 +1691,7 @@ async function resetLore() {
 
 async function resetGames() {
   try {
-    await update(ref(db),{
+    await update(ref(db,"newlore"),{
       p1Games:0,
       p2Games:0
     });
@@ -1785,7 +1785,7 @@ let timerState = {
   startedAt:0
 };
 
-const timerRef = ref(db,"timer");
+const timerRef = ref(db,"newlore/"+("timer"));
 
 function currentRemaining() {
   const base = Math.max(
