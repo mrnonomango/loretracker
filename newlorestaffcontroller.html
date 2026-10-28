@@ -1510,9 +1510,24 @@ cardSearchButton.addEventListener(
   searchCards
 );
 
+// Search automatically after the user pauses typing; Enter remains optional.
+let cardSearchDebounce;
+cardSearchInput.addEventListener("input",() => {
+  clearTimeout(cardSearchDebounce);
+  ++searchCounter; // Discard older results when the query changes.
+  const query=cardSearchInput.value.trim();
+  if(query.length<2) {
+    cardSearchResults.replaceChildren();
+    cardSearchButton.disabled=false;
+    setCardSearchStatus("Type at least two characters to find cards.");
+    return;
+  }
+  cardSearchDebounce=setTimeout(searchCards,350);
+});
 cardSearchInput.addEventListener("keydown",event => {
   if(event.key === "Enter") {
     event.preventDefault();
+    clearTimeout(cardSearchDebounce);
     searchCards();
   }
 });
