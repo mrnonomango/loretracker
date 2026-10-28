@@ -46,7 +46,7 @@
       <div class="player left"><div class="name">Mrnonomango</div><div class="record">0-0-0</div></div>
       <div class="emblem left"><img id="inkLeft" class="ink-img" alt="Left ink combination" src="Ink%20combinations/amber%20amethyst.png"></div>
       <div class="win-icons left" id="leftWinIcons"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 1"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 2"></div>
-      <div class="center-title"><span>FINALS</span><span class="separator"></span><span id="clock">60:00</span></div>
+      <div class="center-title"><span id="roundName">FINALS</span><span class="separator"></span><span id="clock">60:00</span></div>
       <div class="win-icons right" id="rightWinIcons"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 1"><img class="win-icon" src="Illuminary%20Icon_White.png" alt="Game 2"></div>
       <div class="emblem right"><img id="inkRight" class="ink-img" alt="Right ink combination" src="Ink%20combinations/ruby%20sapphire.png"></div>
       <div class="player right"><div class="name">Eddie</div><div class="record">0-0-0</div></div>
@@ -54,88 +54,87 @@
     <div id="loreTrack" class="lore-track"></div>
   </div>
 </div>
-<script>
-  const stage = document.getElementById('stage');
-  function resizeStage() {
-    const sx = innerWidth / 1650;
-    const sy = innerHeight / 928;
-    stage.style.transform = 'scale(' + sx + ', ' + sy + ')';
-  }
-  window.addEventListener('resize', resizeStage);
-  resizeStage();
-  const track = document.getElementById('loreTrack');
-  const values = [...Array(21).keys(), ...Array.from({length:20}, (_,i)=>19-i)];
-  values.forEach((value,index)=>{
-    const dot = document.createElement('div');
-    dot.className = 'lore-dot' + (index===20 ? ' twenty' : '');
-    dot.textContent = value;
-    track.appendChild(dot);
-  });
-  const dots = Array.from(track.children);
-  // Set ink images and scores via URL parameters while controller integration is pending.
-  const inkFiles={
-    'amber-amethyst':'amber amethyst.png','amber-emerald':'amber emerald.png',
-    'amber-ruby':'ruby amber.png','amber-sapphire':'amber sapphire.png','amber-steel':'amber steel.png',
-    'amethyst-emerald':'amethyst emerald.png','amethyst-ruby':'amethyst ruby.png',
-    'amethyst-sapphire':'amethyst sapphire.png','amethyst-steel':'amethyst steel.png',
-    'emerald-ruby':'emerald ruby.png','emerald-sapphire':'emerald sapphire.png',
-    'emerald-steel':'green steel.png','ruby-sapphire':'ruby sapphire.png',
-    'ruby-steel':'ruby steel.png','sapphire-steel':'blue steel 1.png'
-  };
-  const params=new URLSearchParams(location.search);
-  for(const side of ['Left','Right']){
-    const name=params.get(side.toLowerCase()+'Ink');
-    if(name && inkFiles[name.toLowerCase()]){
-      document.getElementById('ink'+side).src='Ink%20combinations/'+encodeURIComponent(inkFiles[name.toLowerCase()]);
-    }
-  }
-  let gamesLeft=Math.max(0,Math.min(9,Number(params.get('leftGames'))||0));
-  let gamesRight=Math.max(0,Math.min(9,Number(params.get('rightGames'))||0));
-  const clock = document.getElementById('clock');
-  let loreLeft = 0, loreRight = 0, remaining = 60 * 60;
-  let timerRunning = false;
-  let lastTick = Date.now();
-  function render() {
-    document.querySelectorAll('#leftWinIcons .win-icon').forEach((el,i)=>el.classList.toggle('won',i<gamesLeft));
-    document.querySelectorAll('#rightWinIcons .win-icon').forEach((el,i)=>el.classList.toggle('won',i<gamesRight));
-    dots.forEach((dot, index) => {
-      dot.classList.toggle('current', index === loreLeft || index === 40 - loreRight);
-    });
-    clock.textContent = String(Math.floor(remaining / 60)).padStart(2,'0') + ':' + String(remaining % 60).padStart(2,'0');
-  }
-  // Testing in a focused browser tab: Up/Down left lore, Right/Left right lore,
-  // Space start/pause timer, R reset lore, T reset timer.
-  document.addEventListener('keydown', (ev) => {
-    const keys = ['ArrowUp','ArrowDown','ArrowRight','ArrowLeft','Space'];
-    if (keys.includes(ev.code)) ev.preventDefault();
-    switch (ev.code) {
-      case 'ArrowUp': loreLeft = Math.min(20, loreLeft + 1); break;
-      case 'ArrowDown': loreLeft = Math.max(0, loreLeft - 1); break;
-      case 'ArrowRight': loreRight = Math.min(20, loreRight + 1); break;
-      case 'ArrowLeft': loreRight = Math.max(0, loreRight - 1); break;
-      case 'Space': timerRunning = !timerRunning; lastTick = Date.now(); break;
-      case 'KeyR': loreLeft = 0; loreRight = 0; break;
-      case 'KeyT': remaining = 3600; timerRunning = false; break;
-      case 'KeyQ': gamesLeft = Math.min(2,gamesLeft+1); break;
-      case 'KeyA': gamesLeft = Math.max(0,gamesLeft-1); break;
-      case 'KeyP': gamesRight = Math.min(2,gamesRight+1); break;
-      case 'KeyL': gamesRight = Math.max(0,gamesRight-1); break;
-    }
-    render();
-  });
-  setInterval(() => {
-    const now = Date.now();
-    if (timerRunning && remaining > 0) {
-      const elapsed = Math.floor((now - lastTick)/1000);
-      if (elapsed > 0) {
-        remaining = Math.max(0, remaining-elapsed);
-        lastTick += elapsed * 1000;
-        if (remaining === 0) timerRunning = false;
-        render();
-      }
-    } else { lastTick = now; }
-  }, 200);
-  render();
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const app=initializeApp({
+ apiKey:"AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+ authDomain:"lore-counter-4e654.firebaseapp.com",
+ databaseURL:"https://lore-counter-4e654-default-rtdb.firebaseio.com",
+ projectId:"lore-counter-4e654"
+});
+const db=getDatabase(app);
+const path=key=>ref(db,"newlore/"+key);
+const stage=document.getElementById("stage");
+function resizeStage(){
+ stage.style.transform="scale("+(innerWidth/1650)+","+(innerHeight/928)+")";
+}
+window.addEventListener("resize",resizeStage);
+resizeStage();
+const track=document.getElementById("loreTrack");
+const values=[...Array(21).keys(),...Array.from({length:20},(_,i)=>19-i)];
+for(let index=0;index<values.length;index++){
+ const dot=document.createElement("div");
+ dot.className="lore-dot"+(index===20?" twenty":"");
+ dot.textContent=values[index];
+ track.appendChild(dot);
+}
+const dots=Array.from(track.children);
+let loreLeft=0,loreRight=0,gamesLeft=0,gamesRight=0;
+const clamp=(n,min,max)=>Math.max(min,Math.min(max,Number(n)||0));
+function render(){
+ dots.forEach((dot,index)=>dot.classList.toggle("current",index===loreLeft||index===40-loreRight));
+ document.querySelectorAll("#leftWinIcons .win-icon").forEach((el,i)=>el.classList.toggle("won",i<gamesLeft));
+ document.querySelectorAll("#rightWinIcons .win-icon").forEach((el,i)=>el.classList.toggle("won",i<gamesRight));
+}
+onValue(path("p1"),snap=>{loreLeft=clamp(snap.val(),0,20);render()});
+onValue(path("p2"),snap=>{loreRight=clamp(snap.val(),0,20);render()});
+onValue(path("p1Games"),snap=>{gamesLeft=clamp(snap.val(),0,2);render()});
+onValue(path("p2Games"),snap=>{gamesRight=clamp(snap.val(),0,2);render()});
+for(const [player,index] of [["p1",0],["p2",1]]){
+ const nameEl=document.querySelectorAll(".player .name")[index];
+ const recordEl=document.querySelectorAll(".player .record")[index];
+ onValue(path(player+"Name"),snap=>{nameEl.textContent=String(snap.val()|| (index===0?"Player 1":"Player 2"))});
+ onValue(path(player+"Record"),snap=>{const value=String(snap.val()||"0-0-0");recordEl.textContent=/^\\d{1,3}-\\d{1,3}-\\d{1,3}$/.test(value)?value:"0-0-0"});
+}
+const imageFiles={
+ "amber,amethyst":"amber amethyst.png","amber,emerald":"amber emerald.png",
+ "amber,sapphire":"amber sapphire.png","amber,steel":"amber steel.png",
+ "amethyst,emerald":"amethyst emerald.png","amethyst,ruby":"amethyst ruby.png",
+ "amethyst,sapphire":"amethyst sapphire.png","amethyst,steel":"amethyst steel.png",
+ "emerald,ruby":"emerald ruby.png","emerald,sapphire":"emerald sapphire.png",
+ "emerald,steel":"green steel.png","ruby,amber":"ruby amber.png",
+ "ruby,sapphire":"ruby sapphire.png","ruby,steel":"ruby steel.png",
+ "sapphire,steel":"blue steel 1.png"
+};
+for(const [player,id] of [["p1","inkLeft"],["p2","inkRight"]]){
+ const img=document.getElementById(id);
+ function show(filename){
+  if(filename && Object.values(imageFiles).includes(filename)){
+   img.src="Ink%20combinations/"+encodeURIComponent(filename);
+  }else if(!filename){img.removeAttribute("src")}
+ }
+ onValue(path(player+"Ink"),snap=>{if(snap.val())show(snap.val())});
+ onValue(path(player+"Inks"),snap=>{
+  const a=snap.val();
+  if(!Array.isArray(a)||a.length!==2)return;
+  const key=a.join(",");
+  const reverse=a.slice().reverse().join(",");
+  show(imageFiles[key]||imageFiles[reverse]||"");
+ });
+}
+let timerState={roundName:"FINALS",remaining:3600,running:false,startedAt:0};
+onValue(path("timer"),snap=>{timerState=snap.val()||timerState;renderTimer()});
+function renderTimer(){
+ let seconds=Math.max(0,Math.floor(Number(timerState.remaining)||0));
+ if(timerState.running && Number(timerState.startedAt)>0){
+   seconds=Math.max(0,seconds-Math.floor((Date.now()-Number(timerState.startedAt))/1000));
+ }
+ document.getElementById("clock").textContent=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
+ document.getElementById("roundName").textContent=timerState.roundName||"FINALS";
+}
+setInterval(renderTimer,250);
+render();renderTimer();
 </script>
 </body>
 </html>
