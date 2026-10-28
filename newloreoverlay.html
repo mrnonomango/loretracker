@@ -17,7 +17,7 @@
   .header { position:absolute; top:1px; width:100%; height:59px; }
   .player { position:absolute; top:5px; width:195px; color:#fff; text-align:center; text-shadow:0 0 5px #91b3c6,0 2px 2px #000; }
   .player.left {left:0;} .player.right{right:0;}
-  .name {font-size:25px; font-weight:900; line-height:28px; white-space:nowrap;}
+  .name {font-size:25px; font-weight:900; line-height:28px; white-space:nowrap; overflow:hidden; width:100%;}
   .record {font-size:20px; line-height:24px; font-weight:400;}
   .emblem {position:absolute; top:5px; width:52px; height:55px; clip-path:polygon(50% 0,100% 25%,100% 76%,50% 100%,0 76%,0 25%); background:#101920; border:0; filter:drop-shadow(0 0 2px #eee); color:#fff; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;}
   .emblem::before {content:""; position:absolute; inset:4px; clip-path:inherit; border:2px solid #d6b963; background:linear-gradient(135deg,#0b141c,#24394a); z-index:-1;}
@@ -94,8 +94,15 @@ onValue(path("p2Games"),snap=>{gamesRight=clamp(snap.val(),0,2);render()});
 for(const [player,index] of [["p1",0],["p2",1]]){
  const nameEl=document.querySelectorAll(".player .name")[index];
  const recordEl=document.querySelectorAll(".player .record")[index];
- onValue(path(player+"Name"),snap=>{nameEl.textContent=String(snap.val()|| (index===0?"Player 1":"Player 2"))});
- onValue(path(player+"Record"),snap=>{const value=String(snap.val()||"0-0-0");recordEl.textContent=/^\\d{1,3}-\\d{1,3}-\\d{1,3}$/.test(value)?value:"0-0-0"});
+ onValue(path(player+"Name"),snap=>{
+  nameEl.textContent=String(snap.val()|| (index===0?"Player 1":"Player 2")).trim();
+  nameEl.style.fontSize="25px";
+  let size=25;
+  while(nameEl.scrollWidth>nameEl.clientWidth && size>11){
+    nameEl.style.fontSize=(--size)+"px";
+  }
+});
+ onValue(path(player+"Record"),snap=>{const value=String(snap.val()||"0-0-0");recordEl.textContent=/^\d{1,3}-\d{1,3}-\d{1,3}$/.test(value)?value:"0-0-0"});
 }
 const imageFiles={
  "amber,amethyst":"amber amethyst.png","amber,emerald":"amber emerald.png",
