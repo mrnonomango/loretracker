@@ -197,19 +197,19 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 
-const p1Ref=ref(db,"p1");
-const p2Ref=ref(db,"p2");
+const p1Ref=ref(db,"newlore/"+("p1"));
+const p2Ref=ref(db,"newlore/"+("p2"));
 
-const p1GamesRef=ref(db,"p1Games");
-const p2GamesRef=ref(db,"p2Games");
+const p1GamesRef=ref(db,"newlore/"+("p1Games"));
+const p2GamesRef=ref(db,"newlore/"+("p2Games"));
 
-const p1NameRef=ref(db,"p1Name");
-const p2NameRef=ref(db,"p2Name");
+const p1NameRef=ref(db,"newlore/"+("p1Name"));
+const p2NameRef=ref(db,"newlore/"+("p2Name"));
 
-const timerRef=ref(db,"timer");
+const timerRef=ref(db,"newlore/"+("timer"));
 
-const p1InksRef=ref(db,"p1Inks");
-const p2InksRef=ref(db,"p2Inks");
+const p1InksRef=ref(db,"newlore/"+("p1Inks"));
+const p2InksRef=ref(db,"newlore/"+("p2Inks"));
 
 const DEFAULT_RESET=3300;
 const DEFAULT_ROUND_NAME="Round 1";
@@ -330,7 +330,7 @@ for(const [combination,filename] of Object.entries(inkImages)){
    changes[player+"Inks"]=combination.split(",");
    changes[player+"Ink"]=filename;
 
-   await update(ref(db),changes);
+   await update(ref(db,"newlore"),changes);
 
   }catch(error){
    console.error("Unable to save ink combination:",error);
