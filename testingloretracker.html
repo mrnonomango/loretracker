@@ -685,6 +685,13 @@ body {
   animation: lorePulse 1.2s infinite;
 }
 
+
+.lore-point.lore-gain{animation:loreGainBurst .52s ease-out both!important}
+.lore-point.lore-loss{animation:loreLossBurst .52s ease-out both!important}
+@keyframes loreGainBurst{0%,100%{transform:scale(1.5);filter:brightness(1)}45%{transform:scale(1.95);filter:brightness(1.8) drop-shadow(0 0 12px #f5c94c)}}
+@keyframes loreLossBurst{0%,100%{transform:scale(1.5);filter:brightness(1)}45%{transform:scale(1.8);filter:brightness(1.3) drop-shadow(0 0 12px #ff4545)}}
+.pulse{animation:winPulse .52s ease-out!important}
+@keyframes winPulse{0%,100%{transform:scale(1);filter:brightness(1)}45%{transform:scale(1.32);filter:brightness(2) drop-shadow(0 0 9px #ffe6a0)}}
 </style>
 </head>
 
@@ -952,8 +959,8 @@ let p2Lore = 0;
 let p1Games = 0;
 let p2Games = 0;
 
-let lastP1Games = 0;
-let lastP2Games = 0;
+let lastP1Games = null;
+let lastP2Games = null;
 
 
 let timerData = {
@@ -1053,6 +1060,23 @@ function renderLoreTrack() {
 }
 
 
+const previousLore = {p1:null,p2:null};
+function updateAnimatedLore(player,value){
+ const old=previousLore[player];
+ if(player==="p1")p1Lore=value;else p2Lore=value;
+ renderLoreTrack();
+ if(old!==null && old!==value){
+  const nodes=loreTrack.querySelectorAll(".lore-point");
+  const index=value>=20?20:player==="p1"?value:40-value;
+  const target=nodes[index];
+  if(target){
+   const effect=value>old?"lore-gain":"lore-loss";
+   target.classList.add(effect);
+   target.addEventListener("animationend",()=>target.classList.remove(effect),{once:true});
+  }
+ }
+ previousLore[player]=value;
+}
 function renderGameIcons(
   player,
   wins,
@@ -1082,7 +1106,7 @@ function renderGameIcons(
   );
 
 
-  if (wins > lastWins) {
+  if (lastWins !== null && wins > lastWins) {
 
     const target =
       wins === 1
@@ -1195,10 +1219,7 @@ onValue(
 
   snapshot => {
 
-    p1Lore =
-      Number(snapshot.val()) || 0;
-
-    renderLoreTrack();
+    updateAnimatedLore("p1",Math.max(0,Math.min(20,Number(snapshot.val())||0)));
 
   }
 );
@@ -1209,10 +1230,7 @@ onValue(
 
   snapshot => {
 
-    p2Lore =
-      Number(snapshot.val()) || 0;
-
-    renderLoreTrack();
+    updateAnimatedLore("p2",Math.max(0,Math.min(20,Number(snapshot.val())||0)));
 
   }
 );
