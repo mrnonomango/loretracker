@@ -307,6 +307,464 @@ html, body {
     0 1px 1px rgba(255,255,255,.45);
 }
 
+let p1Games = 0;
+let p2Games = 0;
+let lastP1Games = null;
+let lastP2Games = null;
+let victoryTimeout = null;
+const selectedVictoryInks={p1:"",p2:""};
+
+function showMatchWinner(player) {
+ const banner=document.getElementById("matchVictory");
+ banner.replaceChildren();
+ const kicker=document.createElement("div");
+ kicker.className="victory-kicker"; kicker.textContent="Match Complete";
+ const title=document.createElement("div");
+ title.className="victory-title";
+ const victoryV=document.createElement("span"); victoryV.textContent="V";
+ const victoryIcon=document.createElement("img"); victoryIcon.className="victory-title-icon";
+ victoryIcon.src="./Illuminary%20Icon_White.png"; victoryIcon.alt="I";
+ const victoryRest=document.createElement("span"); victoryRest.textContent="CTORY";
+ title.append(victoryV,victoryIcon,victoryRest);
+ const names=document.createElement("div");
+ names.className="victory-names";
+ for(const p of ["p1","p2"]){
+  const column=document.createElement("div"); column.className="victory-player"+(p===player?" winner":"");
+  const name=document.createElement("div"); name.className="victory-player-name";
+  name.textContent=document.getElementById(p+"Name").textContent.trim() || (p==="p1"?"Player 1":"Player 2");
+  const score=document.createElement("div"); score.className="victory-score";
+  score.textContent=String(p==="p1"?p1Games:p2Games);
+  column.append(name,score); names.append(column);
+  if(p==="p1"){const dash=document.createElement("div");dash.className="victory-separator";dash.textContent="–";names.append(dash);}
+ }
+ const content=document.createElement("div"); content.className="victory-content";
+ content.append(kicker,title,names);
+ for(const p of [player]){
+  const ink=document.createElement("div");
+  ink.className="victory-ink winner";
+  const img=document.createElement("img");
+  img.alt="";
+  const file=selectedVictoryInks[p];
+  if(file && /^[a-z0-9 ._-]+\.png$/i.test(file)){
+   img.src="./Ink%20combinations/"+encodeURIComponent(file);
+   ink.append(img);
+  }
+  banner.append(ink);
+ }
+ banner.append(content);
+ clearTimeout(victoryTimeout);
+ banner.classList.remove("visible");
+ void banner.offsetWidth;
+ banner.classList.add("visible");
+ victoryTimeout=setTimeout(()=>banner.classList.remove("visible"),6500);
+}
+
+
+
+let timerData = {
+  roundName: "Round 1",
+  remaining: 3300,
+  running: false,
+  startedAt: 0
+};
+
+
+const loreTrack =
+  document.getElementById("loreTrack");
+
+
+function createLorePoint(
+  number,
+  player
+) {
+
+  const point =
+    document.createElement("div");
+
+  point.className =
+    "lore-point";
+
+  point.textContent =
+    number;
+
+
+  if (
+    player === "p1" &&
+    p1Lore === number
+  ) {
+    point.classList.add("active");
+  }
+
+
+  if (
+    player === "p2" &&
+    p2Lore === number
+  ) {
+    point.classList.add("active");
+  }
+
+
+  return point;
+}
+
+
+function renderLoreTrack() {
+
+  loreTrack.innerHTML = "";
+
+
+  for (
+    let i = 0;
+    i <= 19;
+    i++
+  ) {
+    loreTrack.appendChild(
+      createLorePoint(i, "p1")
+    );
+  }
+
+
+  const center =
+    document.createElement("div");
+
+  center.className =
+    "lore-point center-20";
+
+  center.textContent =
+    "20";
+
+
+  if (
+    p1Lore >= 20 ||
+    p2Lore >= 20
+  ) {
+    center.classList.add("active");
+  }
+
+
+  loreTrack.appendChild(center);
+
+
+  for (
+    let i = 19;
+    i >= 0;
+    i--
+  ) {
+    loreTrack.appendChild(
+      createLorePoint(i, "p2")
+    );
+  }
+
+}
+
+
+const previousLore = {p1:null,p2:null};
+function updateAnimatedLore(player,value){
+ const old=previousLore[player];
+ if(player==="p1")p1Lore=value;else p2Lore=value;
+ renderLoreTrack();
+ if(old!==null && old!==value){
+  const nodes=loreTrack.querySelectorAll(".lore-point");
+  const index=value>=20?20:player==="p1"?value:40-value;
+  const target=nodes[index];
+  if(target){
+   const effect=value>old?"lore-gain":"lore-loss";
+   target.classList.add(effect);
+   target.addEventListener("animationend",()=>target.classList.remove(effect),{once:true});
+  }
+ }
+ previousLore[player]=value;
+}
+function renderGameIcons(
+  player,
+  wins,
+  lastWins
+) {
+
+  const game1 =
+    document.getElementById(
+      player + "g1"
+    );
+
+  const game2 =
+    document.getElementById(
+      player + "g2"
+    );
+
+
+  game1.classList.toggle(
+    "filled",
+    wins >= 1
+  );
+
+
+  game2.classList.toggle(
+    "filled",
+    wins >= 2
+  );
+
+
+  if (lastWins !== null && wins > lastWins) {
+
+    const target =
+      wins === 1
+        ? game1
+        : game2;
+
+    target.classList.remove("pulse");
+
+    void target.offsetWidth;
+
+    target.classList.add("pulse");
+
+
+    setTimeout(
+      () => {
+        target.classList.remove("pulse");
+      },
+      350
+    );
+
+  }
+
+}
+
+
+function formatTime(
+  totalSeconds
+) {
+
+  const safe =
+    Math.max(
+      0,
+      Math.floor(
+        Number(totalSeconds) || 0
+      )
+    );
+
+  const minutes =
+    Math.floor(safe / 60);
+
+  const seconds =
+    safe % 60;
+
+  return (
+    minutes +
+    ":" +
+    String(seconds).padStart(2, "0")
+  );
+
+}
+
+
+function getTimerRemaining() {
+
+  let remaining =
+    Number(
+      timerData.remaining ?? 3300
+    );
+
+  const running =
+    Boolean(timerData.running);
+
+  const startedAt =
+    Number(timerData.startedAt ?? 0);
+
+
+  if (
+    running &&
+    startedAt > 0
+  ) {
+
+    const elapsed =
+      Math.floor(
+        (Date.now() - startedAt) / 1000
+      );
+
+    remaining =
+      Math.max(
+        0,
+        remaining - elapsed
+      );
+
+  }
+
+  return remaining;
+}
+
+
+function renderTimer() {
+
+  document
+    .getElementById("timer")
+    .textContent =
+      formatTime(
+        getTimerRemaining()
+      );
+
+
+  document
+    .getElementById("roundName")
+    .textContent =
+      timerData.roundName ||
+      "Round 1";
+
+}
+
+
+onValue(
+  ref(db, "p1"),
+
+  snapshot => {
+
+    updateAnimatedLore("p1",Math.max(0,Math.min(20,Number(snapshot.val())||0)));
+
+  }
+);
+
+
+onValue(
+  ref(db, "p2"),
+
+  snapshot => {
+
+    updateAnimatedLore("p2",Math.max(0,Math.min(20,Number(snapshot.val())||0)));
+
+  }
+);
+
+
+onValue(
+  ref(db, "p1Games"),
+
+  snapshot => {
+
+    p1Games =
+      Number(snapshot.val()) || 0;
+
+    renderGameIcons(
+      "p1",
+      p1Games,
+      lastP1Games
+    );
+
+    if (lastP1Games !== null && lastP1Games < 2 && p1Games >= 2) showMatchWinner("p1");
+    lastP1Games =
+      p1Games;
+
+  }
+);
+
+
+onValue(
+  ref(db, "p2Games"),
+
+  snapshot => {
+
+    p2Games =
+      Number(snapshot.val()) || 0;
+
+    renderGameIcons(
+      "p2",
+      p2Games,
+      lastP2Games
+    );
+
+    if (lastP2Games !== null && lastP2Games < 2 && p2Games >= 2) showMatchWinner("p2");
+    lastP2Games =
+      p2Games;
+
+  }
+);
+
+
+onValue(
+  ref(db, "p1Name"),
+
+  snapshot => {
+
+    const name =
+      String(
+        snapshot.val() || ""
+      ).trim();
+
+    document
+      .getElementById("p1Name")
+      .textContent =
+        name || "Player 1";
+
+  }
+);
+
+
+onValue(
+  ref(db, "p2Name"),
+
+  snapshot => {
+
+    const name =
+      String(
+        snapshot.val() || ""
+      ).trim();
+
+    document
+      .getElementById("p2Name")
+      .textContent =
+        name || "Player 2";
+
+  }
+);
+
+
+onValue(
+  ref(db, "timer"),
+
+  snapshot => {
+
+    timerData =
+      snapshot.val() || {
+        roundName: "Round 1",
+        remaining: 3300,
+        running: false,
+        startedAt: 0
+      };
+
+    renderTimer();
+
+  }
+);
+
+
+setInterval(
+  renderTimer,
+  250
+);
+
+
+renderLoreTrack();
+
+
+renderGameIcons(
+  "p1",
+  p1Games,
+  p1Games
+);
+
+
+renderGameIcons(
+  "p2",
+  p2Games,
+  p2Games
+);
+
+
+renderTimer();
+
+</script>
+
+</body>
+</html>
+
 /* INK COMBINATIONS */
 
 .ink-slot {
@@ -494,6 +952,80 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Cinematic Lorcana match result: no flashing or strobing. */
+#matchVictory {
+ position:fixed; inset:0; width:100vw; height:100vh;
+ z-index:100; box-sizing:border-box; overflow:hidden;
+ display:flex; flex-direction:column; align-items:center; justify-content:center;
+ background:radial-gradient(ellipse at 50% 72%,#58421f 0%,#1c2b42 38%,#081529 75%,#040b16 100%);
+ color:#fff; opacity:0; visibility:hidden; pointer-events:none;
+ transform:scale(1.025);
+ transition:opacity .8s ease,transform 1s ease,visibility 0s linear .8s;
+}
+#matchVictory.visible {
+ opacity:1; visibility:visible; transform:scale(1);
+ transition:opacity .8s ease,transform 1s ease;
+}
+#matchVictory .victory-ink {
+ position:absolute; top:13%; bottom:11%; width:40%; z-index:0;
+ display:flex; align-items:center; justify-content:center;
+ opacity:.48; filter:saturate(1.15) drop-shadow(0 10px 24px rgba(0,0,0,.28)); pointer-events:none;
+}
+#matchVictory .victory-ink.winner {left:50%; top:13%; bottom:20%; transform:translateX(-50%) scale(.94); width:52%; opacity:.48; filter:saturate(1.25) drop-shadow(0 0 30px rgba(239,185,83,.35)); transition:transform 1.4s ease-out;}
+#matchVictory.visible .victory-ink.winner {transform:translateX(-50%) scale(1);}
+#matchVictory .victory-ink img {
+ width:100%; height:100%; object-fit:contain;
+}
+#matchVictory .victory-content {
+ position:relative; z-index:2; width:min(1320px,92vw);
+ display:flex; flex-direction:column; align-items:center;
+}
+#matchVictory::before {
+ content:""; position:absolute; inset:7% 9%; pointer-events:none;
+ border:3px solid rgba(244,197,100,.88);
+ box-shadow:inset 0 0 0 7px rgba(7,17,31,.65), inset 0 0 0 9px rgba(244,197,100,.35), 0 0 22px rgba(236,180,76,.25);
+ transition:box-shadow 1.2s ease;
+}
+#matchVictory::after {
+ content:""; position:absolute; inset:9% 11%; pointer-events:none;
+ background:
+ linear-gradient(#f9d57e,#f9d57e) top left/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) top left/5px 72px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) top right/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) top right/5px 72px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom left/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom left/5px 72px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom right/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom right/5px 72px no-repeat;
+ opacity:.95;
+}
+
+.victory-kicker {
+ color:#ffffff; font:800 25px Arial,sans-serif; letter-spacing:12px;
+ text-transform:uppercase; margin-bottom:6px;
+}
+.victory-title {
+ display:flex; align-items:center; justify-content:center; white-space:nowrap;
+ font-family:Georgia,serif; font-size:clamp(72px,10vw,160px); font-weight:900;
+ line-height:1.05; letter-spacing:0; text-transform:uppercase;
+ text-shadow:0 4px 10px rgba(0,0,0,.95),0 0 25px rgba(0,0,0,.65);
+}
+.victory-title-icon {
+ width:.56em; height:1.02em; object-fit:contain; display:inline-block;
+ flex:0 0 .56em; margin:0 -.005em; transform:scale(1.9); filter:drop-shadow(0 5px 9px rgba(0,0,0,.55));
+}
+.victory-player.winner .victory-player-name {color:#f4cf6b;}
+.victory-names { display:flex; gap:80px; align-items:center; justify-content:center; width:85%; margin-top:32px; }
+.victory-player { flex:1; min-width:0; text-align:center; }
+.victory-player-name {font:800 32px Arial,sans-serif; overflow-wrap:anywhere; margin-bottom:10px; text-shadow:0 3px 12px #07101e,0 0 18px #07101e;}
+.victory-score {font:900 clamp(126px,11vw,178px) Georgia,serif; color:#f4cf6b; line-height:1; text-shadow:0 3px 15px #07101e,0 0 12px #07101e;}
+.victory-separator {font:900 78px Georgia,serif; color:#f4cf6b;}
+.victory-footer {color:#f1d694; font:700 22px Arial,sans-serif; letter-spacing:8px; margin-top:40px;}
+@media (prefers-reduced-motion:reduce) {
+ #matchVictory {transition:none!important;transform:none!important;}
+ #matchVictory .victory-ink.winner {transition:none!important;transform:translateX(-50%)!important;}
+}
+
 </style>
 </head>
 
@@ -643,6 +1175,7 @@ html, body {
 
 </div>
 </div>
+<div id="matchVictory" role="status" aria-live="polite"></div>
 
 <script type="module">
 
@@ -759,6 +1292,7 @@ const validImages = new Set([
 ]);
 
 function showInk(player, filename) {
+  selectedVictoryInks[player] = String(filename || "");
   const image = $(player + "InkImage");
   const placeholder = $(player + "InkPlaceholder");
 
@@ -889,11 +1423,17 @@ function renderGames(player, raw) {
 }
 
 onValue(ref(db, "p1Games"), snapshot => {
-  renderGames("p1", snapshot.val());
+  p1Games = Math.max(0, Math.min(2, Number(snapshot.val()) || 0));
+  renderGames("p1", p1Games);
+  if (lastP1Games !== null && lastP1Games < 2 && p1Games >= 2) showMatchWinner("p1");
+  lastP1Games = p1Games;
 });
 
 onValue(ref(db, "p2Games"), snapshot => {
-  renderGames("p2", snapshot.val());
+  p2Games = Math.max(0, Math.min(2, Number(snapshot.val()) || 0));
+  renderGames("p2", p2Games);
+  if (lastP2Games !== null && lastP2Games < 2 && p2Games >= 2) showMatchWinner("p2");
+  lastP2Games = p2Games;
 });
 
 /* PLAYER NAMES + RECORDS */
