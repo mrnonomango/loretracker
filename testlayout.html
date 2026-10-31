@@ -634,7 +634,6 @@ html, body {
 
   <div class="timer-box">
     <div id="roundName" class="round-name">
-      Round 1
     </div>
 
     <div id="time" class="time">
@@ -929,7 +928,7 @@ for (const player of ["p1", "p2"]) {
 /* ROUND + TIMER */
 
 let timerState = {
-  roundName: "Round 1",
+  roundName: "",
   remaining: 3600,
   running: false,
   startedAt: 0
@@ -957,7 +956,7 @@ function renderTimer() {
   const remaining = Math.max(0, base - elapsed);
 
   $("roundName").textContent =
-    timerState.roundName || "Round 1";
+    timerState.roundName ?? "";
 
   $("time").textContent =
     Math.floor(remaining / 60) + ":" +
@@ -966,7 +965,7 @@ function renderTimer() {
 
 onValue(ref(db, "timer"), snapshot => {
   timerState = snapshot.val() || {
-    roundName: "Round 1",
+    roundName: "",
     remaining: 3600,
     running: false,
     startedAt: 0
