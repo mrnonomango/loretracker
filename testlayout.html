@@ -797,7 +797,36 @@ function showLore(container, raw) {
 }
 
 const lastLore={p1:null,p2:null};
-function animateLore(p,raw){const value=Math.max(0,Math.min(20,Number(raw)||0));const container=$(p==="p1"?"leftTrack":"rightTrack");showLore(container,value);const old=lastLore[p];if(old!==null&&old!==value){const marker=[...container.children].find(el=>Number(el.dataset.lore)===value);if(marker){marker.classList.remove("lore-gain","lore-loss");void marker.offsetWidth;const effect=value>old?"lore-gain":"lore-loss";marker.classList.add(effect);marker.addEventListener("animationend",()=>marker.classList.remove(effect),{once:true});}}lastLore[p]=value;}
+const loreAnimationTimers={p1:null,p2:null};
+function animateLore(p,raw){
+  const value=Math.max(0,Math.min(20,Math.floor(Number(raw)||0)));
+  const container=$(p==="p1"?"leftTrack":"rightTrack");
+  const old=lastLore[p];
+
+  // Cancel previous animations immediately, including on rapid multi-lore updates.
+  if(loreAnimationTimers[p]!==null){
+    clearTimeout(loreAnimationTimers[p]);
+    loreAnimationTimers[p]=null;
+  }
+  for(const marker of container.children){
+    marker.classList.remove("lore-gain","lore-loss");
+  }
+  showLore(container,value);
+
+  // Only animate the destination number; all previous markers stay normal.
+  if(old!==null&&old!==value){
+    const marker=[...container.children].find(el=>Number(el.dataset.lore)===value);
+    if(marker){
+      void marker.offsetWidth;
+      marker.classList.add(value>old?"lore-gain":"lore-loss");
+      loreAnimationTimers[p]=setTimeout(()=>{
+        marker.classList.remove("lore-gain","lore-loss");
+        loreAnimationTimers[p]=null;
+      },650);
+    }
+  }
+  lastLore[p]=value;
+}
 onValue(ref(db,"p1"),snapshot=>animateLore("p1",snapshot.val()));
 onValue(ref(db,"p2"),snapshot=>animateLore("p2",snapshot.val()));
 
