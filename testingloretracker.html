@@ -683,9 +683,9 @@ body {
  transition:opacity .8s ease,transform 1s ease;
 }
 #matchVictory .victory-ink {
- position:absolute; top:16%; bottom:13%; width:36%; z-index:0;
+ position:absolute; top:13%; bottom:11%; width:40%; z-index:0;
  display:flex; align-items:center; justify-content:center;
- opacity:.19; filter:saturate(.8); pointer-events:none;
+ opacity:.48; filter:saturate(1.15) drop-shadow(0 10px 24px rgba(0,0,0,.28)); pointer-events:none;
 }
 #matchVictory .victory-ink.left {left:0;}
 #matchVictory .victory-ink.right {right:0;}
@@ -1028,7 +1028,7 @@ function showMatchWinner(player) {
   const img=document.createElement("img");
   img.alt="";
   const file=selectedVictoryInks[p];
-  if(file && /^[a-z0-9 ._-]+\\.png$/i.test(file)){
+  if(file && /^[a-z0-9 ._-]+\.png$/i.test(file)){
    img.src="./Ink%20combinations/"+encodeURIComponent(file);
    ink.append(img);
   }
