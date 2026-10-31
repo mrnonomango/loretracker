@@ -15,22 +15,22 @@ body{display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
-<div class="timer-box"><div id="roundName" class="round-name">Round 1</div><div id="time" class="time">60:00</div></div>
+<div class="timer-box"><div id="roundName" class="round-name"></div><div id="time" class="time">60:00</div></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 const config={apiKey:"AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",authDomain:"lore-counter-4e654.firebaseapp.com",databaseURL:"https://lore-counter-4e654-default-rtdb.firebaseio.com",projectId:"lore-counter-4e654"};
 const db=getDatabase(initializeApp(config));
-let state={roundName:"Round 1",remaining:3600,running:false,startedAt:0};
+let state={roundName:"",remaining:3600,running:false,startedAt:0};
 function render(){
  const base=Math.max(0,Math.floor(Number(state.remaining)||0));
  const startedAt=Number(state.startedAt)||0;
  const elapsed=state.running&&startedAt>0?Math.max(0,Math.floor((Date.now()-startedAt)/1000)):0;
  const remaining=Math.max(0,base-elapsed);
- document.getElementById("roundName").textContent=state.roundName||"Round 1";
+ document.getElementById("roundName").textContent=state.roundName??"";
  document.getElementById("time").textContent=Math.floor(remaining/60)+":"+String(remaining%60).padStart(2,"0");
 }
-onValue(ref(db,"timer"),snap=>{state=snap.val()||{roundName:"Round 1",remaining:3600,running:false,startedAt:0};render();});
+onValue(ref(db,"timer"),snap=>{state=snap.val()||{roundName:"",remaining:3600,running:false,startedAt:0};render();});
 setInterval(render,250);render();
 </script>
 </body>
