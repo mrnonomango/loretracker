@@ -687,7 +687,7 @@ body {
  display:flex; align-items:center; justify-content:center;
  opacity:.48; filter:saturate(1.15) drop-shadow(0 10px 24px rgba(0,0,0,.28)); pointer-events:none;
 }
-#matchVictory .victory-ink.winner {left:50%; top:4%; bottom:22%; transform:translateX(-50%) scale(.94); width:52%; opacity:.15; transition:transform 1.4s ease-out;}
+#matchVictory .victory-ink.winner {left:50%; top:13%; bottom:20%; transform:translateX(-50%) scale(.94); width:47%; opacity:.15; transition:transform 1.4s ease-out;}
 #matchVictory.visible .victory-ink.winner {transform:translateX(-50%) scale(1);}
 #matchVictory .victory-ink img {
  width:100%; height:100%; object-fit:contain;
@@ -711,10 +711,16 @@ body {
  text-transform:uppercase; margin-bottom:6px;
 }
 .victory-title {
+ display:flex; align-items:center; justify-content:center; white-space:nowrap;
  font-family:Georgia,serif; font-size:clamp(72px,10vw,160px); font-weight:900;
  line-height:1.05; letter-spacing:10px; text-transform:uppercase;
  text-shadow:0 7px 25px rgba(0,0,0,.65);
 }
+.victory-title-icon {
+ width:.66em; height:.77em; object-fit:contain; display:inline-block;
+ margin:0 -.025em 0 .005em; filter:drop-shadow(0 5px 9px rgba(0,0,0,.55));
+}
+.victory-player.winner .victory-player-name {color:#f4cf6b;}
 .victory-names { display:flex; gap:80px; align-items:center; justify-content:center; width:85%; margin-top:32px; }
 .victory-player { flex:1; min-width:0; text-align:center; }
 .victory-player-name {font:800 32px Arial,sans-serif; overflow-wrap:anywhere; margin-bottom:10px;}
@@ -1007,11 +1013,16 @@ function showMatchWinner(player) {
  const kicker=document.createElement("div");
  kicker.className="victory-kicker"; kicker.textContent="Match Complete";
  const title=document.createElement("div");
- title.className="victory-title"; title.textContent="VICTORY";
+ title.className="victory-title";
+ const victoryV=document.createElement("span"); victoryV.textContent="V";
+ const victoryIcon=document.createElement("img"); victoryIcon.className="victory-title-icon";
+ victoryIcon.src="./Illuminary%20Icon_White.png"; victoryIcon.alt="I";
+ const victoryRest=document.createElement("span"); victoryRest.textContent="CTORY";
+ title.append(victoryV,victoryIcon,victoryRest);
  const names=document.createElement("div");
  names.className="victory-names";
  for(const p of ["p1","p2"]){
-  const column=document.createElement("div"); column.className="victory-player";
+  const column=document.createElement("div"); column.className="victory-player"+(p===player?" winner":"");
   const name=document.createElement("div"); name.className="victory-player-name";
   name.textContent=document.getElementById(p+"Name").textContent.trim() || (p==="p1"?"Player 1":"Player 2");
   const score=document.createElement("div"); score.className="victory-score";
