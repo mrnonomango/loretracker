@@ -84,7 +84,7 @@ body{height:100dvh;display:flex;flex-direction:column;touch-action:manipulation}
 
 <div class="playerHalf topHalf">
  <div class="roundTimerBox">
-  <div id="roundNameTop" class="roundTimerName">Round 1</div>
+  <div id="roundNameTop" class="roundTimerName"></div>
   <div id="roundTimeTop" class="roundTimerTime">55:00</div>
  </div>
 
@@ -126,7 +126,7 @@ body{height:100dvh;display:flex;flex-direction:column;touch-action:manipulation}
 
 <div class="playerHalf">
  <div class="roundTimerBox">
-  <div id="roundNameBottom" class="roundTimerName">Round 1</div>
+  <div id="roundNameBottom" class="roundTimerName"></div>
   <div id="roundTimeBottom" class="roundTimerTime">55:00</div>
  </div>
 
@@ -212,7 +212,7 @@ const p1InksRef=ref(db,"p1Inks");
 const p2InksRef=ref(db,"p2Inks");
 
 const DEFAULT_RESET=3300;
-const DEFAULT_ROUND_NAME="Round 1";
+const DEFAULT_ROUND_NAME="";
 
 let timerData={
  roundName:DEFAULT_ROUND_NAME,
@@ -418,7 +418,7 @@ function getTimerRemaining(){
 
 function renderRoundTimer(){
  const formatted=formatTime(getTimerRemaining());
- const roundName=timerData.roundName||DEFAULT_ROUND_NAME;
+ const roundName=timerData.roundName??DEFAULT_ROUND_NAME;
 
  document.getElementById("roundTimeTop").textContent=formatted;
  document.getElementById("roundTimeBottom").textContent=formatted;
