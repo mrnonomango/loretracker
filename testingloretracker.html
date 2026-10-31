@@ -687,8 +687,7 @@ body {
  display:flex; align-items:center; justify-content:center;
  opacity:.48; filter:saturate(1.15) drop-shadow(0 10px 24px rgba(0,0,0,.28)); pointer-events:none;
 }
-#matchVictory .victory-ink.left {left:0;}
-#matchVictory .victory-ink.right {right:0;}
+#matchVictory .victory-ink.winner {left:50%; transform:translateX(-50%); width:65%; opacity:.24;}
 #matchVictory .victory-ink img {
  width:100%; height:100%; object-fit:contain;
 }
@@ -1022,9 +1021,9 @@ function showMatchWinner(player) {
  footer.textContent="✦ "+(document.getElementById(player+"Name").textContent.trim() || "Winner")+" WINS THE MATCH ✦";
  const content=document.createElement("div"); content.className="victory-content";
  content.append(kicker,title,names,footer);
- for(const p of ["p1","p2"]){
+ for(const p of [player]){
   const ink=document.createElement("div");
-  ink.className="victory-ink "+(p==="p1"?"left":"right");
+  ink.className="victory-ink winner";
   const img=document.createElement("img");
   img.alt="";
   const file=selectedVictoryInks[p];
