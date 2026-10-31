@@ -670,10 +670,10 @@ body {
 
 /* Cinematic Lorcana match result: no flashing or strobing. */
 #matchVictory {
- position:absolute; inset:0; width:1920px; height:1080px;
+ position:fixed; inset:0; width:100vw; height:100vh;
  z-index:100; box-sizing:border-box; overflow:hidden;
  display:flex; flex-direction:column; align-items:center; justify-content:center;
- background:radial-gradient(ellipse at 50% 70%,#76531c 0%,#28364a 33%,#0a1729 70%,#060e1a 100%);
+ background:radial-gradient(ellipse at 50% 72%,#6a4b1e 0%,#243247 36%,#0a1729 72%,#060e1a 100%);
  color:#fff; opacity:0; visibility:hidden; pointer-events:none;
  transform:scale(1.025);
  transition:opacity .8s ease,transform 1s ease,visibility 0s linear .8s;
@@ -681,6 +681,20 @@ body {
 #matchVictory.visible {
  opacity:1; visibility:visible; transform:scale(1);
  transition:opacity .8s ease,transform 1s ease;
+}
+#matchVictory .victory-ink {
+ position:absolute; top:16%; bottom:13%; width:36%; z-index:0;
+ display:flex; align-items:center; justify-content:center;
+ opacity:.19; filter:saturate(.8); pointer-events:none;
+}
+#matchVictory .victory-ink.left {left:0;}
+#matchVictory .victory-ink.right {right:0;}
+#matchVictory .victory-ink img {
+ width:100%; height:100%; object-fit:contain;
+}
+#matchVictory .victory-content {
+ position:relative; z-index:2; width:min(1320px,92vw);
+ display:flex; flex-direction:column; align-items:center;
 }
 #matchVictory::before {
  content:""; position:absolute; inset:7% 9%; pointer-events:none;
@@ -691,13 +705,13 @@ body {
  content:""; position:absolute; left:18%; right:18%; bottom:9%; height:3px;
  background:linear-gradient(90deg,transparent,#e9bf62,transparent);
 }
-.victory-ornament { color:#e6bd62; font-size:42px; letter-spacing:32px; margin-bottom:30px; }
+
 .victory-kicker {
  color:#f3cf7a; font:800 25px Arial,sans-serif; letter-spacing:12px;
  text-transform:uppercase; margin-bottom:6px;
 }
 .victory-title {
- font-family:Georgia,serif; font-size:160px; font-weight:900;
+ font-family:Georgia,serif; font-size:clamp(72px,10vw,160px); font-weight:900;
  line-height:1.05; letter-spacing:10px; text-transform:uppercase;
  text-shadow:0 7px 25px rgba(0,0,0,.65);
 }
@@ -980,11 +994,15 @@ let p2Games = 0;
 let lastP1Games = null;
 let lastP2Games = null;
 let victoryTimeout = null;
+const selectedVictoryInks={p1:"",p2:""};
+for(const p of ["p1","p2"]){
+ onValue(ref(db,p+"Ink"),snapshot=>{
+  selectedVictoryInks[p]=String(snapshot.val()||"");
+ });
+}
 function showMatchWinner(player) {
  const banner=document.getElementById("matchVictory");
  banner.replaceChildren();
- const ornament=document.createElement("div");
- ornament.className="victory-ornament"; ornament.textContent="✧ ◆ ✧";
  const kicker=document.createElement("div");
  kicker.className="victory-kicker"; kicker.textContent="Match Complete";
  const title=document.createElement("div");
@@ -1002,7 +1020,21 @@ function showMatchWinner(player) {
  }
  const footer=document.createElement("div");footer.className="victory-footer";
  footer.textContent="✦ "+(document.getElementById(player+"Name").textContent.trim() || "Winner")+" WINS THE MATCH ✦";
- banner.append(ornament,kicker,title,names,footer);
+ const content=document.createElement("div"); content.className="victory-content";
+ content.append(kicker,title,names,footer);
+ for(const p of ["p1","p2"]){
+  const ink=document.createElement("div");
+  ink.className="victory-ink "+(p==="p1"?"left":"right");
+  const img=document.createElement("img");
+  img.alt="";
+  const file=selectedVictoryInks[p];
+  if(file && /^[a-z0-9 ._-]+\\.png$/i.test(file)){
+   img.src="./Ink%20combinations/"+encodeURIComponent(file);
+   ink.append(img);
+  }
+  banner.append(ink);
+ }
+ banner.append(content);
  clearTimeout(victoryTimeout);
  banner.classList.remove("visible");
  void banner.offsetWidth;
