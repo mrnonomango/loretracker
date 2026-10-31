@@ -442,7 +442,7 @@ body {
 
   pointer-events: none;
 
-  transition: opacity .15s ease;
+  transition: none;
 }
 
 .tick.filled .win-fill {
@@ -458,19 +458,6 @@ body {
   animation: winPulse .35s ease;
 }
 
-@keyframes winPulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.18);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
 
 
 /* =========================================================
@@ -539,12 +526,7 @@ body {
     inset 0 0 8px rgba(65, 165, 225, .08),
     0 0 2px rgba(240, 200, 91, .08);
 
-  transition:
-    transform .18s ease,
-    background .18s ease,
-    color .18s ease,
-    border .18s ease,
-    box-shadow .18s ease;
+  transition: none;
 }
 
 
@@ -596,28 +578,6 @@ body {
    CYAN / BLUE
 ========================================================= */
 
-@keyframes lorePulse {
-
-  0%,
-  100% {
-    box-shadow:
-      0 0 10px rgba(235, 255, 255, 1),
-      0 0 22px rgba(140, 245, 255, .95),
-      0 0 42px rgba(50, 205, 255, .85),
-      0 0 68px rgba(0, 135, 255, .55),
-      inset 0 0 14px rgba(230, 255, 255, .70);
-  }
-
-  50% {
-    box-shadow:
-      0 0 16px rgba(255, 255, 255, 1),
-      0 0 34px rgba(175, 250, 255, 1),
-      0 0 60px rgba(75, 220, 255, .95),
-      0 0 92px rgba(0, 145, 255, .72),
-      inset 0 0 20px rgba(235, 255, 255, .90);
-  }
-
-}
 
 
 /* =========================================================
@@ -706,6 +666,25 @@ body {
 @media (prefers-reduced-motion: reduce) {
  .lore-point.lore-gain,.lore-point.lore-loss,.pulse { animation: none !important; }
  .lore-point { transition: none !important; }
+}
+
+/* One-time match winner card, with no flashes or brightness changes. */
+#matchVictory {
+ position:absolute; top:260px; left:50%; transform:translateX(-50%) translateY(12px);
+ min-width:420px; max-width:900px; padding:16px 36px;
+ border:2px solid #d5ad52; border-radius:12px;
+ background:#102b46; color:#fff; text-align:center;
+ font-size:32px; font-weight:800; letter-spacing:.5px;
+ opacity:0; visibility:hidden; pointer-events:none; z-index:50;
+ transition:opacity .65s ease, transform .65s ease, visibility 0s linear .65s;
+}
+#matchVictory.visible {
+ opacity:1; visibility:visible;
+ transform:translateX(-50%) translateY(0);
+ transition:opacity .65s ease, transform .65s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+ #matchVictory { transition:none!important; transform:translateX(-50%)!important; }
 }
 </style>
 </head>
@@ -934,7 +913,7 @@ body {
   </div>
 
 </div>
-
+<div id="matchVictory" role="status" aria-live="polite"></div>
 
 <script type="module">
 
@@ -976,6 +955,18 @@ let p2Games = 0;
 
 let lastP1Games = null;
 let lastP2Games = null;
+let victoryTimeout = null;
+function showMatchWinner(player) {
+ const banner=document.getElementById("matchVictory");
+ const name=document.getElementById(player+"Name").textContent.trim() || (player==="p1"?"Player 1":"Player 2");
+ banner.textContent=name+" wins the match!";
+ clearTimeout(victoryTimeout);
+ banner.classList.remove("visible");
+ void banner.offsetWidth;
+ banner.classList.add("visible");
+ victoryTimeout=setTimeout(()=>banner.classList.remove("visible"),3600);
+}
+
 
 
 let timerData = {
@@ -1265,6 +1256,7 @@ onValue(
       lastP1Games
     );
 
+    if (lastP1Games !== null && lastP1Games < 2 && p1Games >= 2) showMatchWinner("p1");
     lastP1Games =
       p1Games;
 
@@ -1286,6 +1278,7 @@ onValue(
       lastP2Games
     );
 
+    if (lastP2Games !== null && lastP2Games < 2 && p2Games >= 2) showMatchWinner("p2");
     lastP2Games =
       p2Games;
 
