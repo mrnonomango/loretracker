@@ -930,12 +930,6 @@ input:focus {
       maxlength="70"
     >
 
-    <button
-      id="cardSearchButton"
-      class="cardSearchBtn"
-      type="button"
-    >Search Cards</button>
-
     <div id="cardSearchResults" class="cardResults"></div>
 
     <div
@@ -1269,13 +1263,13 @@ const artworkEmpty = $("artworkEmpty");
 const artworkCard = $("artworkCard");
 const cardSearchArea = $("cardSearchArea");
 const cardSearchInput = $("cardSearchInput");
-const cardSearchButton = $("cardSearchButton");
 const cardSearchResults = $("cardSearchResults");
 const cardSearchStatus = $("cardSearchStatus");
 
 let featuredCardUrl = "";
 let featuredMode = "empty";
 let searchCounter = 0;
+let cardSearchDebounce = null;
 
 function validCardUrl(value) {
   try {
@@ -1416,7 +1410,6 @@ async function searchCards() {
 
   const requestId = ++searchCounter;
 
-  cardSearchButton.disabled = true;
   cardSearchResults.replaceChildren();
 
   setCardSearchStatus("Searching Lorcana cards...");
@@ -1520,21 +1513,30 @@ async function searchCards() {
       true
     );
 
-  } finally {
-    if(requestId === searchCounter) {
-      cardSearchButton.disabled = false;
-    }
   }
 }
 
-cardSearchButton.addEventListener(
-  "click",
-  searchCards
-);
+/* Search after a short typing pause. Invalidate older requests immediately
+   so slower network responses cannot overwrite newer search results. */
+cardSearchInput.addEventListener("input",() => {
+  clearTimeout(cardSearchDebounce);
+  ++searchCounter;
+
+  if(cardSearchInput.value.trim().length < 2) {
+    cardSearchResults.replaceChildren();
+    setCardSearchStatus("Type at least two characters to see matching cards.");
+    return;
+  }
+
+  setCardSearchStatus("Finding matching cards...");
+  cardSearchDebounce = setTimeout(searchCards,300);
+});
 
 cardSearchInput.addEventListener("keydown",event => {
   if(event.key === "Enter") {
     event.preventDefault();
+    clearTimeout(cardSearchDebounce);
+    ++searchCounter;
     searchCards();
   }
 });
