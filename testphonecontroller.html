@@ -643,6 +643,18 @@ input:focus {
     grid-template-columns: 1fr 90px;
   }
 }
+
+/* Interview section — separate from match controls */
+.interviewSection{margin-top:24px;padding:16px;border:2px solid #d7ae61;border-radius:14px;background:linear-gradient(160deg,#282044,#132d48)}
+.interviewSection h2{margin:0 0 5px;color:#f0c85b;font-size:21px}
+.interviewNote{color:#b9c6db;font-size:12px;margin-bottom:15px}
+.interviewGuest{border:1px solid #75618b;border-radius:10px;padding:12px;margin-top:12px;background:#0e1629}
+.interviewGuest h3{margin:0 0 10px;color:#ebc984;font-size:16px}
+.interviewGuest input{margin-bottom:10px}
+.interviewToggle{width:100%;padding:13px;background:#664a38;color:#fff;border:1px solid #d8ae60;border-radius:8px;font-weight:bold;font-size:15px}
+.interviewToggle.visible{background:#245e48}
+.interviewPreviewLink{display:block;text-align:center;color:#f0c85b;margin-top:14px}
+
 </style>
 </head>
 
@@ -964,6 +976,16 @@ input:focus {
     </div>
   </div>
 </div>
+
+
+<!-- INTERVIEW CONTROLS — deliberately after every existing match control -->
+<section class="interviewSection" aria-label="Interview Controls">
+<h2>INTERVIEW CONTROLS</h2>
+<div class="interviewNote">Names and subtitles update the OBS interview overlay automatically. Hide either guest to center the remaining nameplate.</div>
+<div class="interviewGuest"><h3>PERSON 1</h3><label for="interviewName1">Name</label><input id="interviewName1" maxlength="45" placeholder="Person 1"><label for="interviewSubtitle1">Subtitle</label><input id="interviewSubtitle1" maxlength="60" placeholder="Guest / Champion / Host"><button type="button" id="interviewVisible1" class="interviewToggle">Loading...</button></div>
+<div class="interviewGuest"><h3>PERSON 2</h3><label for="interviewName2">Name</label><input id="interviewName2" maxlength="45" placeholder="Person 2"><label for="interviewSubtitle2">Subtitle</label><input id="interviewSubtitle2" maxlength="60" placeholder="Guest / Finalist / Host"><button type="button" id="interviewVisible2" class="interviewToggle">Loading...</button></div>
+<a class="interviewPreviewLink" href="interviewoverlay.html" target="_blank" rel="noopener">Open Interview Overlay</a>
+</section>
 
 <script type="module">
 
@@ -1953,6 +1975,32 @@ $("pauseTimer").addEventListener("click",async () => {
 $("resetTimer").addEventListener("click",async () => {
   await applyMinutes();
 });
+
+
+/* INTERVIEW: independent Firebase path, no impact on match state */
+for(const i of [1,2]){
+ const base="interview/person"+i;
+ const nameInput=$("interviewName"+i),subtitleInput=$("interviewSubtitle"+i),button=$("interviewVisible"+i);
+ let state={name:"Person "+i,subtitle:"",visible:true},editingName=false,editingSubtitle=false;
+ onValue(ref(db,base),snapshot=>{
+  const incoming=snapshot.val()||{};
+  state={name:String(incoming.name??("Person "+i)),subtitle:String(incoming.subtitle??""),visible:incoming.visible!==false};
+  if(!editingName)nameInput.value=state.name;
+  if(!editingSubtitle)subtitleInput.value=state.subtitle;
+  button.textContent=state.visible?"Hide Person "+i:"Show Person "+i;
+  button.classList.toggle("visible",state.visible);
+ },()=>setStatus("Interview connection error",true));
+ for(const [el,field,flag] of [[nameInput,"name",0],[subtitleInput,"subtitle",1]]){
+  el.addEventListener("focus",()=>{if(flag===0)editingName=true;else editingSubtitle=true;});
+  el.addEventListener("blur",async()=>{
+   if(flag===0)editingName=false;else editingSubtitle=false;
+   const next=el.value.trim();
+   if(next!==state[field])await save(base+"/"+field,next);
+  });
+  el.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();el.blur();}});
+ }
+ button.addEventListener("click",()=>save(base+"/visible",!state.visible));
+}
 
 </script>
 </body>
