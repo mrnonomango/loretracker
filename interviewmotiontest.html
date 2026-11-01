@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lorcana Cookout — Interview Motion Test</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Arial,sans-serif;color:white}.stage{position:absolute;inset:0;overflow:hidden;background:transparent}.side{position:absolute;top:0;bottom:0;width:15%;background:linear-gradient(165deg,#49276e,#23183e 63%,#10203f)}.side.left{left:0}.side.right{right:0;background:linear-gradient(190deg,#233f70,#17254a 60%,#291c4d)}.side:after{content:"";position:absolute;top:-20%;width:110%;height:150%;border:1px solid #d6af6255;border-radius:50%;animation:drift 12s ease-in-out infinite alternate}.side.left:after{right:-35%}.side.right:after{left:-30%;animation-direction:alternate-reverse}.cameraOutline{position:absolute;top:0;bottom:0;left:15%;right:15%;border-left:2px solid #c99c56;border-right:2px solid #c99c56;pointer-events:none}.tag{position:absolute;top:6%;left:18%;font-size:20px;font-weight:700;color:#e2bf7c;letter-spacing:.15em}.nameplates{position:absolute;bottom:7%;left:18%;right:18%;display:grid;grid-template-columns:1fr 1fr;gap:2.5%;z-index:3}.nameplate{position:relative;overflow:hidden;background:linear-gradient(110deg,#231a3def,#16294aef);border-left:5px solid #e0b564;box-shadow:0 8px 22px #050719af;padding:20px;min-width:0;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1);opacity:1;transform:translateY(0)}.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nameplate::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 25%,rgba(244,210,129,.04) 42%,rgba(255,222,149,.35) 50%,rgba(255,221,151,.05) 58%,transparent 75%);transform:translateX(-160%);opacity:0}
+.nameplate.reveal{animation:plateReveal .7s cubic-bezier(.17,.8,.25,1) both}
+.nameplate.reveal::after{animation:goldSweep 1.05s ease-out .2s both}
+.nameplate.reveal .name{animation:lineReveal .6s ease-out .12s both}
+.nameplate.reveal .subtitle{animation:lineReveal .6s ease-out .27s both}
+@keyframes plateReveal{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes goldSweep{0%{opacity:0;transform:translateX(-160%)}15%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateX(160%)}}
+@keyframes lineReveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.side:after,.nameplate,.nameplate::after,.nameplate .name,.nameplate .subtitle{animation:none!important}.nameplate{transition:none}}
+</style></head><body><main class="stage"><div class="side left"></div><div class="side right"></div><div class="cameraOutline"></div><div class="tag">THE LORCANA COOKOUT</div><div class="nameplates" id="plates"><div class="nameplate" id="p1"><div class="name" id="n1">Person 1</div><div class="subtitle" id="s1"></div></div><div class="nameplate" id="p2"><div class="name" id="n2">Person 2</div><div class="subtitle" id="s2"></div></div></div></main>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const app=initializeApp({apiKey:"AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",authDomain:"lore-counter-4e654.firebaseapp.com",databaseURL:"https://lore-counter-4e654-default-rtdb.firebaseio.com",projectId:"lore-counter-4e654"});
+const db=getDatabase(app);const data={};const $=id=>document.getElementById(id);
+const previous={};
+function paint(){
+ for(let i=1;i<=2;i++){
+  const p=data[i]||{},name=String(p.name??("Person "+i)),sub=String(p.subtitle??""),visible=p.visible!==false;
+  const el=$("p"+i);
+  const old=previous[i];
+  $("n"+i).textContent=name;$("s"+i).textContent=sub;
+  el.classList.toggle("hidden",!visible);
+  if(visible&&old&&(old.visible===false||old.name!==name||old.subtitle!==sub)){
+   el.classList.remove("reveal");void el.offsetWidth;el.classList.add("reveal");
+  }
+  previous[i]={name,subtitle:sub,visible};
+ }
+ $("plates").classList.toggle("solo",[1,2].filter(i=>data[i]?.visible!==false).length===1);
+}
+for(let i=1;i<=2;i++)onValue(ref(db,"interview/person"+i),snap=>{data[i]=snap.val()||{};paint()});
+</script></body></html>
