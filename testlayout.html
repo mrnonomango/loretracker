@@ -564,6 +564,13 @@ html, body {
 @keyframes trackerGain{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.8)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
+/* Larger, tighter lore scale with subtle five-point guide marks. */
+.markers { top: 94px; bottom: 94px; }
+.marker { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.marker.major-lore::before {
+  content:""; position:absolute; left:-5px; top:50%; width:7px; height:2px;
+  background:rgba(240,200,91,.58); transform:translateY(-50%); pointer-events:none;
+}
 /* Ringless overrides must follow all original marker styles. */
 .marker, .marker.lit, .marker.current {
   border: none;
@@ -776,7 +783,7 @@ fitOverlay();
 function buildTrack(container) {
   for (let i = 20; i >= 0; i--) {
     const marker = document.createElement("div");
-    marker.className = "marker";
+    marker.className = "marker" + (i % 5 === 0 ? " major-lore" : "");
     const number=document.createElement("span");
     number.className="lore-number";
     number.textContent=i;
