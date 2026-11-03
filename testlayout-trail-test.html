@@ -1,0 +1,1254 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lorcana Tournament Overlay</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: Arial, sans-serif;
+}
+
+#viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background: transparent;
+  transform-origin: top left;
+}
+
+/* =========================
+   320PX SIDE LAYOUT
+========================= */
+
+.side {
+  position: absolute;
+  top: 0;
+  width: 320px;
+  height: 1080px;
+  display: flex;
+}
+
+.side.left {
+  left: 0;
+}
+
+.side.right {
+  right: 0;
+}
+
+/* =========================
+   GOLD PLAYER PANELS
+========================= */
+
+.panel {
+  position: relative;
+  width: 240px;
+  height: 1080px;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  border: 2px solid #f8dc82;
+
+  background:
+    radial-gradient(
+      circle at 50% 88%,
+      rgba(255,238,170,.20),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(255,204,70,.18),
+      transparent 45%
+    ),
+    linear-gradient(
+      180deg,
+      #f9d66d 0%,
+      #f3c44f 32%,
+      #eeb43a 68%,
+      #d99724 100%
+    );
+
+  box-shadow:
+    inset 0 0 30px rgba(255,245,190,.12),
+    inset 0 0 70px rgba(128,75,0,.18),
+    0 0 8px rgba(255,210,90,.18);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(255,243,190,.5);
+  pointer-events: none;
+}
+
+/* =========================
+   VERTICAL LORE TRACKERS
+========================= */
+
+.track {
+  position: relative;
+  width: 80px;
+  height: 1080px;
+  flex-shrink: 0;
+
+  /* One gold divider only, on the gameplay-facing edge of each tracker. */
+  border: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(55,145,210,.18),
+      transparent 58%
+    ),
+    linear-gradient(
+      180deg,
+      #214d78,
+      #123150 34%,
+      #0b1e32 68%,
+      #050c15
+    );
+
+  box-shadow:
+    inset 0 0 20px rgba(55,145,210,.12),
+    inset 0 0 45px rgba(0,0,0,.9);
+}
+
+.side.left .track { border-right: 2px solid #f0c85b; }
+.side.right .track { border-left: 2px solid #f0c85b; }
+
+/* LORE POSITIONING */
+
+.markers {
+  position: absolute;
+  top: 30px;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+}
+
+.marker {
+  position: absolute;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+
+  transform: translate(-50%,-50%);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #16324b,
+      #0b1c2d 56%,
+      #040a11
+    );
+
+  border: 3px solid #c9962d;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.95);
+
+  box-shadow:
+    inset 0 0 8px rgba(65,165,225,.08),
+    0 0 3px rgba(240,200,91,.10);
+}
+
+/* Ringless lore: preserve the original positions, number sizes and animations. */
+.marker, .marker.lit, .marker.current {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.marker.current { color: white; }
+
+/* COMPLETED LORE */
+
+.marker.lit {
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #245f8f,
+      #123b61 48%,
+      #09243e 72%,
+      #030b14
+    );
+
+  border-color: #e1b447;
+
+  box-shadow:
+    0 0 6px rgba(218,170,55,.2),
+    inset 0 0 12px rgba(70,180,235,.18);
+}
+
+/* ACTIVE LORE - 1.40X */
+
+.marker.current {
+  z-index: 5;
+
+  transform:
+    translate(-50%,-50%) scale(1.40);
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #fffdf1 0%,
+      #ffe9a0 20%,
+      #e8b83f 40%,
+      #2d8dbd 58%,
+      #0c4269 75%,
+      #03101e 100%
+    );
+
+  border: 4px solid #dffcff;
+  color: white;
+
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.95);
+
+  /* Remove only the active marker glow. */
+  box-shadow: none;
+}
+
+/* =========================
+   PLAYER INFORMATION
+========================= */
+
+.player-info {
+  position: absolute;
+  top: 296px;
+  left: 9px;
+  right: 9px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 55px 32px 108px 105px;
+  row-gap: 15px;
+
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.player-name {
+  width: 100%;
+  font-size: 25px;
+  font-weight: 800;
+  color: white;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-shadow:
+    0 2px 4px rgba(0,0,0,.95),
+    0 0 6px rgba(0,0,0,.5);
+}
+
+/* TOURNAMENT RECORD */
+
+.player-record {
+  font-size: 24px;
+  font-weight: 800;
+  color: #123150;
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 1px 1px rgba(255,255,255,.45);
+}
+
+/* INK COMBINATIONS */
+
+.ink-slot {
+  width: 108px;
+  height: 108px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ink-image {
+  width: 108px;
+  height: 108px;
+  object-fit: contain;
+  display: none;
+}
+
+.ink-placeholder {
+  width: 108px;
+  height: 108px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 14px;
+}
+
+/* =========================
+   FEATURED CARD - LEFT ONLY
+
+   MOVED DOWN 20PX
+========================= */
+
+.featured-card {
+  position: absolute;
+  top: 646px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 205px;
+  height: 278px;
+
+  object-fit: contain;
+  display: none;
+  pointer-events: none;
+}
+
+/* GAME WIN ICONS */
+
+.games {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 0;
+}
+
+.game-icon {
+  width: 105px;
+  height: 105px;
+  object-fit: contain;
+  opacity: .32;
+
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,.65));
+
+  transition: opacity .15s;
+}
+
+.game-icon + .game-icon {
+  margin-left: -25px;
+}
+
+.game-icon.won {
+  opacity: 1;
+}
+
+.game-icon.just-won {
+  animation: gamePulse .35s ease;
+}
+
+@keyframes gamePulse {
+  50% {
+    transform: scale(1.14);
+  }
+}
+
+/* PURPLE DISNEY LOGOS */
+
+.lorcana-logo {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 216px;
+  height: 125px;
+
+  object-fit: contain;
+  object-position: center bottom;
+
+  pointer-events: none;
+}
+
+/* =========================
+   ROUND TIMER
+   WIDTH: 180PX
+   HEIGHT: 72PX
+========================= */
+
+.timer-box {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 180px;
+  height: 72px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  padding: 4px 10px 6px;
+
+  background:
+    radial-gradient(
+      circle at 50% 12%,
+      rgba(255,234,150,.26),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(55,145,210,.22),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      #214d78,
+      #123150 34%,
+      #0b1e32 68%,
+      #050c15
+    );
+
+  border: 2px solid #f0c85b;
+  border-radius: 6px;
+
+  box-shadow:
+    inset 0 0 25px rgba(255,240,175,.06),
+    inset 0 0 45px rgba(35,115,180,.10),
+    inset 0 0 60px rgba(0,0,0,.8),
+    0 0 8px rgba(240,200,91,.24);
+}
+
+.round-name,
+.time {
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+
+  text-shadow:
+    0 0 2px rgba(255,255,255,.95),
+    0 0 7px rgba(170,245,255,.65),
+    0 0 14px rgba(55,205,255,.32);
+}
+
+.round-name {
+  font-size: 22px;
+  line-height: 1.05;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 36px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cinematic Lorcana match result: no flashing or strobing. */
+#matchVictory {
+ position:fixed; inset:0; width:100vw; height:100vh;
+ z-index:100; box-sizing:border-box; overflow:hidden;
+ display:flex; flex-direction:column; align-items:center; justify-content:center;
+ background:radial-gradient(ellipse at 50% 72%,#58421f 0%,#1c2b42 38%,#081529 75%,#040b16 100%);
+ color:#fff; opacity:0; visibility:hidden; pointer-events:none;
+ transform:scale(1.025);
+ transition:opacity .8s ease,transform 1s ease,visibility 0s linear .8s;
+}
+#matchVictory.visible {
+ opacity:1; visibility:visible; transform:scale(1);
+ transition:opacity .8s ease,transform 1s ease;
+}
+#matchVictory .victory-ink {
+ position:absolute; top:13%; bottom:11%; width:40%; z-index:0;
+ display:flex; align-items:center; justify-content:center;
+ opacity:.48; filter:saturate(1.15) drop-shadow(0 10px 24px rgba(0,0,0,.28)); pointer-events:none;
+}
+#matchVictory .victory-ink.winner {left:50%; top:13%; bottom:20%; transform:translateX(-50%) scale(.75); width:40%; opacity:.48; filter:saturate(1.25) drop-shadow(0 0 30px rgba(239,185,83,.35)); transition:transform 1.4s ease-out;}
+#matchVictory.visible .victory-ink.winner {transform:translateX(-50%) scale(.80);}
+#matchVictory .victory-ink img {
+ width:100%; height:100%; object-fit:contain;
+}
+#matchVictory .victory-content {
+ position:relative; z-index:2; width:min(1320px,92vw);
+ display:flex; flex-direction:column; align-items:center;
+}
+#matchVictory::before {
+ content:""; position:absolute; inset:7% 9%; pointer-events:none;
+ border:3px solid rgba(244,197,100,.88);
+ box-shadow:inset 0 0 0 7px rgba(7,17,31,.65), inset 0 0 0 9px rgba(244,197,100,.35), 0 0 22px rgba(236,180,76,.25);
+ transition:box-shadow 1.2s ease;
+}
+#matchVictory::after {
+ content:""; position:absolute; inset:9% 11%; pointer-events:none;
+ background:
+ linear-gradient(#f9d57e,#f9d57e) top left/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) top left/5px 72px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) top right/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) top right/5px 72px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom left/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom left/5px 72px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom right/72px 5px no-repeat,
+ linear-gradient(#f9d57e,#f9d57e) bottom right/5px 72px no-repeat;
+ opacity:.95;
+}
+
+.victory-kicker {
+ color:#ffffff; font:800 25px Arial,sans-serif; letter-spacing:12px;
+ text-transform:uppercase; margin-bottom:6px;
+}
+.victory-title {
+ display:flex; align-items:center; justify-content:center; white-space:nowrap;
+ font-family:Georgia,serif; font-size:clamp(72px,10vw,160px); font-weight:900;
+ line-height:1.05; letter-spacing:0; text-transform:uppercase;
+ text-shadow:0 4px 10px rgba(0,0,0,.95),0 0 25px rgba(0,0,0,.65);
+}
+.victory-title-icon {
+ width:.56em; height:1.02em; object-fit:contain; display:inline-block;
+ flex:0 0 .56em; margin:0 -.005em; transform:scale(1.9); filter:drop-shadow(0 5px 9px rgba(0,0,0,.55));
+}
+.victory-player.winner .victory-player-name {color:#f4cf6b;}
+.victory-names { display:flex; gap:80px; align-items:center; justify-content:center; width:85%; margin-top:32px; }
+.victory-player { flex:1; min-width:0; text-align:center; }
+.victory-player-name {font:800 32px Arial,sans-serif; overflow-wrap:anywhere; margin-bottom:10px; text-shadow:0 3px 12px #07101e,0 0 18px #07101e;}
+.victory-score {font:900 clamp(126px,11vw,178px) Georgia,serif; color:#f4cf6b; line-height:1; text-shadow:0 3px 15px #07101e,0 0 12px #07101e;}
+.victory-separator {font:900 78px Georgia,serif; color:#f4cf6b;}
+.victory-footer {color:#f1d694; font:700 22px Arial,sans-serif; letter-spacing:8px; margin-top:40px;}
+@media (prefers-reduced-motion:reduce) {
+ #matchVictory {transition:none!important;transform:none!important;}
+ #matchVictory .victory-ink.winner {transition:none!important;transform:translateX(-50%)!important;}
+}
+
+
+.marker.lore-gain{animation:trackerGain .6s cubic-bezier(.2,.7,.2,1) both!important}
+.marker.lore-loss{animation:trackerLoss .5s ease-out both!important}
+@keyframes trackerGain{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.8)}100%{transform:translate(-50%,-50%) scale(1.4)}}
+@keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
+@media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
+/* Larger, evenly spaced lore scale without tick marks. */
+.markers { top: 25px; bottom: 25px; }
+.marker { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+/* Ringless overrides must follow all original marker styles. */
+.marker, .marker.lit, .marker.current {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.marker.current { isolation:isolate; }
+.marker .lore-number { position:relative; z-index:2; }
+/* Soft light on the active numeral only; no glow around the marker itself. */
+.marker.current .lore-number {
+  text-shadow: 0 0 3px rgba(255,255,255,.95), 0 0 9px rgba(175,240,255,.8), 0 0 17px rgba(135,115,255,.42), 0 1px 3px rgba(0,0,0,.9);
+}
+.marker .lore-swirl-canvas { position:absolute; left:50%; top:50%; width:82px; height:82px; transform:translate(-50%,-50%); z-index:1; pointer-events:none; }
+/* Independent light-trail layer; no change to number rendering. */
+.track { isolation:isolate; }
+.markers { z-index:2; }
+.lore-trail-layer { position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; overflow:visible; }
+</style>
+</head>
+
+<body>
+
+<div id="viewport">
+<div class="overlay" id="overlay">
+
+  <!-- PLAYER 1 - LEFT -->
+
+  <div class="side left">
+    <div class="panel">
+
+      <div class="player-info">
+
+        <div id="p1Name" class="player-name">
+          Player 1
+        </div>
+
+        <div id="p1Record" class="player-record">
+          0-0-0
+        </div>
+
+        <div class="ink-slot">
+          <img
+            class="ink-image"
+            id="p1InkImage"
+            alt="Player 1 ink"
+          >
+
+          <div
+            class="ink-placeholder"
+            id="p1InkPlaceholder">
+            Select inks
+          </div>
+        </div>
+
+        <div class="games">
+          <img
+            id="p1g1"
+            class="game-icon"
+            src="./Illuminary%20Icon_White.png"
+            alt="Player 1 game 1"
+          >
+
+          <img
+            id="p1g2"
+            class="game-icon"
+            src="./Illuminary%20Icon_White.png"
+            alt="Player 1 game 2"
+          >
+        </div>
+
+      </div>
+
+      <!-- SELECTABLE CARD ART ONLY -->
+
+      <img
+        class="featured-card"
+        id="featuredCard"
+        alt="Featured Lorcana Card"
+      >
+
+      <img
+        class="lorcana-logo"
+        src="./purple%20disney%20logo.png"
+        alt="Disney Lorcana"
+      >
+
+    </div>
+
+    <div class="track">
+      <div class="markers" id="leftTrack"></div>
+    </div>
+  </div>
+
+  <!-- PLAYER 2 - RIGHT -->
+
+  <div class="side right">
+    <div class="track">
+      <div class="markers" id="rightTrack"></div>
+    </div>
+
+    <div class="panel">
+
+      <div class="player-info">
+
+        <div id="p2Name" class="player-name">
+          Player 2
+        </div>
+
+        <div id="p2Record" class="player-record">
+          0-0-0
+        </div>
+
+        <div class="ink-slot">
+          <img
+            class="ink-image"
+            id="p2InkImage"
+            alt="Player 2 ink"
+          >
+
+          <div
+            class="ink-placeholder"
+            id="p2InkPlaceholder">
+            Select inks
+          </div>
+        </div>
+
+        <div class="games">
+          <img
+            id="p2g1"
+            class="game-icon"
+            src="./Illuminary%20Icon_White.png"
+            alt="Player 2 game 1"
+          >
+
+          <img
+            id="p2g2"
+            class="game-icon"
+            src="./Illuminary%20Icon_White.png"
+            alt="Player 2 game 2"
+          >
+        </div>
+
+      </div>
+
+      <img
+        class="lorcana-logo"
+        src="./purple%20disney%20logo.png"
+        alt="Disney Lorcana"
+      >
+
+    </div>
+  </div>
+
+  <!-- ROUND + TIMER -->
+
+  <div class="timer-box">
+    <div id="roundName" class="round-name">
+    </div>
+
+    <div id="time" class="time">
+      60:00
+    </div>
+  </div>
+
+</div>
+</div>
+<div id="matchVictory" role="status" aria-live="polite"></div>
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const config = {
+  apiKey: "AIzaSyCGlW1px3ZbK1qVFwVK-v4gP-d9KSGVj0U",
+  authDomain: "lore-counter-4e654.firebaseapp.com",
+  databaseURL:
+    "https://lore-counter-4e654-default-rtdb.firebaseio.com",
+  projectId: "lore-counter-4e654"
+};
+
+const app = initializeApp(config);
+const db = getDatabase(app);
+
+const $ = id => document.getElementById(id);
+
+/* FIT TO SCREEN AT 1920 X 1080 */
+
+function fitOverlay() {
+  const scale = Math.min(
+    window.innerWidth / 1920,
+    window.innerHeight / 1080
+  );
+
+  const x =
+    (window.innerWidth - 1920 * scale) / 2;
+
+  const y =
+    (window.innerHeight - 1080 * scale) / 2;
+
+  $("overlay").style.transform =
+    `translate(${x}px,${y}px) scale(${scale})`;
+}
+
+window.addEventListener("resize", fitOverlay);
+fitOverlay();
+
+/* LORE TRACKERS */
+
+function buildTrack(container) {
+  for (let i = 20; i >= 0; i--) {
+    const marker = document.createElement("div");
+    marker.className = "marker";
+    const number=document.createElement("span");
+    number.className="lore-number";
+    number.textContent=i;
+    marker.appendChild(number);
+    marker.dataset.lore = i;
+
+    marker.style.top =
+      ((20 - i) / 20 * 100) + "%";
+
+    container.appendChild(marker);
+  }
+}
+
+buildTrack($("leftTrack"));
+buildTrack($("rightTrack"));
+
+
+/* Visual-only V12 swirls. The original lore animation and Firebase logic are untouched. */
+const SWIRL_COLORS=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
+function installSwirl(holder){
+ const canvas=document.createElement("canvas");
+ canvas.className="lore-swirl-canvas"; canvas.setAttribute("aria-hidden","true");
+ canvas.width=164;canvas.height=164;
+ const ctx=canvas.getContext("2d");
+ function ribbon(t,phase,color,width,alpha,reverse){
+  ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.lineWidth=width;
+  ctx.lineCap="round";ctx.lineJoin="round";ctx.shadowBlur=12;ctx.shadowColor=color;
+  ctx.beginPath();
+  for(let k=0;k<=95;k++){
+   const a=k/95*Math.PI*2.1+phase+(reverse?-1:1)*t*.00090;
+   const radius=14+5.6*Math.sin(a*1.7+phase);
+   const x=41+Math.cos(a)*radius*1.25;
+   const y=41+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
+   if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.restore();
+ }
+ function frame(t){
+  const active=holder.querySelector(".marker.current");
+  if(active && canvas.parentElement!==active)active.appendChild(canvas);
+  if(!active && canvas.parentElement)canvas.remove();
+  ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,82,82);
+  if(active){
+   ribbon(t,.2,SWIRL_COLORS[0],1.5,.9,false);
+   ribbon(t,1.3,SWIRL_COLORS[1],1.45,.86,true);
+   ribbon(t,2.4,SWIRL_COLORS[2],1.25,.75,false);
+   ribbon(t,3.5,SWIRL_COLORS[3],1.5,.84,true);
+   ribbon(t,4.6,SWIRL_COLORS[4],1.35,.82,false);
+   ribbon(t,5.7,SWIRL_COLORS[5],1.35,.78,true);
+  }
+  requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+}
+installSwirl($("leftTrack"));
+installSwirl($("rightTrack"));
+
+function showLore(container, raw) {
+  const value = Math.max(
+    0,
+    Math.min(20, Math.floor(Number(raw) || 0))
+  );
+
+  for (const marker of container.children) {
+    const number = Number(marker.dataset.lore);
+
+    marker.classList.toggle(
+      "lit",
+      number <= value
+    );
+
+    marker.classList.toggle(
+      "current",
+      number === value
+    );
+  }
+}
+
+
+/* TEST ONLY: colorful moving trail between lore positions. */
+const trailCanvases={};
+const trailJobs={};
+function initLoreTrail(player,holder){
+ const track=holder.parentElement;
+ const canvas=document.createElement("canvas");
+ canvas.className="lore-trail-layer";
+ canvas.width=160; canvas.height=2160;
+ track.appendChild(canvas);
+ trailCanvases[player]={canvas,ctx:canvas.getContext("2d"),holder};
+}
+initLoreTrail("p1",$("leftTrack"));
+initLoreTrail("p2",$("rightTrack"));
+function playLoreTrail(player,from,to){
+ if(from===null||from===to)return;
+ const item=trailCanvases[player];
+ const {canvas,ctx,holder}=item;
+ if(trailJobs[player])cancelAnimationFrame(trailJobs[player]);
+ const track=holder.parentElement;
+ const start=performance.now(),duration=780;
+ const top=holder.offsetTop,span=holder.clientHeight;
+ const y1=top+(20-from)/20*span;
+ const y2=top+(20-to)/20*span;
+ const center=track.clientWidth/2;
+ function draw(now){
+  const progress=Math.min(1,(now-start)/duration);
+  ctx.setTransform(2,0,0,2,0,0);
+  ctx.clearRect(0,0,canvas.width/2,canvas.height/2);
+  const head=y1+(y2-y1)*(1-Math.pow(1-progress,2.2));
+  const tail=y1+(head-y1)*Math.max(0,(progress-.27)/.73);
+  const opacity=Math.min(1,progress*7)*Math.min(1,(1-progress)*3.5);
+  if(opacity>0){
+   ctx.save();ctx.globalCompositeOperation="lighter";
+   const palette=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
+   for(let i=0;i<6;i++){
+    const phase=i*Math.PI/3;
+    ctx.beginPath();
+    const steps=42;
+    for(let k=0;k<=steps;k++){
+     const f=k/steps;
+     const y=tail+(head-tail)*f;
+     const x=center+Math.sin(f*9+phase+now*.006)*(8+4*f);
+     if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=palette[i];ctx.lineWidth=1.6;
+    ctx.globalAlpha=opacity*(.6+.25*Math.sin(phase+now*.003));
+    ctx.shadowColor=palette[i];ctx.shadowBlur=9;
+    ctx.stroke();
+   }
+   // Moving luminous tip, without rendering another number.
+   const g=ctx.createRadialGradient(center,head,0,center,head,20);
+   g.addColorStop(0,"rgba(255,255,255,.75)");
+   g.addColorStop(.25,"rgba(125,215,255,.35)");
+   g.addColorStop(1,"rgba(125,215,255,0)");
+   ctx.globalAlpha=opacity*.75;ctx.fillStyle=g;
+   ctx.beginPath();ctx.arc(center,head,20,0,Math.PI*2);ctx.fill();
+   ctx.restore();
+  }
+  if(progress<1)trailJobs[player]=requestAnimationFrame(draw);
+  else{ctx.clearRect(0,0,canvas.width/2,canvas.height/2);trailJobs[player]=null;}
+ }
+ trailJobs[player]=requestAnimationFrame(draw);
+}
+
+const lastLore={p1:null,p2:null};
+const loreAnimationTimers={p1:null,p2:null};
+function animateLore(p,raw){
+  const value=Math.max(0,Math.min(20,Math.floor(Number(raw)||0)));
+  const container=$(p==="p1"?"leftTrack":"rightTrack");
+  const old=lastLore[p];
+
+  // Cancel previous animations immediately, including on rapid multi-lore updates.
+  if(loreAnimationTimers[p]!==null){
+    clearTimeout(loreAnimationTimers[p]);
+    loreAnimationTimers[p]=null;
+  }
+  for(const marker of container.children){
+    marker.classList.remove("lore-gain","lore-loss");
+  }
+  showLore(container,value);
+  if(old!==null&&old!==value)playLoreTrail(p,old,value);
+
+  // Only animate the destination number; all previous markers stay normal.
+  if(old!==null&&old!==value){
+    const marker=[...container.children].find(el=>Number(el.dataset.lore)===value);
+    if(marker){
+      void marker.offsetWidth;
+      marker.classList.add(value>old?"lore-gain":"lore-loss");
+      loreAnimationTimers[p]=setTimeout(()=>{
+        marker.classList.remove("lore-gain","lore-loss");
+        loreAnimationTimers[p]=null;
+      },650);
+    }
+  }
+  lastLore[p]=value;
+}
+onValue(ref(db,"p1"),snapshot=>animateLore("p1",snapshot.val()));
+onValue(ref(db,"p2"),snapshot=>animateLore("p2",snapshot.val()));
+
+let p1Games=0,p2Games=0,lastP1Games=null,lastP2Games=null,victoryTimeout=null;
+const selectedVictoryInks={p1:"",p2:""};
+function showMatchWinner(player) {
+ const banner=document.getElementById("matchVictory");
+ banner.replaceChildren();
+ const kicker=document.createElement("div");
+ kicker.className="victory-kicker"; kicker.textContent="Match Complete";
+ const title=document.createElement("div");
+ title.className="victory-title";
+ const victoryV=document.createElement("span"); victoryV.textContent="V";
+ const victoryIcon=document.createElement("img"); victoryIcon.className="victory-title-icon";
+ victoryIcon.src="./Illuminary%20Icon_White.png"; victoryIcon.alt="I";
+ const victoryRest=document.createElement("span"); victoryRest.textContent="CTORY";
+ title.append(victoryV,victoryIcon,victoryRest);
+ const names=document.createElement("div");
+ names.className="victory-names";
+ for(const p of ["p1","p2"]){
+  const column=document.createElement("div"); column.className="victory-player"+(p===player?" winner":"");
+  const name=document.createElement("div"); name.className="victory-player-name";
+  name.textContent=document.getElementById(p+"Name").textContent.trim() || (p==="p1"?"Player 1":"Player 2");
+  const score=document.createElement("div"); score.className="victory-score";
+  score.textContent=String(p==="p1"?p1Games:p2Games);
+  column.append(name,score); names.append(column);
+  if(p==="p1"){const dash=document.createElement("div");dash.className="victory-separator";dash.textContent="–";names.append(dash);}
+ }
+ const content=document.createElement("div"); content.className="victory-content";
+ content.append(kicker,title,names);
+ for(const p of [player]){
+  const ink=document.createElement("div");
+  ink.className="victory-ink winner";
+  const img=document.createElement("img");
+  img.alt="";
+  const file=selectedVictoryInks[p];
+  if(file && /^[a-z0-9 ._-]+\.png$/i.test(file)){
+   img.src="./Ink%20combinations/"+encodeURIComponent(file);
+   ink.append(img);
+  }
+  banner.append(ink);
+ }
+ banner.append(content);
+ clearTimeout(victoryTimeout);
+ banner.classList.remove("visible");
+ void banner.offsetWidth;
+ banner.classList.add("visible");
+ victoryTimeout=setTimeout(()=>banner.classList.remove("visible"),6500);
+}
+
+
+
+/* INK COMBINATIONS */
+
+const validImages = new Set([
+  "amber amethyst.png",
+  "amber emerald.png",
+  "amber sapphire.png",
+  "amber steel.png",
+  "amethyst emerald.png",
+  "amethyst ruby.png",
+  "amethyst sapphire.png",
+  "amethyst steel.png",
+  "blue steel 1.png",
+  "emerald ruby.png",
+  "emerald sapphire.png",
+  "green steel.png",
+  "ruby amber.png",
+  "ruby sapphire.png",
+  "ruby steel.png"
+]);
+
+function showInk(player, filename) {
+  selectedVictoryInks[player] = String(filename || "");
+  const image = $(player + "InkImage");
+  const placeholder = $(player + "InkPlaceholder");
+
+  if (!validImages.has(filename)) {
+    image.removeAttribute("src");
+    image.style.display = "none";
+
+    placeholder.textContent = "Select inks";
+    placeholder.style.display = "flex";
+    return;
+  }
+
+  image.onload = () => {
+    image.style.display = "block";
+    placeholder.style.display = "none";
+  };
+
+  image.onerror = () => {
+    image.style.display = "none";
+    placeholder.textContent = "Image not found";
+    placeholder.style.display = "flex";
+  };
+
+  image.src =
+    "./Ink%20combinations/" +
+    encodeURIComponent(filename);
+}
+
+onValue(ref(db, "p1Ink"), snapshot => {
+  showInk("p1", snapshot.val());
+});
+
+onValue(ref(db, "p2Ink"), snapshot => {
+  showInk("p2", snapshot.val());
+});
+
+/* =========================
+   FEATURED CARD DISPLAY
+
+   Listens to personal Firebase:
+   featuredDisplay
+
+   Expected value:
+   {
+     mode: "card",
+     cardUrl: "https://cards.lorcast.io/card/..."
+   }
+
+   Nothing is shown until a card
+   is selected.
+========================= */
+
+const featuredCard = $("featuredCard");
+
+function showFeaturedCard(data) {
+  let cardUrl = "";
+
+  if (
+    data &&
+    typeof data === "object" &&
+    data.mode === "card" &&
+    typeof data.cardUrl === "string"
+  ) {
+    try {
+      const url = new URL(data.cardUrl);
+
+      if (
+        url.protocol === "https:" &&
+        url.hostname === "cards.lorcast.io" &&
+        url.pathname.startsWith("/card/")
+      ) {
+        cardUrl = url.href;
+      }
+    } catch (_) {}
+  }
+
+  if (!cardUrl) {
+    featuredCard.style.display = "none";
+    featuredCard.removeAttribute("src");
+    return;
+  }
+
+  featuredCard.onload = () => {
+    featuredCard.style.display = "block";
+  };
+
+  featuredCard.onerror = () => {
+    featuredCard.style.display = "none";
+  };
+
+  if (featuredCard.getAttribute("src") !== cardUrl) {
+    featuredCard.style.display = "none";
+    featuredCard.src = cardUrl;
+  }
+}
+
+onValue(ref(db, "featuredDisplay"), snapshot => {  showFeaturedCard(snapshot.val());
+});
+
+/* GAME WIN ICONS */
+
+function renderGames(player, raw) {
+  const wins = Math.max(
+    0,
+    Math.min(2, Number(raw) || 0)
+  );
+
+  for (let i = 1; i <= 2; i++) {
+    const icon = $(player + "g" + i);
+
+    const newlyWon =
+      wins >= i &&
+      !icon.classList.contains("won");
+
+    icon.classList.toggle("won", wins >= i);
+
+    if (newlyWon) {
+      icon.classList.remove("just-won");
+      void icon.offsetWidth;
+      icon.classList.add("just-won");
+
+      setTimeout(() => {
+        icon.classList.remove("just-won");
+      }, 350);
+    }
+  }
+}
+
+onValue(ref(db, "p1Games"), snapshot => {
+  p1Games = Math.max(0, Math.min(2, Number(snapshot.val()) || 0));
+  renderGames("p1", p1Games);
+  if (lastP1Games !== null && lastP1Games < 2 && p1Games >= 2) showMatchWinner("p1");
+  lastP1Games = p1Games;
+});
+
+onValue(ref(db, "p2Games"), snapshot => {
+  p2Games = Math.max(0, Math.min(2, Number(snapshot.val()) || 0));
+  renderGames("p2", p2Games);
+  if (lastP2Games !== null && lastP2Games < 2 && p2Games >= 2) showMatchWinner("p2");
+  lastP2Games = p2Games;
+});
+
+/* PLAYER NAMES + RECORDS */
+
+for (const player of ["p1", "p2"]) {
+  onValue(
+    ref(db, player + "Name"),
+    snapshot => {
+      const name =
+        String(snapshot.val() ?? "").trim();
+
+      $(player + "Name").textContent =
+        name ||
+        (player === "p1" ? "Player 1" : "Player 2");
+    }
+  );
+
+  onValue(
+    ref(db, player + "Record"),
+    snapshot => {
+      const record =
+        String(snapshot.val() ?? "").trim();
+
+      $(player + "Record").textContent =
+        /^\d{1,3}-\d{1,3}-\d{1,3}$/.test(record)
+          ? record
+          : "0-0-0";
+    }
+  );
+}
+
+/* ROUND + TIMER */
+
+let timerState = {
+  roundName: "",
+  remaining: 3600,
+  running: false,
+  startedAt: 0
+};
+
+function renderTimer() {
+  const base = Math.max(
+    0,
+    Math.floor(Number(timerState.remaining) || 0)
+  );
+
+  const startedAt =
+    Number(timerState.startedAt) || 0;
+
+  const elapsed =
+    timerState.running && startedAt > 0
+      ? Math.max(
+          0,
+          Math.floor(
+            (Date.now() - startedAt) / 1000
+          )
+        )
+      : 0;
+
+  const remaining = Math.max(0, base - elapsed);
+
+  $("roundName").textContent =
+    timerState.roundName ?? "";
+
+  $("time").textContent =
+    Math.floor(remaining / 60) + ":" +
+    String(remaining % 60).padStart(2, "0");
+}
+
+onValue(ref(db, "timer"), snapshot => {
+  timerState = snapshot.val() || {
+    roundName: "",
+    remaining: 3600,
+    running: false,
+    startedAt: 0
+  };
+
+  renderTimer();
+});
+
+setInterval(renderTimer, 250);
+renderTimer();
+
+</script>
+</body>
+</html>
