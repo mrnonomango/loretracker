@@ -559,6 +559,13 @@ html, body {
 @keyframes trackerGain{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.8)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
+
+/* V12 six-color swirl test: visual layer only; lore logic unchanged. */
+.markers { isolation:isolate; }
+.lore-swirl-canvas {
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:9; pointer-events:none; overflow:visible;
+}
 </style>
 </head>
 
@@ -774,6 +781,82 @@ function buildTrack(container) {
 
 buildTrack($("leftTrack"));
 buildTrack($("rightTrack"));
+
+/* V12 six-color swirling lights. Independent canvas for each lore ladder.
+   The original lore markers, controller and Firebase behavior remain intact. */
+const SWIRL_COLORS=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
+function installLoreSwirl(trackId) {
+  const holder=$(trackId);
+  const canvas=document.createElement("canvas");
+  canvas.className="lore-swirl-canvas";
+  canvas.setAttribute("aria-hidden","true");
+  holder.appendChild(canvas);
+  const ctx=canvas.getContext("2d");
+  const dpr=2, w=holder.clientWidth, h=holder.clientHeight;
+  canvas.width=w*dpr; canvas.height=h*dpr;
+  let displayY=null;
+  function ribbon(cx,cy,t,phase,color,width,alpha,reverse) {
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    ctx.strokeStyle=color;
+    ctx.lineWidth=width;
+    ctx.lineCap="round";
+    ctx.lineJoin="round";
+    ctx.shadowBlur=5;
+    ctx.shadowColor=color;
+    ctx.beginPath();
+    for(let k=0;k<=95;k++){
+      const a=k/95*Math.PI*2.1+phase+(reverse?-1:1)*t*.00090;
+      const radius=10+4*Math.sin(a*1.7+phase);
+      const x=cx+Math.cos(a)*radius*1.25;
+      const y=cy+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
+      if(k===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  function frame(t){
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    const active=holder.querySelector(".marker.current");
+    if(active){
+      const targetY=active.offsetTop;
+      if(displayY===null)displayY=targetY;
+      displayY+=(targetY-displayY)*.13;
+      if(Math.abs(targetY-displayY)<.08)displayY=targetY;
+      const cx=w/2,cy=displayY;
+      const glow=ctx.createRadialGradient(cx,cy,1,cx,cy,29);
+      glow.addColorStop(0,"rgba(255,255,255,.23)");
+      glow.addColorStop(.28,"rgba(190,225,255,.12)");
+      glow.addColorStop(.6,"rgba(110,170,210,.05)");
+      glow.addColorStop(1,"rgba(110,170,210,0)");
+      ctx.fillStyle=glow;
+      ctx.fillRect(cx-30,cy-30,60,60);
+      ribbon(cx,cy,t,.2,SWIRL_COLORS[0],1.5,.9,false);
+      ribbon(cx,cy,t,1.3,SWIRL_COLORS[1],1.45,.86,true);
+      ribbon(cx,cy,t,2.4,SWIRL_COLORS[2],1.25,.75,false);
+      ribbon(cx,cy,t,3.5,SWIRL_COLORS[3],1.5,.84,true);
+      ribbon(cx,cy,t,4.6,SWIRL_COLORS[4],1.35,.82,false);
+      ribbon(cx,cy,t,5.7,SWIRL_COLORS[5],1.35,.78,true);
+      // Draw the active numeral above the strands to preserve readability.
+      // Match the original 16px bold marker at its 1.4x active scale.
+      ctx.save();
+      ctx.font="bold 22.4px Arial,sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.shadowColor="rgba(0,0,0,.95)";
+      ctx.shadowBlur=3;
+      ctx.fillStyle="#fff";
+      ctx.fillText(active.dataset.lore,cx,cy+1);
+      ctx.restore();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+installLoreSwirl("leftTrack");
+installLoreSwirl("rightTrack");
+
 
 function showLore(container, raw) {
   const value = Math.max(
