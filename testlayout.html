@@ -546,11 +546,13 @@ html, body {
 @keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
 
-/* V12 six-color swirl test: visual layer only; lore logic unchanged. */
-.markers { isolation:isolate; }
-.lore-swirl-canvas {
-  position:absolute; inset:0; width:100%; height:100%;
-  z-index:4; pointer-events:none; overflow:visible;
+/* Swirls belong to the active circle, beneath its original numeral. */
+.marker.current { isolation:isolate; }
+.marker .lore-number { position:relative; z-index:2; pointer-events:none; }
+.marker .lore-swirl-canvas {
+  position:absolute; width:82px; height:82px; left:50%; top:50%;
+  transform:translate(-50%,-50%); z-index:1; pointer-events:none;
+  overflow:visible;
 }
 </style>
 </head>
@@ -755,7 +757,10 @@ function buildTrack(container) {
   for (let i = 20; i >= 0; i--) {
     const marker = document.createElement("div");
     marker.className = "marker";
-    marker.textContent = i;
+    const numeral=document.createElement("span");
+    numeral.className="lore-number";
+    numeral.textContent=i;
+    marker.appendChild(numeral);
     marker.dataset.lore = i;
 
     marker.style.top =
@@ -768,65 +773,43 @@ function buildTrack(container) {
 buildTrack($("leftTrack"));
 buildTrack($("rightTrack"));
 
-/* V12 six-color swirling lights. Independent canvas for each lore ladder.
-   The original lore markers, controller and Firebase behavior remain intact. */
+/* Original lore logic unchanged. Only a visual swirl inside the active marker. */
 const SWIRL_COLORS=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
-function installLoreSwirl(trackId) {
+function installLoreSwirl(trackId){
   const holder=$(trackId);
   const canvas=document.createElement("canvas");
   canvas.className="lore-swirl-canvas";
   canvas.setAttribute("aria-hidden","true");
-  holder.appendChild(canvas);
+  canvas.width=164; canvas.height=164;
   const ctx=canvas.getContext("2d");
-  const dpr=2, w=holder.clientWidth, h=holder.clientHeight;
-  canvas.width=w*dpr; canvas.height=h*dpr;
-  function ribbon(cx,cy,t,phase,color,width,alpha,reverse) {
+  function ribbon(t,phase,color,width,alpha,reverse){
     ctx.save();
-    ctx.globalAlpha=alpha;
-    ctx.strokeStyle=color;
-    ctx.lineWidth=width;
-    ctx.lineCap="round";
-    ctx.lineJoin="round";
-    ctx.shadowBlur=12;
-    ctx.shadowColor=color;
+    ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width;
+    ctx.lineCap="round"; ctx.lineJoin="round";
+    ctx.shadowBlur=12; ctx.shadowColor=color;
     ctx.beginPath();
     for(let k=0;k<=95;k++){
       const a=k/95*Math.PI*2.1+phase+(reverse?-1:1)*t*.00090;
       const radius=14+5.6*Math.sin(a*1.7+phase);
-      const x=cx+Math.cos(a)*radius*1.25;
-      const y=cy+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
-      if(k===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      const x=41+Math.cos(a)*radius*1.25;
+      const y=41+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
+      if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
     }
-    ctx.stroke();
-    ctx.restore();
+    ctx.stroke(); ctx.restore();
   }
   function frame(t){
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.clearRect(0,0,w,h);
     const active=holder.querySelector(".marker.current");
+    if(active && canvas.parentElement!==active) active.appendChild(canvas);
+    if(!active && canvas.parentElement) canvas.remove();
+    ctx.setTransform(2,0,0,2,0,0);
+    ctx.clearRect(0,0,82,82);
     if(active){
-      const cx=w/2,cy=active.offsetTop;
-      const transform=getComputedStyle(active).transform;
-      const currentScale=transform && transform!=="none" ? Math.hypot(new DOMMatrixReadOnly(transform).a,new DOMMatrixReadOnly(transform).b) : 1.4;
-      const swirlScale=currentScale/1.4;
-      ctx.save();
-      ctx.translate(cx,cy);
-      ctx.scale(swirlScale,swirlScale);
-      ctx.translate(-cx,-cy);
-      const glow=ctx.createRadialGradient(cx,cy,1,cx,cy,29);
-      glow.addColorStop(0,"rgba(255,255,255,.23)");
-      glow.addColorStop(.28,"rgba(190,225,255,.12)");
-      glow.addColorStop(.6,"rgba(110,170,210,.05)");
-      glow.addColorStop(1,"rgba(110,170,210,0)");
-      ctx.fillStyle=glow;
-      ctx.fillRect(cx-30,cy-30,60,60);
-      ribbon(cx,cy,t,.2,SWIRL_COLORS[0],1.5,.9,false);
-      ribbon(cx,cy,t,1.3,SWIRL_COLORS[1],1.45,.86,true);
-      ribbon(cx,cy,t,2.4,SWIRL_COLORS[2],1.25,.75,false);
-      ribbon(cx,cy,t,3.5,SWIRL_COLORS[3],1.5,.84,true);
-      ribbon(cx,cy,t,4.6,SWIRL_COLORS[4],1.35,.82,false);
-      ribbon(cx,cy,t,5.7,SWIRL_COLORS[5],1.35,.78,true);
-      ctx.restore();
+      ribbon(t,.2,SWIRL_COLORS[0],1.5,.9,false);
+      ribbon(t,1.3,SWIRL_COLORS[1],1.45,.86,true);
+      ribbon(t,2.4,SWIRL_COLORS[2],1.25,.75,false);
+      ribbon(t,3.5,SWIRL_COLORS[3],1.5,.84,true);
+      ribbon(t,4.6,SWIRL_COLORS[4],1.35,.82,false);
+      ribbon(t,5.7,SWIRL_COLORS[5],1.35,.78,true);
     }
     requestAnimationFrame(frame);
   }
@@ -835,14 +818,13 @@ function installLoreSwirl(trackId) {
 installLoreSwirl("leftTrack");
 installLoreSwirl("rightTrack");
 
-
 function showLore(container, raw) {
   const value = Math.max(
     0,
     Math.min(20, Math.floor(Number(raw) || 0))
   );
 
-  for (const marker of container.children) {
+  for (const marker of container.querySelectorAll(".marker")) {
     const number = Number(marker.dataset.lore);
 
     marker.classList.toggle(
@@ -869,14 +851,14 @@ function animateLore(p,raw){
     clearTimeout(loreAnimationTimers[p]);
     loreAnimationTimers[p]=null;
   }
-  for(const marker of container.children){
+  for(const marker of container.querySelectorAll(".marker")){
     marker.classList.remove("lore-gain","lore-loss");
   }
   showLore(container,value);
 
   // Only animate the destination number; all previous markers stay normal.
   if(old!==null&&old!==value){
-    const marker=[...container.children].find(el=>Number(el.dataset.lore)===value);
+    const marker=[...container.querySelectorAll(".marker")].find(el=>Number(el.dataset.lore)===value);
     if(marker){
       void marker.offsetWidth;
       marker.classList.add(value>old?"lore-gain":"lore-loss");
