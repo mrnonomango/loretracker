@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cookout | Original Floating Prisms — Background Test</title>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080d1b;color:#f4f0e7;font-family:Arial,Helvetica,sans-serif}
+main{max-width:1320px;margin:0 auto;padding:20px}h1{font-size:25px;margin:0 0 7px}p{margin:0 0 15px;color:#aebbd0;font-size:14px}
+nav{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+button{border:1px solid #6f7791;background:#17243d;color:#d7e5fa;border-radius:8px;padding:12px 18px;cursor:pointer;font-weight:700;font-size:14px}
+button[aria-pressed=true],#replay{background:#352a31;border-color:#c49a5c;color:#f5d394}
+#stage{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#060c19;border:1px solid #6c5971;border-radius:10px;isolation:isolate}
+#webgl{position:absolute;inset:0;width:100%;height:100%;display:block}
+#shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#030916a8,transparent 62%,#04091a22),linear-gradient(0deg,#040a1dbb,transparent 35%)}
+#branding{position:absolute;top:7%;left:7%;font-size:clamp(8px,1.35vw,18px);letter-spacing:.24em;color:#e3bf81;font-weight:800}
+#headline{position:absolute;top:36%;left:7%;font-size:clamp(25px,5.3vw,75px);line-height:1.06;font-weight:900;letter-spacing:-.035em;text-shadow:0 6px 25px #0009}
+#headline em{font-style:normal;color:#edc77f}
+#footer{position:absolute;bottom:8%;left:7%;right:7%;display:flex;justify-content:space-between;gap:12px;letter-spacing:.18em;color:#c0cee0;font-weight:700;font-size:clamp(7px,.95vw,13px)}
+.actions{margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#message{font-size:13px;color:#c7cedb}#error{position:absolute;inset:0;background:#121d34;display:none;align-items:center;justify-content:center;text-align:center;padding:30px}
+</style></head><body><main>
+<h1>FLOATING PRISMS — ORIGINAL MOTION</h1>
+<p>Restored exactly from the original Floating Prisms selection. No built-in text over the video.</p>
+
+<div id="stage"><canvas id="webgl" width="1920" height="1080"></canvas><div id="shade"></div>
+
+<div id="error">3D rendering could not load. Check the connection and refresh this page.</div></div>
+<div class="actions"><button id="replay">▶ Play camera movement</button><span id="message">8-second camera sequence · Original 3D geometry · No changes to OBS</span></div>
+</main>
+<script>
+(()=>{
+if(!window.THREE||!window.gsap){document.getElementById('error').style.display='flex';return}
+const THREE=window.THREE, gsap=window.gsap;
+const canvas=document.getElementById('webgl');
+let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(e){document.getElementById('error').style.display='flex';return}
+renderer.setSize(1920,1080,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.16;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x080e21);scene.fog=new THREE.FogExp2(0x080e20,.011);
+const camera=new THREE.PerspectiveCamera(61,1920/1080,.1,330);
+scene.add(new THREE.HemisphereLight(0x6d8ac0,0x080d20,1.8));
+const key=new THREE.PointLight(0xffc77f,700,110,1.5);scene.add(key);
+const fill=new THREE.PointLight(0x5c91ea,620,120,1.5);scene.add(fill);
+const mats={
+gold:new THREE.MeshStandardMaterial({color:0xc59650,metalness:.87,roughness:.24}),
+goldDark:new THREE.MeshStandardMaterial({color:0x71502e,metalness:.85,roughness:.31}),
+blue:new THREE.MeshStandardMaterial({color:0x1c385f,metalness:.82,roughness:.28}),
+blueLight:new THREE.MeshStandardMaterial({color:0x3d6297,metalness:.8,roughness:.31}),
+dark:new THREE.MeshStandardMaterial({color:0x101b2d,metalness:.55,roughness:.48})
+};
+let group=new THREE.Group();scene.add(group);
+function box(w,h,d,x,y,z,m,ry=0,rz=0){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);mesh.position.set(x,y,z);mesh.rotation.set(0,ry,rz);group.add(mesh);return mesh}
+function clear(){scene.remove(group);group.traverse(obj=>{if(obj.geometry)obj.geometry.dispose()});group=new THREE.Group();scene.add(group)}
+function vault(){
+for(let i=0;i<11;i++){
+const z=9-i*12;
+box(2.5,18,4,-10,1,z,i%3===0?mats.gold:mats.goldDark,-.13);
+box(2.5,18,4,10,1,z,i%3===0?mats.blueLight:mats.blue,.13);
+box(20,1.5,4,0,10,z,mats.dark);
+box(19,.35,1,0,8.98,z,mats.goldDark);
+box(1.2,14,1,-7.8,1,z+.9,mats.gold,.11);
+box(1.2,14,1,7.8,1,z+.9,mats.blueLight,-.11);
+box(24,1.3,4,0,-7.8,z,mats.dark);
+}
+box(140,.4,250,0,-8.6,-50,mats.dark);box(140,.4,250,0,12.5,-50,mats.dark)
+}
+function canyon(){
+for(let i=0;i<15;i++){
+const z=14-i*8,phase=i%4;
+box(5.5,24,6.8,-12-(phase%2)*2,0,z,phase===0?mats.gold:mats.goldDark,-.1,-.07);
+box(5.5,24,6.8,13+(phase%3),0,z,phase===0?mats.blueLight:mats.blue,.12,.06);
+box(.42,19,3.7,-8.7,0,z+2,mats.gold,.1,-.08);
+box(.42,19,3.7,8.7,0,z+2,mats.blueLight,-.1,.08);
+if(i%2===0)box(8,.4,4,-12,-7,z,mats.goldDark,.3);
+}
+box(160,.5,240,0,-9,-58,mats.dark)
+}
+function prism(){
+for(let i=0;i<22;i++){
+const z=10-i*5.5;
+const s=(i%5)/5;
+let a=box(2.5+s*3,11+s*7,3.4,-10+(i%3)*1.4,((i%4)-2)*2,z,i%4===0?mats.gold:mats.goldDark,.28+(i%3)*.17,(i%3-1)*.12);
+let b=box(2.7+s*3,10+s*8,3.8,9-(i%3)*1.4,((i%5)-2)*1.7,z,i%4===0?mats.blueLight:mats.blue,-.3-(i%3)*.17,(i%3-1)*-.15);
+if(i%3===0){box(3.5,1.2,3,-4,6,z-1,mats.goldDark,.4,.1);box(3.5,1.2,3,4,-6,z-1,mats.blueLight,-.4,-.1);}
+}
+}
+const modes={vault:{create:vault,label:'MONUMENT VAULT'},canyon:{create:canyon,label:'METALLIC CANYON'},prism:{create:prism,label:'FLOATING PRISMS'}};
+let active='prism',tl;
+const motion={x:0,y:1.5,z:20,lookX:0,lookY:0,roll:0};
+function render(){camera.position.set(motion.x,motion.y,motion.z);camera.lookAt(motion.lookX,motion.lookY,motion.z-25);camera.rotateZ(motion.roll);key.position.set(-8,8,motion.z-26);fill.position.set(8,5,motion.z-38);renderer.render(scene,camera)}
+function play(){
+if(tl)tl.kill();
+Object.assign(motion,{x:0,y:1.5,z:20,lookX:0,lookY:0,roll:0});
+tl=gsap.timeline({paused:true,onUpdate:render});
+if(active==='vault'){
+tl.to(motion,{z:-62,x:2.5,y:1.9,duration:8,ease:'none'},0);
+tl.to(motion,{x:-1.4,lookX:-.6,duration:4,ease:'sine.inOut'},0);
+tl.to(motion,{x:2.5,lookX:.7,duration:4,ease:'sine.inOut'},4)
+}else if(active==='canyon'){
+tl.to(motion,{z:-61,x:3.2,y:2.4,duration:8,ease:'none'},0);
+tl.to(motion,{x:-3.5,lookX:-2,duration:3.4,ease:'sine.inOut'},0);
+tl.to(motion,{x:3.2,lookX:1.1,duration:4.6,ease:'sine.inOut'},3.4);
+tl.to(motion,{roll:.018,duration:4,ease:'sine.inOut'},0);tl.to(motion,{roll:-.012,duration:4,ease:'sine.inOut'},4)
+}else{
+tl.to(motion,{z:-60,x:1.5,y:3,duration:8,ease:'none'},0);
+tl.to(motion,{x:-2,y:1.2,roll:.025,duration:4,ease:'sine.inOut'},0);
+tl.to(motion,{x:1.5,y:3,roll:-.012,duration:4,ease:'sine.inOut'},4)
+}
+tl.play();document.getElementById('replay').textContent='↻ Replay camera movement';
+}
+function select(m){active=m;clear();modes[m].create();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));play()}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.mode)));
+document.getElementById('replay').addEventListener('click',play);
+select('prism');
+})();
+</script></body></html>
