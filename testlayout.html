@@ -193,6 +193,15 @@ html, body {
     0 0 3px rgba(240,200,91,.10);
 }
 
+/* Ringless lore: preserve the original positions, number sizes and animations. */
+.marker, .marker.lit, .marker.current {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.marker.current { color: white; }
+
 /* COMPLETED LORE */
 
 .marker.lit {
@@ -555,6 +564,13 @@ html, body {
 @keyframes trackerGain{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.8)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
+/* Ringless overrides must follow all original marker styles. */
+.marker, .marker.lit, .marker.current {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
 .marker.current { isolation:isolate; }
 .marker .lore-number { position:relative; z-index:2; }
 .marker .lore-swirl-canvas { position:absolute; left:50%; top:50%; width:82px; height:82px; transform:translate(-50%,-50%); z-index:1; pointer-events:none; }
