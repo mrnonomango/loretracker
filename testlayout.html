@@ -113,8 +113,8 @@ html, body {
   height: 1080px;
   flex-shrink: 0;
 
-  border-left: 2px solid #f0c85b;
-  border-right: 2px solid #f0c85b;
+  /* One gold divider only, on the gameplay-facing edge of each tracker. */
+  border: none;
 
   background:
     radial-gradient(
@@ -135,19 +135,8 @@ html, body {
     inset 0 0 45px rgba(0,0,0,.9);
 }
 
-.track::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 7px;
-  right: 7px;
-
-  border-left: 1px solid rgba(240,200,91,.55);
-  border-right: 1px solid rgba(240,200,91,.55);
-
-  pointer-events: none;
-}
+.side.left .track { border-right: 2px solid #f0c85b; }
+.side.right .track { border-left: 2px solid #f0c85b; }
 
 /* LORE POSITIONING */
 
