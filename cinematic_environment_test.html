@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Lorcana Cookout — Cinematic Broadcast Environment</title>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050b18;font-family:Arial,Helvetica,sans-serif}#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#050b18;isolation:isolate}#webgl{position:absolute;inset:0;width:100%;height:100%;display:block}.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,8,20,.82),rgba(3,9,20,.26) 55%,rgba(3,8,17,.22)),linear-gradient(0deg,#03081499,transparent 35%,#03081433);pointer-events:none}.mark{position:absolute;top:105px;left:135px;color:#dab778;font-size:24px;font-weight:700;letter-spacing:.32em}.title{position:absolute;left:132px;top:340px;color:#f5f3ed;font-size:116px;line-height:.97;font-weight:900;letter-spacing:-.045em;text-shadow:0 16px 45px #010614aa}.title span{display:block;color:#efc67e}.subtitle{position:absolute;left:139px;top:628px;color:#b8c8e0;font-size:23px;letter-spacing:.24em;font-weight:700}.bottom{position:absolute;left:135px;right:135px;bottom:93px;border-top:2px solid #c5a26888;padding-top:25px;display:flex;justify-content:space-between;color:#d8c8aa;letter-spacing:.22em;font-weight:700;font-size:18px}.bottom .right{color:#a5b9d5}.line{position:absolute;width:80px;height:5px;background:#d6ac6c;left:138px;top:295px;box-shadow:0 0 22px #bf904a66}.error{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:white;background:#101b35;padding:100px;text-align:center;font-size:34px}#playbar{position:fixed;bottom:18px;right:20px;z-index:50;background:#101a32eb;color:#f3d49a;padding:10px 18px;border:1px solid #b99458;border-radius:8px;font:700 15px Arial;cursor:pointer}body[data-hf-render] #playbar{display:none}
+</style></head><body><div id="stage" data-composition-id="main" data-start="0" data-duration="12" data-width="1920" data-height="1080" data-track-index="0"><canvas id="webgl" width="1920" height="1080"></canvas><div class="shade"></div><div class="mark">THE LORCANA COOKOUT</div><div class="line"></div><div class="title">STREAM<span>STARTING SOON</span></div><div class="subtitle">LIVE TOURNAMENT BROADCAST</div><div class="bottom"><div>DISNEY LORCANA • FEATURE MATCH COVERAGE</div><div class="right">THE COOKOUT / LIVE</div></div><div class="error" id="err">Unable to load 3D graphics. Check your browser connection.</div></div><button id="playbar">▶ Play camera sequence</button>
+<script>
+(function(){
+if(!window.THREE||!window.gsap){document.getElementById('err').style.display='flex';return;}
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('webgl'),antialias:true,alpha:false,powerPreference:'high-performance'});
+renderer.setSize(1920,1080,false);renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.28;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x070e20);scene.fog=new THREE.FogExp2(0x080f20,.008);
+const camera=new THREE.PerspectiveCamera(57,1920/1080,.1,240);camera.position.set(0,1.8,18);
+scene.add(new THREE.AmbientLight(0x425a82,1.45));
+const goldLight=new THREE.PointLight(0xf6b968,460,85,1.4);goldLight.position.set(-9,8,-13);scene.add(goldLight);
+const blueLight=new THREE.PointLight(0x4e8cd4,370,95,1.5);blueLight.position.set(9,4,-28);scene.add(blueLight);
+const whiteLight=new THREE.DirectionalLight(0xffe6ba,2);whiteLight.position.set(-1,12,3);scene.add(whiteLight);
+const gold=new THREE.MeshStandardMaterial({color:0xb78645,metalness:.87,roughness:.27});
+const goldDark=new THREE.MeshStandardMaterial({color:0x604125,metalness:.8,roughness:.34});
+const navy=new THREE.MeshStandardMaterial({color:0x162c52,metalness:.78,roughness:.3});
+const navyLight=new THREE.MeshStandardMaterial({color:0x2a4975,metalness:.68,roughness:.38});
+const dark=new THREE.MeshStandardMaterial({color:0x0b1427,metalness:.54,roughness:.53});
+const glGold=new THREE.MeshBasicMaterial({color:0xb28447,transparent:true,opacity:.7});
+const glBlue=new THREE.MeshBasicMaterial({color:0x4672aa,transparent:true,opacity:.4});
+function add(w,h,d,x,y,z,mat,ry=0){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);return m;}
+// Repeating architectural bays create actual parallax as the camera moves.
+for(let i=0;i<13;i++){
+ const z=7-i*10;
+ add(1.9,19,2.3,-10.8,1,z,i%3===0?gold:goldDark,-.09);
+ add(1.9,19,2.3,10.8,1,z,i%3===0?navyLight:navy,.09);
+ add(.38,17,.75,-8.8,1,z+.4,gold,.11);
+ add(.38,17,.75,8.8,1,z+.4,navyLight,-.11);
+ add(22,1.3,2.4,0,10,z,dark);
+ add(21.7,.14,.6,0,9.3,z, i%2===0?goldDark:navyLight);
+ add(20,.9,2.2,0,-7.1,z,dark);
+ add(11,.09,.18,-5.8,-6.58,z,glGold);
+ add(11,.09,.18,5.8,-6.58,z,glBlue);
+ add(.15,15,.2,-9.65,1,z+.8,glGold);
+ add(.15,15,.2,9.65,1,z+.8,glBlue);
+ // solid angular wall ribs with real shadowed sides
+ add(1.4,13,8,-13.4,0,z-1,goldDark,.24);
+ add(1.4,13,8,13.4,0,z-1,navy,.24);
+}
+// Massive nearby structures establish foreground scale.
+add(5,28,13,-18,0,3,goldDark,.18);add(5,28,13,18,0,3,navy,.18);
+// Floor, ceiling, tunnel vanishing point.
+add(100,.35,230,0,-7.7,-60,dark);
+add(100,.4,230,0,12.8,-60,dark);
+const cam={z:18,x:0,y:1.8,tilt:0,look:-24,glow:1};
+function render(){camera.position.set(cam.x,cam.y,cam.z);camera.rotation.set(0,0,cam.tilt);camera.lookAt(cam.x*.25,0.6,cam.z+cam.look);camera.rotateZ(cam.tilt);goldLight.intensity=460*cam.glow;renderer.render(scene,camera)}
+window.__timelines=window.__timelines||{};
+const tl=gsap.timeline({paused:true});
+tl.fromTo(cam,{z:18,x:0,y:1.8,tilt:0,look:-24,glow:.85},{z:-47,x:1.6,y:2.2,tilt:.008,look:-25,glow:1.12,duration:12,ease:'none',onUpdate:render},0);
+tl.to(cam,{x:-1.1,y:1.6,duration:6,ease:'sine.inOut',onUpdate:render},0);
+tl.to(cam,{x:1.4,y:2.1,duration:6,ease:'sine.inOut',onUpdate:render},6);
+tl.to(goldLight.position,{x:-6,z:-55,duration:12,ease:'none',onUpdate:render},0);
+tl.to(blueLight.position,{x:8,z:-65,duration:12,ease:'none',onUpdate:render},0);
+window.__timelines.main=tl;render();
+// Standalone GitHub preview playback; HyperFrames uses its own paused timeline.
+const button=document.getElementById('playbar');button.addEventListener('click',()=>{tl.restart();button.textContent='↻ Replay camera sequence'});
+// Hide standalone control in HyperFrames render contexts.
+if(window.location.search.includes('render=')||window.parent!==window){document.body.dataset.hfRender='true'}
+})();
+</script></body></html>
