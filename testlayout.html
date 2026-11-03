@@ -215,7 +215,7 @@ html, body {
 /* ACTIVE LORE - 1.40X */
 
 .marker.current {
-  z-index: 5;
+  z-index: 10;
 
   transform:
     translate(-50%,-50%) scale(1.40);
@@ -550,7 +550,7 @@ html, body {
 .markers { isolation:isolate; }
 .lore-swirl-canvas {
   position:absolute; inset:0; width:100%; height:100%;
-  z-index:9; pointer-events:none; overflow:visible;
+  z-index:4; pointer-events:none; overflow:visible;
 }
 </style>
 </head>
@@ -780,7 +780,6 @@ function installLoreSwirl(trackId) {
   const ctx=canvas.getContext("2d");
   const dpr=2, w=holder.clientWidth, h=holder.clientHeight;
   canvas.width=w*dpr; canvas.height=h*dpr;
-  let displayY=null;
   function ribbon(cx,cy,t,phase,color,width,alpha,reverse) {
     ctx.save();
     ctx.globalAlpha=alpha;
@@ -806,11 +805,7 @@ function installLoreSwirl(trackId) {
     ctx.clearRect(0,0,w,h);
     const active=holder.querySelector(".marker.current");
     if(active){
-      const targetY=active.offsetTop;
-      if(displayY===null)displayY=targetY;
-      displayY+=(targetY-displayY)*.13;
-      if(Math.abs(targetY-displayY)<.08)displayY=targetY;
-      const cx=w/2,cy=displayY;
+      const cx=w/2,cy=active.offsetTop;
       const transform=getComputedStyle(active).transform;
       const currentScale=transform && transform!=="none" ? Math.hypot(new DOMMatrixReadOnly(transform).a,new DOMMatrixReadOnly(transform).b) : 1.4;
       const swirlScale=currentScale/1.4;
@@ -831,18 +826,6 @@ function installLoreSwirl(trackId) {
       ribbon(cx,cy,t,3.5,SWIRL_COLORS[3],1.5,.84,true);
       ribbon(cx,cy,t,4.6,SWIRL_COLORS[4],1.35,.82,false);
       ribbon(cx,cy,t,5.7,SWIRL_COLORS[5],1.35,.78,true);
-      // Draw the active numeral above the strands to preserve readability.
-      // Match the original 16px bold marker at its 1.4x active scale.
-      ctx.save();
-      ctx.font="bold 22.4px Arial,sans-serif";
-      ctx.textAlign="center";
-      ctx.textBaseline="middle";
-      ctx.shadowColor="rgba(0,0,0,.95)";
-      ctx.shadowBlur=3;
-      ctx.fillStyle="#fff";
-      ctx.font=`bold ${16*currentScale/swirlScale}px Arial,sans-serif`;
-      ctx.fillText(active.dataset.lore,cx,cy+1);
-      ctx.restore();
       ctx.restore();
     }
     requestAnimationFrame(frame);
