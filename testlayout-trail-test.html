@@ -874,50 +874,65 @@ function playLoreTrail(player,from,to){
  const item=trailCanvases[player];
  const {canvas,ctx,holder}=item;
  if(trailJobs[player])cancelAnimationFrame(trailJobs[player]);
- const track=holder.parentElement;
- const start=performance.now(),duration=780;
  const top=holder.offsetTop,span=holder.clientHeight;
  const y1=top+(20-from)/20*span;
  const y2=top+(20-to)/20*span;
- const center=track.clientWidth/2;
- function draw(now){
-  const progress=Math.min(1,(now-start)/duration);
+ const center=holder.parentElement.clientWidth/2;
+ const distance=Math.abs(y2-y1),direction=Math.sign(y2-y1);
+ const start=performance.now(),travel=620,fade=390;
+ const colors=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
+ function smooth(x){return x*x*(3-2*x);}
+ function frame(now){
+  const elapsed=now-start;
+  const p=Math.min(1,elapsed/travel);
+  const head=y1+(y2-y1)*smooth(p);
+  const fadeAlpha=elapsed<travel?1:Math.max(0,1-(elapsed-travel)/fade);
+  const tailLength=Math.min(distance,145);
+  const tail=Math.max(0,Math.min(distance,Math.abs(head-y1)-tailLength));
+  const trailStart=y1+direction*tail;
   ctx.setTransform(2,0,0,2,0,0);
-  ctx.clearRect(0,0,canvas.width/2,canvas.height/2);
-  const head=y1+(y2-y1)*(1-Math.pow(1-progress,2.2));
-  const tail=y1+(head-y1)*Math.max(0,(progress-.27)/.73);
-  const opacity=Math.min(1,progress*7)*Math.min(1,(1-progress)*3.5);
-  if(opacity>0){
-   ctx.save();ctx.globalCompositeOperation="lighter";
-   const palette=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
+  ctx.clearRect(0,0,80,1080);
+  if(fadeAlpha>0){
+   ctx.save();
+   ctx.globalCompositeOperation="lighter";
+   const segments=56;
    for(let i=0;i<6;i++){
     const phase=i*Math.PI/3;
-    ctx.beginPath();
-    const steps=42;
-    for(let k=0;k<=steps;k++){
-     const f=k/steps;
-     const y=tail+(head-tail)*f;
-     const x=center+Math.sin(f*9+phase+now*.006)*(8+4*f);
-     if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    const pts=[];
+    for(let j=0;j<=segments;j++){
+     const f=j/segments;
+     const y=trailStart+(head-trailStart)*f;
+     const bend=Math.sin(f*Math.PI*2.1+phase+now*.004)*11;
+     const secondary=Math.sin(f*Math.PI*3.6-phase*.7+now*.002)*3;
+     const x=center+bend+secondary;
+     pts.push([x,y]);
     }
-    ctx.strokeStyle=palette[i];ctx.lineWidth=1.6;
-    ctx.globalAlpha=opacity*(.6+.25*Math.sin(phase+now*.003));
-    ctx.shadowColor=palette[i];ctx.shadowBlur=9;
-    ctx.stroke();
+    // Broad luminous aura underneath a crisp, bright filament.
+    for(const [width,alpha,blur] of [[9,.13,17],[4.5,.38,10],[2.1,.96,4]]){
+     ctx.beginPath();
+     pts.forEach(([x,y],j)=>j?ctx.lineTo(x,y):ctx.moveTo(x,y));
+     ctx.lineCap="round";ctx.lineJoin="round";
+     ctx.strokeStyle=colors[i];ctx.lineWidth=width;
+     ctx.shadowColor=colors[i];ctx.shadowBlur=blur;
+     ctx.globalAlpha=fadeAlpha*alpha;
+     ctx.stroke();
+    }
    }
-   // Moving luminous tip, without rendering another number.
-   const g=ctx.createRadialGradient(center,head,0,center,head,20);
-   g.addColorStop(0,"rgba(255,255,255,.75)");
-   g.addColorStop(.25,"rgba(125,215,255,.35)");
-   g.addColorStop(1,"rgba(125,215,255,0)");
-   ctx.globalAlpha=opacity*.75;ctx.fillStyle=g;
-   ctx.beginPath();ctx.arc(center,head,20,0,Math.PI*2);ctx.fill();
+   // Tiny light sparks travel with the strands; no duplicate numerals.
+   for(let i=0;i<12;i++){
+    const f=((i*0.6180339+now*.00035)%1);
+    const y=trailStart+(head-trailStart)*f;
+    const x=center+Math.sin(f*11+i*1.7+now*.004)*13;
+    ctx.globalAlpha=fadeAlpha*(.3+.5*Math.sin(Math.PI*f));
+    ctx.fillStyle=colors[i%6];ctx.shadowBlur=8;ctx.shadowColor=colors[i%6];
+    ctx.beginPath();ctx.arc(x,y,i%3===0?1.8:1.1,0,Math.PI*2);ctx.fill();
+   }
    ctx.restore();
   }
-  if(progress<1)trailJobs[player]=requestAnimationFrame(draw);
-  else{ctx.clearRect(0,0,canvas.width/2,canvas.height/2);trailJobs[player]=null;}
+  if(elapsed<travel+fade)trailJobs[player]=requestAnimationFrame(frame);
+  else{ctx.clearRect(0,0,80,1080);trailJobs[player]=null;}
  }
- trailJobs[player]=requestAnimationFrame(draw);
+ trailJobs[player]=requestAnimationFrame(frame);
 }
 
 const lastLore={p1:null,p2:null};
