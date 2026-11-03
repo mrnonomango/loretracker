@@ -564,13 +564,9 @@ html, body {
 @keyframes trackerGain{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.8)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
-/* Larger, tighter lore scale with subtle five-point guide marks. */
+/* Larger, evenly spaced lore scale without tick marks. */
 .markers { top: 25px; bottom: 25px; }
 .marker { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.marker.major-lore::before {
-  content:""; position:absolute; left:-5px; top:50%; width:7px; height:2px;
-  background:rgba(240,200,91,.58); transform:translateY(-50%); pointer-events:none;
-}
 /* Ringless overrides must follow all original marker styles. */
 .marker, .marker.lit, .marker.current {
   border: none;
@@ -580,6 +576,10 @@ html, body {
 }
 .marker.current { isolation:isolate; }
 .marker .lore-number { position:relative; z-index:2; }
+/* Soft light on the active numeral only; no glow around the marker itself. */
+.marker.current .lore-number {
+  text-shadow: 0 0 3px rgba(255,255,255,.95), 0 0 9px rgba(175,240,255,.8), 0 0 17px rgba(135,115,255,.42), 0 1px 3px rgba(0,0,0,.9);
+}
 .marker .lore-swirl-canvas { position:absolute; left:50%; top:50%; width:82px; height:82px; transform:translate(-50%,-50%); z-index:1; pointer-events:none; }
 </style>
 </head>
@@ -783,7 +783,7 @@ fitOverlay();
 function buildTrack(container) {
   for (let i = 20; i >= 0; i--) {
     const marker = document.createElement("div");
-    marker.className = "marker" + (i % 5 === 0 ? " major-lore" : "");
+    marker.className = "marker";
     const number=document.createElement("span");
     number.className="lore-number";
     number.textContent=i;
