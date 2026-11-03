@@ -220,29 +220,15 @@ html, body {
   transform:
     translate(-50%,-50%) scale(1.40);
 
-  background:
-    radial-gradient(
-      circle at 30% 30%,
-      #fffdf1 0%,
-      #ffe9a0 20%,
-      #e8b83f 40%,
-      #2d8dbd 58%,
-      #0c4269 75%,
-      #03101e 100%
-    );
-
-  border: 4px solid #dffcff;
+  background: radial-gradient(circle at 30% 30%, #16324b, #0b1c2d 56%, #040a11);
+  border: 4px solid #d9b257;
   color: white;
 
   text-shadow:
     0 1px 3px rgba(0,0,0,.95);
 
-  /* Steady active-lore glow; never pulse or flash. */
-  box-shadow:
-    0 0 10px rgba(235,255,255,.85),
-    0 0 22px rgba(140,245,255,.65),
-    0 0 38px rgba(50,205,255,.42),
-    inset 0 0 12px rgba(230,255,255,.5);
+  /* Only the colored V12 ribbons glow; the active circle stays crisp. */
+  box-shadow: inset 0 0 8px rgba(65,165,225,.08);
 }
 
 /* =========================
@@ -802,12 +788,12 @@ function installLoreSwirl(trackId) {
     ctx.lineWidth=width;
     ctx.lineCap="round";
     ctx.lineJoin="round";
-    ctx.shadowBlur=5;
+    ctx.shadowBlur=12;
     ctx.shadowColor=color;
     ctx.beginPath();
     for(let k=0;k<=95;k++){
       const a=k/95*Math.PI*2.1+phase+(reverse?-1:1)*t*.00090;
-      const radius=10+4*Math.sin(a*1.7+phase);
+      const radius=14+5.6*Math.sin(a*1.7+phase);
       const x=cx+Math.cos(a)*radius*1.25;
       const y=cy+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
       if(k===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
@@ -825,6 +811,13 @@ function installLoreSwirl(trackId) {
       displayY+=(targetY-displayY)*.13;
       if(Math.abs(targetY-displayY)<.08)displayY=targetY;
       const cx=w/2,cy=displayY;
+      const transform=getComputedStyle(active).transform;
+      const currentScale=transform && transform!=="none" ? Math.hypot(new DOMMatrixReadOnly(transform).a,new DOMMatrixReadOnly(transform).b) : 1.4;
+      const swirlScale=currentScale/1.4;
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.scale(swirlScale,swirlScale);
+      ctx.translate(-cx,-cy);
       const glow=ctx.createRadialGradient(cx,cy,1,cx,cy,29);
       glow.addColorStop(0,"rgba(255,255,255,.23)");
       glow.addColorStop(.28,"rgba(190,225,255,.12)");
@@ -847,7 +840,9 @@ function installLoreSwirl(trackId) {
       ctx.shadowColor="rgba(0,0,0,.95)";
       ctx.shadowBlur=3;
       ctx.fillStyle="#fff";
+      ctx.font=`bold ${16*currentScale/swirlScale}px Arial,sans-serif`;
       ctx.fillText(active.dataset.lore,cx,cy+1);
+      ctx.restore();
       ctx.restore();
     }
     requestAnimationFrame(frame);
