@@ -215,20 +215,30 @@ html, body {
 /* ACTIVE LORE - 1.40X */
 
 .marker.current {
-  z-index: 10;
+  z-index: 5;
 
   transform:
     translate(-50%,-50%) scale(1.40);
 
-  background: radial-gradient(circle at 30% 30%, #16324b, #0b1c2d 56%, #040a11);
-  border: 4px solid #d9b257;
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #fffdf1 0%,
+      #ffe9a0 20%,
+      #e8b83f 40%,
+      #2d8dbd 58%,
+      #0c4269 75%,
+      #03101e 100%
+    );
+
+  border: 4px solid #dffcff;
   color: white;
 
   text-shadow:
     0 1px 3px rgba(0,0,0,.95);
 
-  /* Only the colored V12 ribbons glow; the active circle stays crisp. */
-  box-shadow: inset 0 0 8px rgba(65,165,225,.08);
+  /* Remove only the active marker glow. */
+  box-shadow: none;
 }
 
 /* =========================
@@ -545,15 +555,9 @@ html, body {
 @keyframes trackerGain{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.8)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @keyframes trackerLoss{0%{transform:translate(-50%,-50%) scale(1.4)}45%{transform:translate(-50%,-50%) scale(1.58)}100%{transform:translate(-50%,-50%) scale(1.4)}}
 @media(prefers-reduced-motion:reduce){.marker.lore-gain,.marker.lore-loss{animation:none!important}}
-
-/* Swirls belong to the active circle, beneath its original numeral. */
 .marker.current { isolation:isolate; }
-.marker .lore-number { position:relative; z-index:2; pointer-events:none; }
-.marker .lore-swirl-canvas {
-  position:absolute; width:82px; height:82px; left:50%; top:50%;
-  transform:translate(-50%,-50%); z-index:1; pointer-events:none;
-  overflow:visible;
-}
+.marker .lore-number { position:relative; z-index:2; }
+.marker .lore-swirl-canvas { position:absolute; left:50%; top:50%; width:82px; height:82px; transform:translate(-50%,-50%); z-index:1; pointer-events:none; }
 </style>
 </head>
 
@@ -757,10 +761,10 @@ function buildTrack(container) {
   for (let i = 20; i >= 0; i--) {
     const marker = document.createElement("div");
     marker.className = "marker";
-    const numeral=document.createElement("span");
-    numeral.className="lore-number";
-    numeral.textContent=i;
-    marker.appendChild(numeral);
+    const number=document.createElement("span");
+    number.className="lore-number";
+    number.textContent=i;
+    marker.appendChild(number);
     marker.dataset.lore = i;
 
     marker.style.top =
@@ -773,50 +777,46 @@ function buildTrack(container) {
 buildTrack($("leftTrack"));
 buildTrack($("rightTrack"));
 
-/* Original lore logic unchanged. Only a visual swirl inside the active marker. */
+
+/* Visual-only V12 swirls. The original lore animation and Firebase logic are untouched. */
 const SWIRL_COLORS=["#39ff78","#ff3c51","#aeb4c0","#b66aff","#ffbf43","#176bff"];
-function installLoreSwirl(trackId){
-  const holder=$(trackId);
-  const canvas=document.createElement("canvas");
-  canvas.className="lore-swirl-canvas";
-  canvas.setAttribute("aria-hidden","true");
-  canvas.width=164; canvas.height=164;
-  const ctx=canvas.getContext("2d");
-  function ribbon(t,phase,color,width,alpha,reverse){
-    ctx.save();
-    ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=width;
-    ctx.lineCap="round"; ctx.lineJoin="round";
-    ctx.shadowBlur=12; ctx.shadowColor=color;
-    ctx.beginPath();
-    for(let k=0;k<=95;k++){
-      const a=k/95*Math.PI*2.1+phase+(reverse?-1:1)*t*.00090;
-      const radius=14+5.6*Math.sin(a*1.7+phase);
-      const x=41+Math.cos(a)*radius*1.25;
-      const y=41+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
-      if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-    }
-    ctx.stroke(); ctx.restore();
+function installSwirl(holder){
+ const canvas=document.createElement("canvas");
+ canvas.className="lore-swirl-canvas"; canvas.setAttribute("aria-hidden","true");
+ canvas.width=164;canvas.height=164;
+ const ctx=canvas.getContext("2d");
+ function ribbon(t,phase,color,width,alpha,reverse){
+  ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.lineWidth=width;
+  ctx.lineCap="round";ctx.lineJoin="round";ctx.shadowBlur=12;ctx.shadowColor=color;
+  ctx.beginPath();
+  for(let k=0;k<=95;k++){
+   const a=k/95*Math.PI*2.1+phase+(reverse?-1:1)*t*.00090;
+   const radius=14+5.6*Math.sin(a*1.7+phase);
+   const x=41+Math.cos(a)*radius*1.25;
+   const y=41+Math.sin(a)*radius*.85+Math.sin(a*2+t*.001)*1.1;
+   if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
   }
-  function frame(t){
-    const active=holder.querySelector(".marker.current");
-    if(active && canvas.parentElement!==active) active.appendChild(canvas);
-    if(!active && canvas.parentElement) canvas.remove();
-    ctx.setTransform(2,0,0,2,0,0);
-    ctx.clearRect(0,0,82,82);
-    if(active){
-      ribbon(t,.2,SWIRL_COLORS[0],1.5,.9,false);
-      ribbon(t,1.3,SWIRL_COLORS[1],1.45,.86,true);
-      ribbon(t,2.4,SWIRL_COLORS[2],1.25,.75,false);
-      ribbon(t,3.5,SWIRL_COLORS[3],1.5,.84,true);
-      ribbon(t,4.6,SWIRL_COLORS[4],1.35,.82,false);
-      ribbon(t,5.7,SWIRL_COLORS[5],1.35,.78,true);
-    }
-    requestAnimationFrame(frame);
+  ctx.stroke();ctx.restore();
+ }
+ function frame(t){
+  const active=holder.querySelector(".marker.current");
+  if(active && canvas.parentElement!==active)active.appendChild(canvas);
+  if(!active && canvas.parentElement)canvas.remove();
+  ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,82,82);
+  if(active){
+   ribbon(t,.2,SWIRL_COLORS[0],1.5,.9,false);
+   ribbon(t,1.3,SWIRL_COLORS[1],1.45,.86,true);
+   ribbon(t,2.4,SWIRL_COLORS[2],1.25,.75,false);
+   ribbon(t,3.5,SWIRL_COLORS[3],1.5,.84,true);
+   ribbon(t,4.6,SWIRL_COLORS[4],1.35,.82,false);
+   ribbon(t,5.7,SWIRL_COLORS[5],1.35,.78,true);
   }
   requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
 }
-installLoreSwirl("leftTrack");
-installLoreSwirl("rightTrack");
+installSwirl($("leftTrack"));
+installSwirl($("rightTrack"));
 
 function showLore(container, raw) {
   const value = Math.max(
@@ -824,7 +824,7 @@ function showLore(container, raw) {
     Math.min(20, Math.floor(Number(raw) || 0))
   );
 
-  for (const marker of container.querySelectorAll(".marker")) {
+  for (const marker of container.children) {
     const number = Number(marker.dataset.lore);
 
     marker.classList.toggle(
@@ -851,14 +851,14 @@ function animateLore(p,raw){
     clearTimeout(loreAnimationTimers[p]);
     loreAnimationTimers[p]=null;
   }
-  for(const marker of container.querySelectorAll(".marker")){
+  for(const marker of container.children){
     marker.classList.remove("lore-gain","lore-loss");
   }
   showLore(container,value);
 
   // Only animate the destination number; all previous markers stay normal.
   if(old!==null&&old!==value){
-    const marker=[...container.querySelectorAll(".marker")].find(el=>Number(el.dataset.lore)===value);
+    const marker=[...container.children].find(el=>Number(el.dataset.lore)===value);
     if(marker){
       void marker.offsetWidth;
       marker.classList.add(value>old?"lore-gain":"lore-loss");
@@ -1040,8 +1040,7 @@ function showFeaturedCard(data) {
   }
 }
 
-onValue(ref(db, "featuredDisplay"), snapshot => {
-  showFeaturedCard(snapshot.val());
+onValue(ref(db, "featuredDisplay"), snapshot => {  showFeaturedCard(snapshot.val());
 });
 
 /* GAME WIN ICONS */
