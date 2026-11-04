@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE LORCANA COOKOUT — Broadcast Stinger Test</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent;overflow:hidden;font-family:Arial,Helvetica,sans-serif}
+#main{position:relative;width:1920px;height:1080px;overflow:hidden;isolation:isolate;background:transparent}
+.shape,.accent,.core,.type,.flash{position:absolute;will-change:transform,opacity}
+.shape{height:1800px;top:-360px;transform:skewX(-21deg)}
+#depthLeft{left:-800px;width:1600px;background:linear-gradient(96deg,#020714 0%,#0b1935 39%,#234b7d 70%,#09172f 100%);border-right:26px solid #3c6da1;box-shadow:65px 0 100px #0008}
+#depthRight{right:-800px;width:1600px;background:linear-gradient(86deg,#192c4c,#0a1530 44%,#050d20 100%);border-left:20px solid #bd9357;box-shadow:-65px 0 100px #000a}
+#bladeGold{left:-580px;width:1100px;background:linear-gradient(90deg,#2d2015,#b77f37 34%,#ffe1a1 47%,#b78340 53%,#49321c 100%);border-right:8px solid #f6dba0;box-shadow:0 0 50px #e1ac4b60,30px 0 70px #01041196}
+#bladeBlue{right:-580px;width:1100px;background:linear-gradient(90deg,#101e3a,#285589 24%,#69b4ef 40%,#24497a 58%,#0b152b);border-left:7px solid #91bce9;box-shadow:0 0 55px #2e83ce60,-30px 0 70px #01041196}
+#seam{left:0;top:0;width:100%;height:100%;opacity:0;pointer-events:none;background:linear-gradient(115deg,#041020,#071934 29%,#112b50 50%,#071832 72%,#030b1b)}
+#seam:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(114deg,transparent 0 95px,#90afd00d 96px 97px,transparent 98px 200px),radial-gradient(ellipse at 50% 50%,#244b8d5e,transparent 55%)}
+#slash{position:absolute;left:50%;top:-25%;width:16px;height:150%;background:linear-gradient(90deg,#48311b,#e3bd78 46%,#fff4d5 52%,#d1a05c);transform:skewX(-21deg);box-shadow:0 0 36px #e9b76b,0 0 85px #e7ac5952;opacity:0}
+#energy1,#energy2{height:4px;width:120%;left:-10%;background:linear-gradient(90deg,transparent,#62b8ff,#f4d9a4,transparent);box-shadow:0 0 25px #5bacf6;opacity:0;transform:rotate(-12deg)}
+#energy1{top:32%}#energy2{top:72%}
+#type{inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#f6eee0;text-align:center;opacity:0;filter:drop-shadow(0 7px 20px #000b);transform:scale(.9)}
+#type .pre{font-size:25px;letter-spacing:.7em;color:#d3ad6c;font-weight:800;padding-left:.7em}
+#type .word{font-size:106px;font-weight:900;letter-spacing:-.05em;line-height:1.15}
+#type .word span{color:#efc87c}
+#type .sub{font-size:22px;letter-spacing:.4em;color:#b0c9e5;margin-top:20px;font-weight:700}
+#shutter{inset:0;background:#070e21;opacity:0;pointer-events:none}
+#tick{position:absolute;bottom:115px;left:6%;right:6%;height:2px;opacity:0;background:linear-gradient(90deg,transparent,#d1ad70 30%,#456a9e 80%,transparent)}
+#halo{position:absolute;inset:0;background:radial-gradient(ellipse at center,#4f87b240,transparent 55%);opacity:0}
+#player{position:fixed;right:18px;bottom:16px;display:flex;gap:8px;align-items:center;z-index:80}
+#player button{background:#121e38;color:#f8d496;border:1px solid #b88a47;border-radius:7px;padding:11px 15px;font:700 14px Arial;cursor:pointer}
+#player span{background:#0e1932d9;color:#fff;padding:9px 12px;border-radius:6px;font:12px Arial}
+body[data-hf-render] #player{display:none}
+</style></head><body><div id="main" data-composition-id="main" data-start="0" data-duration="2.6" data-width="1920" data-height="1080">
+<div id="seam"><div id="halo"></div><div id="slash"></div><div id="energy1" class="accent"></div><div id="energy2" class="accent"></div><div id="tick"></div></div>
+<div id="depthLeft" class="shape"></div><div id="depthRight" class="shape"></div>
+<div id="bladeGold" class="shape"></div><div id="bladeBlue" class="shape"></div>
+<div id="type"><div class="pre">THE LORCANA COOKOUT</div><div class="word">LIVE <span>BROADCAST</span></div><div class="sub">TOURNAMENT COVERAGE</div></div>
+<div id="shutter" class="flash"></div></div>
+<div id="player"><span>SCENE CUT AT 1.3s</span><button id="play">▶ Play stinger</button></div>
+<script>
+(()=>{
+if(!window.gsap)return;
+const $=s=>document.querySelector(s);
+gsap.set('#depthLeft',{x:-1700});
+gsap.set('#depthRight',{x:1700});
+gsap.set('#bladeGold',{x:-1500});
+gsap.set('#bladeBlue',{x:1500});
+const tl=gsap.timeline({paused:true});
+tl.to('#depthLeft',{x:140,duration:.64,ease:'power3.inOut'},.02);
+tl.to('#depthRight',{x:-140,duration:.64,ease:'power3.inOut'},.02);
+tl.to('#bladeGold',{x:780,duration:.68,ease:'power3.inOut'},.07);
+tl.to('#bladeBlue',{x:-780,duration:.68,ease:'power3.inOut'},.07);
+tl.set('#seam',{opacity:1},.64);
+tl.to('#halo',{opacity:1,duration:.4},.62);
+tl.to('#slash',{opacity:1,duration:.1},.69);
+tl.to('#energy1',{opacity:.85,duration:.13},.74);
+tl.to('#energy2',{opacity:.66,duration:.13},.79);
+tl.to('#bladeGold',{x:1380,duration:.35,ease:'power2.in'},.76);
+tl.to('#bladeBlue',{x:-1380,duration:.35,ease:'power2.in'},.76);
+tl.to('#depthLeft',{x:800,duration:.35,ease:'power2.in'},.83);
+tl.to('#depthRight',{x:-800,duration:.35,ease:'power2.in'},.83);
+tl.to('#slash',{scaleX:6,opacity:0,duration:.24,ease:'power2.out'},.96);
+tl.to('#energy1',{opacity:0,duration:.24},.92);
+tl.to('#energy2',{opacity:0,duration:.24},.98);
+tl.to('#tick',{opacity:.9,duration:.12},1.03);
+tl.to('#type',{opacity:1,scale:1,duration:.27,ease:'back.out(1.3)'},1.04);
+tl.to('#type',{opacity:0,scale:1.09,duration:.2,ease:'power2.in'},1.61);
+tl.to('#tick',{opacity:0,duration:.22},1.64);
+tl.to('#halo',{opacity:0,duration:.25},1.72);
+tl.to('#seam',{opacity:0,duration:.55,ease:'power2.inOut'},1.8);
+tl.set('#depthLeft',{x:-1700},2.55);
+tl.set('#depthRight',{x:1700},2.55);
+tl.set('#bladeGold',{x:-1500},2.55);
+tl.set('#bladeBlue',{x:1500},2.55);
+tl.to('#shutter',{opacity:0,duration:.01},2.59);
+window.__timelines=window.__timelines||{};
+window.__timelines.main=tl;
+const button=$('#play');
+button.addEventListener('click',()=>{tl.restart();button.textContent='↻ Replay stinger'});
+if(window.location.search.includes('render=')||window.parent!==window){document.body.dataset.hfRender='true'}
+})();
+</script></body></html>
