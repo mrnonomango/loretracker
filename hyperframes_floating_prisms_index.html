@@ -21,7 +21,7 @@ html,body{margin:0;padding:0;background:#080e21;overflow:hidden}
 if(!window.THREE||!window.gsap){console.error("Three.js or GSAP did not load");return;}
 const THREE=window.THREE, gsap=window.gsap;
 const canvas=document.getElementById('webgl');
-let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(e){document.getElementById('error').style.display='flex';return}
+let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(e){console.error('WebGL renderer unavailable',e);return}
 renderer.setSize(1920,1080,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.16;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x080e21);scene.fog=new THREE.FogExp2(0x080e20,.011);
