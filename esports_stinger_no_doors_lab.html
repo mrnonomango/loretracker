@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Lorcana Cookout — Non-Door Esports Stinger Concepts</title>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#080d1b;color:#f4f1ed;font-family:Arial,Helvetica,sans-serif}main{max-width:1370px;margin:auto;padding:18px}h1{font-size:22px;margin:0 0 6px}p{font-size:13px;color:#afc0d4;margin:0 0 15px}nav{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:13px}button{padding:10px 16px;border-radius:7px;border:1px solid #64728f;background:#192841;color:#e4e9f4;font-weight:bold;cursor:pointer}button.active,#replay{border-color:#c39a5e;color:#f9d99f;background:#282639}
+#stage{position:relative;aspect-ratio:16/9;background:#030915;overflow:hidden;border:1px solid #64728f;border-radius:7px;isolation:isolate}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 24%,#02061192 100%);pointer-events:none}#luma{position:absolute;inset:0;opacity:0;background:#fff;pointer-events:none}
+#text{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;color:#f8f3ec;opacity:0;text-shadow:0 7px 20px #000a;pointer-events:none}
+#small{font-size:clamp(8px,1.25vw,19px);letter-spacing:.42em;color:#e4bd79;font-weight:800}#big{font-size:clamp(28px,6vw,91px);font-weight:900;line-height:1.2;letter-spacing:-.045em;margin-top:1.5%}#big b{color:#eec784}#sub{font-size:clamp(8px,1vw,15px);letter-spacing:.34em;color:#bfd0e7;font-weight:800;margin-top:1%}
+#footer{display:flex;align-items:center;gap:12px;margin-top:11px}#status{font-size:12px;color:#aebbd1}#error{display:none;position:absolute;inset:0;background:#111b32;align-items:center;justify-content:center;padding:20px;color:#fff}
+</style></head><body><main><h1>THE LORCANA COOKOUT — 3 STINGER CONCEPTS</h1><p>No sliding doors or closing gates. Animated 3D camera, spatial geometry, and broadcast typography.</p>
+<nav><button data-mode="warp" class="active">01 · Hyperdrive Run</button><button data-mode="orbit">02 · Orbital Eclipse</button><button data-mode="signal">03 · Signal Pulse</button></nav>
+<div id="stage"><canvas id="webgl" width="1920" height="1080"></canvas><div id="vignette"></div><div id="text"><div id="small">THE LORCANA COOKOUT</div><div id="big">LIVE <b>BROADCAST</b></div><div id="sub">TOURNAMENT COVERAGE</div></div><div id="luma"></div><div id="error">3D preview could not start. Try Chrome with hardware acceleration enabled.</div></div>
+<div id="footer"><button id="replay">▶ Play sequence</button><span id="status">2.8-second animation · concept 01</span></div>
+</main>
+<script>
+(()=>{
+if(!window.THREE||!window.gsap){document.getElementById("error").style.display="flex";return}
+const T=window.THREE,g=window.gsap,canvas=document.getElementById("webgl");
+let ren;try{ren=new T.WebGLRenderer({canvas,antialias:true,powerPreference:"high-performance"})}catch(e){document.getElementById("error").style.display="flex";return}
+ren.setSize(1920,1080,false);ren.outputColorSpace=T.SRGBColorSpace;ren.toneMapping=T.ACESFilmicToneMapping;ren.toneMappingExposure=.9;
+const scene=new T.Scene();scene.background=new T.Color(0x071026);scene.fog=new T.FogExp2(0x071026,.009);
+const cam=new T.PerspectiveCamera(58,1920/1080,.1,500);
+scene.add(new T.AmbientLight(0x617fae,1.7));const key=new T.PointLight(0xe3b472,170,100);scene.add(key);const blue=new T.PointLight(0x3a87d9,180,120);scene.add(blue);
+const gold=new T.MeshStandardMaterial({color:0xcca263,metalness:.5,roughness:.42,side:T.DoubleSide});
+const darkGold=new T.MeshStandardMaterial({color:0x79512a,metalness:.46,roughness:.55,side:T.DoubleSide});
+const navy=new T.MeshStandardMaterial({color:0x28538a,metalness:.45,roughness:.5,side:T.DoubleSide});
+const lightBlue=new T.MeshStandardMaterial({color:0x5d91c3,metalness:.35,roughness:.5,side:T.DoubleSide});
+const black=new T.MeshStandardMaterial({color:0x121d35,metalness:.25,roughness:.7,side:T.DoubleSide});
+let group=new T.Group();scene.add(group);let objects=[];let tl;
+const mv={z:18,x:0,y:0,roll:0,rot:0,pulse:0};
+function mesh(geometry,mat,x,y,z,rx=0,ry=0,rz=0){const o=new T.Mesh(geometry,mat);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);group.add(o);return o}
+function reset(){if(tl)tl.kill();scene.remove(group);group.traverse(o=>{if(o.geometry)o.geometry.dispose()});group=new T.Group();scene.add(group);objects=[];Object.assign(mv,{z:18,x:0,y:0,roll:0,rot:0,pulse:0});g.set("#text",{opacity:0,y:25,scale:.94});g.set("#luma",{opacity:0})}
+function torus(radius,tube,z,mat,rx=0,ry=0){return mesh(new T.TorusGeometry(radius,tube,8,60),mat,0,0,z,rx,ry)}
+function warp(){
+ scene.fog.density=.012;
+ for(let i=0;i<19;i++){const z=6-i*11;const s=10+(i%4)*1.8;const ring=mesh(new T.TorusGeometry(s,.25+(i%3)*.15,7,8),i%3===0?gold:i%3===1?navy:darkGold,0,0,z,0,0,(i%2?.16:-.16));objects.push(ring)}
+ for(let i=0;i<18;i++){const z=1-i*12;const angle=(i*2.399)%6.283;const radius=13+(i%4)*2;const bar=mesh(new T.BoxGeometry(.28,9+(i%3)*6,1.8),i%3===0?gold:navy,Math.cos(angle)*radius,Math.sin(angle)*radius,z,.15,.3,angle);objects.push(bar)}
+}
+function orbit(){
+ scene.fog.density=.005;
+ const core=mesh(new T.IcosahedronGeometry(7.2,1),black,0,0,-28);objects.push(core);
+ for(let i=0;i<6;i++){const a=i*1.047;const o=torus(13+i*.65,.22+i*.035,-28,i%2?navy:gold,.72+a*.2,a*.49);objects.push(o)}
+ for(let i=0;i<12;i++){const a=i*Math.PI/6;const r=21+(i%3)*2;const o=mesh(new T.BoxGeometry(1.7,7.6,2),i%2?navy:darkGold,Math.cos(a)*r,Math.sin(a)*r,-32+(i%4)*4,0,a,.3+a);objects.push(o)}
+}
+function signal(){
+ scene.fog.density=.009;
+ for(let i=0;i<24;i++){const a=i*Math.PI/12;const rad=12+(i%3)*3;let o=mesh(new T.BoxGeometry(.8,3+(i%5)*2.1,1.5),i%4===0?gold:i%4===1?navy:i%4===2?darkGold:lightBlue,Math.cos(a)*rad,Math.sin(a)*rad,-20+(i%3)*3,0,0,a);objects.push(o)}
+ for(let i=0;i<7;i++)objects.push(torus(5+i*2.1,.12,-24,i%2?navy:gold,.03,.05));
+ objects.push(mesh(new T.IcosahedronGeometry(3.8,0),darkGold,0,0,-24))
+}
+function render(){
+ cam.position.set(mv.x,mv.y,mv.z);cam.lookAt(0,0,-30);cam.rotateZ(mv.roll);
+ group.rotation.z=mv.rot;key.position.set(-12,9,mv.z-28);blue.position.set(12,-6,mv.z-35);
+ if(active==="signal"){objects.forEach((o,i)=>{if(i<24)o.scale.y=1+.25*Math.sin(mv.pulse*2.6+i*.58)})}
+ ren.render(scene,cam)
+}
+let active="warp";const creators={warp,orbit,signal};
+function choose(mode){reset();active=mode;creators[mode]();document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));document.getElementById("status").textContent="2.8-second animation · "+({warp:"Hyperdrive Run",orbit:"Orbital Eclipse",signal:"Signal Pulse"}[mode]);animate()}
+function animate(){
+ tl=g.timeline({paused:true,onUpdate:render});
+ if(active==="warp"){
+  tl.to(mv,{z:-87,x:1.5,roll:.04,duration:1.35,ease:"power2.in"},0);
+  tl.to(mv,{z:-120,duration:.5,ease:"power3.in"},1.35);
+  tl.to(mv,{z:-138,duration:.95,ease:"power2.out"},1.85);
+ }else if(active==="orbit"){
+  tl.to(mv,{z:7,x:-5,y:1,rot:.34,duration:1.3,ease:"power2.inOut"},0);
+  tl.to(mv,{z:-4,x:4,y:-1,rot:1.05,duration:1.5,ease:"power2.inOut"},1.3)
+ }else{
+  tl.to(mv,{z:7,rot:.22,pulse:3.2,duration:1.4,ease:"power2.inOut"},0);
+  tl.to(mv,{z:-6,rot:-.12,pulse:8.4,duration:1.4,ease:"power2.inOut"},1.4)
+ }
+ tl.to("#text",{opacity:1,y:0,scale:1,duration:.3,ease:"power2.out"},1.42);
+ tl.to("#text",{opacity:0,y:-18,scale:1.07,duration:.2,ease:"power2.in"},2.34);
+ tl.to("#luma",{opacity:.5,duration:.1},1.29);
+ tl.to("#luma",{opacity:0,duration:.16},1.39);
+ tl.to("#luma",{opacity:.32,duration:.1},2.57);
+ tl.to("#luma",{opacity:0,duration:.15},2.65);
+ window.__timelines=window.__timelines||{};window.__timelines.main=tl;render();
+ tl.play();document.getElementById("replay").textContent="↻ Replay sequence";
+}
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.mode)));
+document.getElementById("replay").addEventListener("click",animate);
+choose("warp")
+})();
+</script></body></html>
