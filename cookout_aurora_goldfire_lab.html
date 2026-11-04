@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Lorcana Cookout | Aurora & Goldfire Motion Tests</title><script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#060c18;color:#f2f0ec;font-family:Arial,sans-serif}main{max-width:1330px;margin:auto;padding:18px}
+h1{font-size:22px;margin:0 0 6px;color:#f5d38f}p{font-size:13px;color:#aabbd1;margin:0 0 15px}
+nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}button{font-weight:800;cursor:pointer;background:#182a46;color:#d8e4f7;border:1px solid #607ba0;border-radius:7px;padding:11px 17px}button.active,#play{color:#f5d28c;border-color:#bb975d;background:#292a40}
+#screen{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid #4c6282;border-radius:9px;background:#030816}
+canvas{display:block;width:100%;height:100%}
+#tone{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 33%,#02061077 100%)}
+#headline{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-shadow:0 6px 24px #020712c9;opacity:0;pointer-events:none}
+#over{color:#ead5a8;font-size:clamp(9px,1.4vw,22px);font-weight:800;letter-spacing:.42em}
+#title{color:#fff;font-size:clamp(33px,6.9vw,109px);font-weight:900;letter-spacing:-.055em;line-height:1.2}#title b{color:#f0c881}
+#under{font-size:clamp(8px,1.1vw,17px);letter-spacing:.3em;color:#bfcee3;font-weight:800}
+#error{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:#101c34;padding:20px}
+#actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:12px}#label{font-size:13px;color:#aabcce}
+</style></head><body><main><h1>THE LORCANA COOKOUT — MOTION EXPERIMENTS</h1><p>Two organic cinematic effects. No sliding doors, 3D boxes, or rotating rings.</p>
+<nav><button data-mode="aurora" class="active">01 · Aurora Veil</button><button data-mode="goldfire">02 · Goldfire</button></nav>
+<div id="screen" data-composition-id="main" data-start="0" data-duration="4.5" data-width="1920" data-height="1080"><canvas id="canvas" width="1920" height="1080"></canvas><div id="tone"></div><div id="headline"><div id="over">THE LORCANA COOKOUT</div><div id="title">LIVE <b>BROADCAST</b></div><div id="under">DISNEY LORCANA · TOURNAMENT COVERAGE</div></div><div id="error">The animated effect could not start in this browser.</div></div>
+<div id="actions"><button id="play">▶ Play Aurora Veil</button><span id="label">Original real-time shader animation · 4.5 seconds</span></div></main>
+<script>
+(()=>{
+const canvas=document.getElementById("canvas");const gl=canvas.getContext("webgl",{alpha:false,antialias:false,preserveDrawingBuffer:true});
+if(!gl){document.getElementById("error").style.display="flex";return}
+const vertex='attribute vec2 xy;varying vec2 uv;void main(){uv=xy*.5+.5;gl_Position=vec4(xy,0.,1.);}';
+const common=`
+precision highp float;
+varying vec2 uv;
+uniform vec2 res;
+uniform float t;
+uniform float power;
+uniform float mixIn;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.07+vec2(14.5,7.7);a*=.5;}return v;}
+vec3 tone(vec3 v){return 1.-exp(-max(v,0.));}
+`;
+const shaders={
+aurora:common+`
+void main(){
+vec2 p=(gl_FragCoord.xy-.5*res)/res.y;float time=t;
+vec2 q=p;float distortion=fbm(vec2(p.x*1.25,p.y*1.1)+vec2(time*.18,-time*.13));
+float wind=fbm(p*2.1+vec2(time*.25,.9));
+float curtains=0.;
+float curtainGold=0.;
+float electric=0.;
+for(int i=0;i<6;i++){
+ float k=float(i);
+ float base=.18*sin(p.x*(1.4+k*.21)+time*(.4+k*.07)+k*1.8);
+ float ripple=.09*sin(p.x*6.2+time*.8+k*2.3);
+ float strand=p.y-(base+ripple+distortion*.34-.14+k*.067);
+ float line=exp(-abs(strand)*(9.2+k*.9));
+ float head=pow(max(0.,1.-abs(strand)*2.5),2.);
+ float amp=line*(.48+.52*wind)*(1.+.3*sin(time+k));
+ curtains+=amp*(.45+.08*k);
+ curtainGold+=amp*mix(.55,.07,k/5.);
+ electric+=pow(line,2.5)*(.11+.08*sin(k*2.));
+}
+float glow=exp(-abs(p.y-.15*sin(p.x*2.+time*.45))*2.1)*.12;
+vec3 c=vec3(.003,.012,.033);
+c+=vec3(.015,.14,.38)*curtains*1.45;
+c+=vec3(.08,.47,.86)*electric*.9;
+c+=vec3(.85,.38,.09)*curtainGold*.9;
+c+=vec3(1.,.7,.3)*pow(curtainGold,2.)*.21;
+c+=vec3(.10,.23,.5)*glow;
+float strands=pow(max(0.,sin(p.x*22.+p.y*15.+fbm(p*3.+time*.2)*12.)),18.);
+c+=strands*vec3(.18,.35,.53)*curtains*.15;
+c*=.8+power*.35;
+c=tone(c);
+float vig=1.-smoothstep(.5,1.3,length(q*.86));
+c*=.39+.61*vig;
+gl_FragColor=vec4(c,1.);
+}`,
+goldfire:common+`
+void main(){
+vec2 p=(gl_FragCoord.xy-.5*res)/res.y;float time=t;
+vec2 q=p;
+float w=fbm(p*1.6+vec2(time*.13,-time*.2));
+vec2 warped=p+vec2(.23*sin(p.y*2.3+time*.7),.2*cos(p.x*1.7-time*.4));
+float smoke=fbm(warped*2.+vec2(time*.19,-time*.28));
+float smoke2=fbm(warped*3.6+vec2(-time*.23,time*.37)+smoke);
+float jet=exp(-abs(p.x+.22*sin(p.y*2.4+time*.75)+.04*(smoke-.5))*4.);
+float wave=sin(warped.x*9.+warped.y*4.1+smoke*10.-time*2.4);
+float filament=pow(max(0.,wave),13.);
+float molten=smoothstep(.38,.81,smoke+.3*smoke2+.14*wave);
+float emberField=pow(max(0.,fbm(warped*5.+vec2(time*.18,-time*.8))),7.);
+float spray=0.;
+for(int i=0;i<14;i++){
+ float k=float(i);
+ vec2 seed=vec2(k*19.17,k*8.3);
+ float shift=fract(time*(.32+.04*mod(k,4.))+h(seed));
+ vec2 pt=vec2((h(seed+7.)-.5)*2.5+(shift-.5)*.18,-1.1+shift*2.2);
+ float d=length((p-pt)*vec2(1.3,1.0));
+ spray+=exp(-d*220.)*(.3+.7*h(seed+1.));
+}
+vec3 c=vec3(.002,.008,.023);
+c+=vec3(.005,.085,.28)*smoke*1.5;
+c+=vec3(.025,.28,.67)*jet*(.3+smoke2)*1.3;
+c+=vec3(.67,.24,.038)*molten*jet*1.4;
+c+=vec3(1.,.65,.20)*filament*jet*.7;
+c+=vec3(1.,.85,.43)*spray*(.3+.7*smoke2)*.75;
+c+=vec3(.075,.25,.5)*filament*(1.-jet)*.24;
+c+=vec3(.82,.42,.16)*emberField*jet*.2;
+c*=.85+power*.35;
+c=tone(c);
+float vig=1.-smoothstep(.55,1.3,length(q*.8));c*=.34+.66*vig;
+gl_FragColor=vec4(c,1.);
+}`};
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+const vs=shader(gl.VERTEX_SHADER,vertex);
+let program;
+function load(mode){const next=gl.createProgram();gl.attachShader(next,vs);gl.attachShader(next,shader(gl.FRAGMENT_SHADER,shaders[mode]));gl.linkProgram(next);if(!gl.getProgramParameter(next,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(next));if(program)gl.deleteProgram(program);program=next;gl.useProgram(program);const a=gl.getAttribLocation(program,"xy");gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);}
+const quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+let active="aurora",tl;const val={t:0,power:.2,mixIn:0};
+function render(){gl.viewport(0,0,1920,1080);gl.uniform2f(gl.getUniformLocation(program,"res"),1920,1080);gl.uniform1f(gl.getUniformLocation(program,"t"),val.t);gl.uniform1f(gl.getUniformLocation(program,"power"),val.power);gl.uniform1f(gl.getUniformLocation(program,"mixIn"),val.mixIn);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}
+function play(){
+ if(tl)tl.kill();
+ document.getElementById("play").textContent="↻ Replay "+(active==="aurora"?"Aurora Veil":"Goldfire");
+ if(!window.gsap){render();return}
+ Object.assign(val,{t:0,power:.15,mixIn:0});gsap.set("#headline",{opacity:0,scale:.94,y:22,filter:"blur(10px)"});
+ tl=gsap.timeline({paused:true,onUpdate:render});
+ tl.to(val,{t:7.0,power:1.1,duration:4.5,ease:"none"},0);
+ tl.to(val,{power:.7,duration:1.2,ease:"sine.inOut"},2.3);
+ tl.to("#headline",{opacity:1,scale:1,y:0,filter:"blur(0px)",duration:.53,ease:"power2.out"},1.28);
+ tl.to("#headline",{opacity:0,scale:1.055,filter:"blur(6px)",duration:.3},3.55);
+ window.__timelines=window.__timelines||{};window.__timelines.main=tl;render();tl.play()
+}
+function choose(m){active=m;try{load(m)}catch(e){document.getElementById("error").style.display="flex";console.error(e);return}
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.mode===m));
+ play()
+}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.mode)));
+document.getElementById("play").addEventListener("click",play);
+choose("aurora");
+})();
+</script></body></html>
