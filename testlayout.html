@@ -116,27 +116,21 @@ html, body {
   /* One gold divider only, on the gameplay-facing edge of each tracker. */
   border: none;
 
+  /* Richer illuminated blue surface, keeping the ladder shape intact. */
   background:
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(55,145,210,.18),
-      transparent 58%
-    ),
-    linear-gradient(
-      180deg,
-      #214d78,
-      #123150 34%,
-      #0b1e32 68%,
-      #050c15
-    );
+    linear-gradient(90deg,rgba(93,197,255,.22),transparent 24%,transparent 76%,rgba(85,182,240,.16)),
+    radial-gradient(ellipse at 50% 42%,rgba(62,170,237,.38),transparent 72%),
+    linear-gradient(180deg,#2b648b 0%,#174c74 26%,#0e3457 58%,#071a32 100%);
 
   box-shadow:
-    inset 0 0 20px rgba(55,145,210,.12),
-    inset 0 0 45px rgba(0,0,0,.9);
+    inset 0 0 16px rgba(112,205,255,.32),
+    inset 0 0 40px rgba(7,26,57,.50),
+    inset 0 0 5px rgba(245,211,119,.16);
 }
 
-.side.left .track { border-right: 2px solid #f0c85b; }
-.side.right .track { border-left: 2px solid #f0c85b; }
+/* Preserve the single gameplay-facing gold divider on each ladder. */
+.side.left .track { border-right: 2px solid #ffda72; }
+.side.right .track { border-left: 2px solid #ffda72; }
 
 /* LORE POSITIONING */
 
