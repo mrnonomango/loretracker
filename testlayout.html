@@ -116,21 +116,8 @@ html, body {
   /* One gold divider only, on the gameplay-facing edge of each tracker. */
   border: none;
 
-  /* Subtle brushed-sapphire surface with a narrow vertical metallic light streak. */
+  /* Even sapphire background without metallic streaks. */
   background:
-    linear-gradient(90deg,
-      transparent 0%,
-      transparent 31%,
-      rgba(168,229,255,.07) 34%,
-      rgba(205,245,255,.26) 36%,
-      rgba(174,232,255,.12) 38%,
-      transparent 43%,
-      transparent 100%),
-    repeating-linear-gradient(90deg,
-      transparent 0px,
-      transparent 10px,
-      rgba(153,213,244,.025) 11px,
-      transparent 12px),
     linear-gradient(90deg,
       rgba(4,17,32,.40) 0%,
       rgba(77,169,225,.24) 20%,
@@ -567,6 +554,9 @@ html, body {
 /* Larger, evenly spaced lore scale without tick marks. */
 .markers { top: 25px; bottom: 25px; }
 .marker { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+/* Preview: near-black navy inactive lore; keep the active number bright white. */
+.marker:not(.current) { color:#071522; text-shadow:0 1px 1px rgba(194,232,255,.46); }
+.marker.current { color:#fff; }
 /* Ringless overrides must follow all original marker styles. */
 .marker, .marker.lit, .marker.current {
   border: none;
