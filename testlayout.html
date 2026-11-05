@@ -116,20 +116,18 @@ html, body {
   /* One gold divider only, on the gameplay-facing edge of each tracker. */
   border: none;
 
-  /* Even sapphire background without metallic streaks. */
+  /* Match the round timer's deep navy and sapphire gradient. */
   background:
-    linear-gradient(90deg,
-      rgba(4,17,32,.40) 0%,
-      rgba(77,169,225,.24) 20%,
-      rgba(112,211,255,.30) 48%,
-      rgba(77,169,225,.24) 76%,
-      rgba(4,17,32,.44) 100%),
-    linear-gradient(180deg,#124164 0%,#154a70 50%,#124164 100%);
+    radial-gradient(ellipse at 50% 50%,rgba(55,145,210,.18),transparent 65%),
+    linear-gradient(180deg,
+      #214d78 0%,
+      #123150 34%,
+      #0b1e32 68%,
+      #050c15 100%);
 
   box-shadow:
-    inset 3px 0 10px rgba(96,193,246,.26),
-    inset -3px 0 10px rgba(96,193,246,.25),
-    inset 0 0 18px rgba(70,158,220,.22);
+    inset 0 0 17px rgba(55,145,210,.15),
+    inset 0 0 35px rgba(0,0,0,.55);
 }
 
 /* Preserve the single gameplay-facing gold divider on each ladder. */
@@ -554,12 +552,10 @@ html, body {
 /* Larger, evenly spaced lore scale without tick marks. */
 .markers { top: 25px; bottom: 25px; }
 .marker { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
-/* Soft silver-white inactive lore; active lore stays brilliant white. */
+/* Crisp cool white numerals on the darker ladder; active lore stays brightest. */
 .marker:not(.current) {
-  color: #c6d9e6;
-  text-shadow:
-    0 1px 2px rgba(0,0,0,.85),
-    0 0 2px rgba(220,241,255,.20);
+  color: #e7f0f7;
+  text-shadow: 0 1px 3px rgba(0,0,0,.9);
 }
 .marker.current { color:#fff; }
 /* Ringless overrides must follow all original marker styles. */
