@@ -116,16 +116,20 @@ html, body {
   /* One gold divider only, on the gameplay-facing edge of each tracker. */
   border: none;
 
-  /* Richer illuminated blue surface, keeping the ladder shape intact. */
+  /* Even sapphire illumination from lore 0 to 20, with a restrained light rail. */
   background:
-    linear-gradient(90deg,rgba(93,197,255,.22),transparent 24%,transparent 76%,rgba(85,182,240,.16)),
-    radial-gradient(ellipse at 50% 42%,rgba(62,170,237,.38),transparent 72%),
-    linear-gradient(180deg,#2b648b 0%,#174c74 26%,#0e3457 58%,#071a32 100%);
+    linear-gradient(90deg,
+      rgba(4,17,32,.40) 0%,
+      rgba(77,169,225,.24) 20%,
+      rgba(112,211,255,.30) 48%,
+      rgba(77,169,225,.24) 76%,
+      rgba(4,17,32,.44) 100%),
+    linear-gradient(180deg,#124164 0%,#154a70 50%,#124164 100%);
 
   box-shadow:
-    inset 0 0 16px rgba(112,205,255,.32),
-    inset 0 0 40px rgba(7,26,57,.50),
-    inset 0 0 5px rgba(245,211,119,.16);
+    inset 3px 0 10px rgba(96,193,246,.26),
+    inset -3px 0 10px rgba(96,193,246,.25),
+    inset 0 0 18px rgba(70,158,220,.22);
 }
 
 /* Preserve the single gameplay-facing gold divider on each ladder. */
