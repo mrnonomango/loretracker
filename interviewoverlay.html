@@ -1,20 +1,33 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lorcana Cookout — Interview OBS Overlay</title><style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Arial,sans-serif;color:white}.stage{position:absolute;inset:0;overflow:hidden;background:transparent}/* Flowing Lorcana ink currents: six ink colors, no image assets or visible line art. */
-.side{position:absolute;top:0;bottom:0;width:15%;overflow:hidden;isolation:isolate;background:#09172a}
+/* Same six-ink composition as the Starting Soon artwork, clipped to the side panels.
+   Keep the interview camera opening fully transparent. */
+.side{position:absolute;top:0;bottom:0;width:15%;overflow:hidden;isolation:isolate;background:#10131c}
 .side.left{left:0}
 .side.right{right:0}
-.side::before{content:"";position:absolute;inset:-8%;z-index:0;background:radial-gradient(ellipse at 50% 16%,rgba(25,72,122,.68),transparent 72%),linear-gradient(180deg,#071223,#10243d 45%,#071223)}
-.side::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(1,7,17,.42),transparent 26%,transparent 74%,rgba(1,7,17,.42));box-shadow:inset 0 0 24px rgba(1,5,15,.45)}
-.inkCurrent{position:absolute;z-index:1;left:-75%;width:250%;height:46%;border-radius:46% 54% 54% 46%/42% 53% 47% 58%;filter:blur(23px);opacity:.78;mix-blend-mode:screen;transform-origin:50% 50%;will-change:transform;animation:inkFlow var(--duration) ease-in-out infinite alternate}
-.inkCurrent:nth-child(even){animation-direction:alternate-reverse}
-.inkCurrent:nth-child(1){top:-16%;background:radial-gradient(ellipse,rgba(255,187,33,.87) 0%,rgba(255,187,33,.23) 49%,transparent 74%);--duration:11s}
-.inkCurrent:nth-child(2){top:4%;background:radial-gradient(ellipse,rgba(198,39,59,.88) 0%,rgba(198,39,59,.24) 50%,transparent 75%);--duration:14s;animation-delay:-7s}
-.inkCurrent:nth-child(3){top:23%;background:radial-gradient(ellipse,rgba(29,126,235,.93) 0%,rgba(29,126,235,.26) 53%,transparent 77%);--duration:12s;animation-delay:-4s}
-.inkCurrent:nth-child(4){top:44%;background:radial-gradient(ellipse,rgba(144,62,225,.89) 0%,rgba(144,62,225,.21) 48%,transparent 77%);--duration:15s;animation-delay:-9s}
-.inkCurrent:nth-child(5){top:63%;background:radial-gradient(ellipse,rgba(13,165,100,.87) 0%,rgba(13,165,100,.25) 51%,transparent 77%);--duration:13s;animation-delay:-5s}
-.inkCurrent:nth-child(6){top:81%;background:radial-gradient(ellipse,rgba(184,202,216,.84) 0%,rgba(184,202,216,.21) 52%,transparent 77%);--duration:16s;animation-delay:-11s}
-.side.right .inkCurrent{animation-delay:calc(-1 * var(--duration) / 3)}
-@keyframes inkFlow{0%{transform:translate(-8%,-8%) rotate(-12deg) scale(1.04,.9)}45%{transform:translate(10%,8%) rotate(8deg) scale(.96,1.18)}100%{transform:translate(-2%,-4%) rotate(-8deg) scale(1.12,1.02)}}
+.inkWorld{position:absolute;top:0;width:100vw;height:100%;overflow:hidden;pointer-events:none;background:#10131c}
+.side.left .inkWorld{left:0}
+.side.right .inkWorld{right:0}
+.inkWash{position:absolute;inset:-5%;background:
+ radial-gradient(ellipse 32% 42% at 7% -5%,rgba(203,150,52,.92),transparent 86%),
+ radial-gradient(ellipse 31% 40% at 49% -7%,rgba(164,40,60,.86),transparent 82%),
+ radial-gradient(ellipse 34% 49% at 103% 3%,rgba(33,103,191,.92),transparent 85%),
+ radial-gradient(ellipse 30% 42% at 0% 103%,rgba(114,43,155,.90),transparent 85%),
+ radial-gradient(ellipse 35% 37% at 51% 111%,rgba(16,111,77,.90),transparent 84%),
+ radial-gradient(ellipse 30% 45% at 102% 103%,rgba(153,173,185,.89),transparent 87%),
+ radial-gradient(ellipse 67% 65% at 50% 50%,#11141e 40%,#11141e 65%,transparent 100%);
+ filter:url(#interviewInkRipple);
+ transform:scale(1.05);
+ animation:inkDrift 19s ease-in-out infinite alternate;
+}
+.inkDepth{position:absolute;inset:0;background:
+ radial-gradient(ellipse 34% 44% at 42% 49%,rgba(13,16,25,.75),transparent 96%),
+ radial-gradient(ellipse 24% 35% at 5% 53%,rgba(8,12,21,.76),transparent 95%),
+ radial-gradient(ellipse 24% 35% at 95% 55%,rgba(8,12,21,.72),transparent 95%);
+ pointer-events:none}
+.inkFleck{position:absolute;width:var(--w);height:var(--h);left:var(--x);top:var(--y);border-radius:55% 45% 65% 35%;background:var(--ink);opacity:var(--a);transform:rotate(var(--rot));animation:fleckFloat var(--speed) ease-in-out infinite alternate;animation-delay:var(--delay)}
+@keyframes inkDrift{from{transform:translate(-1%,-.5%) scale(1.05)}to{transform:translate(1.2%,.9%) scale(1.06)}}
+@keyframes fleckFloat{to{transform:translate(5px,-8px) rotate(calc(var(--rot) + 20deg))}}
 .cameraOutline{position:absolute;top:0;bottom:0;left:15%;right:15%;border-left:2px solid #c99c56;border-right:2px solid #c99c56;pointer-events:none}.tag{position:absolute;top:6%;left:18%;font-size:20px;font-weight:700;color:#e2bf7c;letter-spacing:.15em}.nameplates{position:absolute;bottom:7%;left:18%;right:18%;display:grid;grid-template-columns:1fr 1fr;gap:2.5%;z-index:3}.nameplate{position:relative;isolation:isolate;overflow:hidden;background:#0b1e32;border-left:5px solid #f0c85b;box-shadow:0 8px 22px #050719af;padding:20px;min-width:0;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1);opacity:1;transform:translateY(0)}/* Soft animated ink behind the interview names; keep every letter sharp. */
 .nameplate::before{
  content:"";position:absolute;inset:-70%;z-index:-2;pointer-events:none;
@@ -36,8 +49,25 @@
  50%{transform:translate(5%,6%) rotate(6deg) scale(1.09)}
  100%{transform:translate(-2%,-4%) rotate(-3deg) scale(1.03)}
 }
-.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;color:#f4cf6b;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.inkCurrent,.nameplate::before{animation:none;will-change:auto}.nameplate{transition:none}}
-</style></head><body><main class="stage"><div class="side left"><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span></div><div class="side right"><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span></div><div class="cameraOutline"></div><div class="tag">THE LORCANA COOKOUT</div><div class="nameplates" id="plates"><div class="nameplate" id="p1"><div class="name" id="n1">Person 1</div><div class="subtitle" id="s1"></div></div><div class="nameplate" id="p2"><div class="name" id="n2">Person 2</div><div class="subtitle" id="s2"></div></div></div></main>
+.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;color:#f4cf6b;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.inkWash,.inkFleck,.nameplate::before{animation:none}.nameplate{transition:none}}
+</style></head><body><main class="stage"><svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true"><defs><filter id="interviewInkRipple" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".008 .019" numOctaves="2" seed="8" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg><div class="side left"><div class="inkWorld"><div class="inkWash"></div><div class="inkDepth"></div></div></div><div class="side right"><div class="inkWorld"><div class="inkWash"></div><div class="inkDepth"></div></div></div><div class="cameraOutline"></div><div class="tag">THE LORCANA COOKOUT</div><div class="nameplates" id="plates"><div class="nameplate" id="p1"><div class="name" id="n1">Person 1</div><div class="subtitle" id="s1"></div></div><div class="nameplate" id="p2"><div class="name" id="n2">Person 2</div><div class="subtitle" id="s2"></div></div></div></main>
+<script>
+/* Small true ink flecks rather than a pastel fog. Decorative, deterministic and lightweight. */
+(()=>{let seed=43792;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+const palette=["#d49d3b","#b52c45","#367ccc","#8946a8","#118965","#b6c7d1"];
+for(const side of document.querySelectorAll(".side")){
+ const world=side.querySelector(".inkWorld");
+ for(let i=0;i<120;i++){
+  const x=rnd()*100,y=rnd()*100,band=y<38?0:y>63?1:2;
+  let color=palette[band===0?(x<32?0:x<66?1:2):band===1?(x<32?3:x<66?4:5):(x<33?3:x>67?2:4)];
+  const fleck=document.createElement("i");fleck.className="inkFleck";
+  const props={"--x":x+"%","--y":y+"%","--w":(2+rnd()*9)+"px","--h":(1+rnd()*4)+"px","--ink":color,"--a":(.16+rnd()*.52).toFixed(2),"--rot":(rnd()*130-65)+"deg","--speed":(9+rnd()*11)+"s","--delay":(-rnd()*12)+"s"};
+  for(const [k,v] of Object.entries(props))fleck.style.setProperty(k,v);
+  world.appendChild(fleck);
+ }
+}
+})();
+</script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
