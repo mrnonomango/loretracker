@@ -27,8 +27,8 @@
  pointer-events:none}
 /* Distinct mid-panel ink: Ruby on camera-left, Emerald on camera-right. */
 .inkMid{position:absolute;inset:0;pointer-events:none;filter:url(#interviewInkRipple);animation:midInkFlow 16s ease-in-out infinite alternate}
-.side.left .inkMid{background:radial-gradient(ellipse 22% 32% at 7% 50%,rgba(187,31,57,.92) 0%,rgba(123,19,40,.78) 43%,rgba(83,15,34,.23) 73%,transparent 96%)}
-.side.right .inkMid{background:radial-gradient(ellipse 22% 32% at 93% 50%,rgba(12,155,86,.90) 0%,rgba(12,113,68,.77) 43%,rgba(8,75,53,.24) 73%,transparent 96%);animation-delay:-8s}
+.side.left .inkMid{background:radial-gradient(ellipse 22% 32% at -3% 50%,rgba(187,31,57,.92) 0%,rgba(123,19,40,.78) 43%,rgba(83,15,34,.23) 73%,transparent 96%)}
+.side.right .inkMid{background:radial-gradient(ellipse 22% 32% at 103% 50%,rgba(12,155,86,.90) 0%,rgba(12,113,68,.77) 43%,rgba(8,75,53,.24) 73%,transparent 96%);animation-delay:-8s}
 @keyframes midInkFlow{from{transform:translateY(-2%) scale(1.02)}to{transform:translateY(2%) scale(1.06)}}
 .inkFleck{position:absolute;width:var(--w);height:var(--h);left:var(--x);top:var(--y);border-radius:55% 45% 65% 35%;background:var(--ink);opacity:var(--a);transform:rotate(var(--rot));animation:fleckFloat var(--speed) ease-in-out infinite alternate;animation-delay:var(--delay)}
 @keyframes inkDrift{from{transform:translate(-1%,-.5%) scale(1.05)}to{transform:translate(1.2%,.9%) scale(1.06)}}
