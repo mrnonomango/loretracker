@@ -176,6 +176,8 @@ body{height:100dvh;display:flex;flex-direction:column;touch-action:manipulation}
 </div>
 
 <script type="module">
+import {getAuth, onAuthStateChanged, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
@@ -197,6 +199,28 @@ const firebaseConfig={
 
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
+
+/* SECURITY STAGING: persistent device login; no credentials stored in source. */
+const auth = getAuth(app);
+const authGate = document.createElement("div");
+authGate.id = "firebase-auth-gate";
+authGate.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:#0b111a;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font:16px Arial,sans-serif";
+authGate.innerHTML = '<form id="firebase-auth-form" style="width:min(380px,100%);display:grid;gap:12px"><h2 style="margin:0">Controller sign-in</h2><p style="margin:0">Sign in once on this device. Your session will normally be remembered.</p><input id="firebase-auth-email" type="email" autocomplete="username" placeholder="Email" required style="padding:12px;font-size:16px"><input id="firebase-auth-password" type="password" autocomplete="current-password" placeholder="Password" required style="padding:12px;font-size:16px"><button type="submit" style="padding:12px;font-size:16px">Sign in</button><p id="firebase-auth-error" role="alert" style="color:#ffb4b4;margin:0"></p></form>';
+document.body.appendChild(authGate);
+const authForm = document.getElementById("firebase-auth-form");
+authForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  const error = document.getElementById("firebase-auth-error");
+  error.textContent = "";
+  try {
+    await signInWithEmailAndPassword(auth, document.getElementById("firebase-auth-email").value, document.getElementById("firebase-auth-password").value);
+    document.getElementById("firebase-auth-password").value = "";
+  } catch (e) {
+    error.textContent = "Sign-in failed. Check your credentials and try again.";
+  }
+});
+onAuthStateChanged(auth, user => { authGate.style.display = user ? "none" : "flex"; });
+
 
 const p1Ref=ref(db,"p1");
 const p2Ref=ref(db,"p2");
