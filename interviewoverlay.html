@@ -15,7 +15,28 @@
 .inkCurrent:nth-child(6){top:81%;background:radial-gradient(ellipse,rgba(184,202,216,.84) 0%,rgba(184,202,216,.21) 52%,transparent 77%);--duration:16s;animation-delay:-11s}
 .side.right .inkCurrent{animation-delay:calc(-1 * var(--duration) / 3)}
 @keyframes inkFlow{0%{transform:translate(-8%,-8%) rotate(-12deg) scale(1.04,.9)}45%{transform:translate(10%,8%) rotate(8deg) scale(.96,1.18)}100%{transform:translate(-2%,-4%) rotate(-8deg) scale(1.12,1.02)}}
-.cameraOutline{position:absolute;top:0;bottom:0;left:15%;right:15%;border-left:2px solid #c99c56;border-right:2px solid #c99c56;pointer-events:none}.tag{position:absolute;top:6%;left:18%;font-size:20px;font-weight:700;color:#e2bf7c;letter-spacing:.15em}.nameplates{position:absolute;bottom:7%;left:18%;right:18%;display:grid;grid-template-columns:1fr 1fr;gap:2.5%;z-index:3}.nameplate{background:linear-gradient(110deg,rgba(33,77,120,.96),rgba(11,30,50,.96));border-left:5px solid #f0c85b;box-shadow:0 8px 22px #050719af;padding:20px;min-width:0;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1);opacity:1;transform:translateY(0)}.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;color:#f4cf6b;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.inkCurrent{animation:none;will-change:auto}.nameplate{transition:none}}
+.cameraOutline{position:absolute;top:0;bottom:0;left:15%;right:15%;border-left:2px solid #c99c56;border-right:2px solid #c99c56;pointer-events:none}.tag{position:absolute;top:6%;left:18%;font-size:20px;font-weight:700;color:#e2bf7c;letter-spacing:.15em}.nameplates{position:absolute;bottom:7%;left:18%;right:18%;display:grid;grid-template-columns:1fr 1fr;gap:2.5%;z-index:3}.nameplate{position:relative;isolation:isolate;overflow:hidden;background:#0b1e32;border-left:5px solid #f0c85b;box-shadow:0 8px 22px #050719af;padding:20px;min-width:0;transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1);opacity:1;transform:translateY(0)}/* Soft animated ink behind the interview names; keep every letter sharp. */
+.nameplate::before{
+ content:"";position:absolute;inset:-70%;z-index:-2;pointer-events:none;
+ background:
+ radial-gradient(ellipse at 18% 27%,rgba(255,188,47,.76),transparent 31%),
+ radial-gradient(ellipse at 78% 20%,rgba(200,39,61,.65),transparent 31%),
+ radial-gradient(ellipse at 75% 72%,rgba(44,125,236,.78),transparent 38%),
+ radial-gradient(ellipse at 23% 70%,rgba(148,67,223,.64),transparent 32%),
+ radial-gradient(ellipse at 56% 44%,rgba(16,169,100,.68),transparent 33%),
+ radial-gradient(ellipse at 45% 90%,rgba(181,200,220,.48),transparent 35%);
+ filter:blur(19px);animation:plateInkFlow 17s ease-in-out infinite alternate;
+}
+.nameplate#p2::before{animation-delay:-8s;animation-direction:alternate-reverse}
+.nameplate::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(110deg,rgba(6,17,35,.83),rgba(9,28,48,.77));}
+.nameplate .name,.nameplate .subtitle{position:relative;z-index:1}
+@keyframes plateInkFlow{
+ 0%{transform:translate(-10%,-5%) rotate(-8deg) scale(1)}
+ 50%{transform:translate(5%,6%) rotate(6deg) scale(1.09)}
+ 100%{transform:translate(-2%,-4%) rotate(-3deg) scale(1.03)}
+}
+.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;color:#f4cf6b;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.inkCurrent,.nameplate::before{animation:none;will-change:auto}.nameplate{transition:none}}
 </style></head><body><main class="stage"><div class="side left"><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span></div><div class="side right"><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span><span class="inkCurrent" aria-hidden="true"></span></div><div class="cameraOutline"></div><div class="tag">THE LORCANA COOKOUT</div><div class="nameplates" id="plates"><div class="nameplate" id="p1"><div class="name" id="n1">Person 1</div><div class="subtitle" id="s1"></div></div><div class="nameplate" id="p2"><div class="name" id="n2">Person 2</div><div class="subtitle" id="s2"></div></div></div></main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
