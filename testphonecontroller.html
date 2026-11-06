@@ -960,7 +960,7 @@ input:focus {
         id="inkClear"
         type="button"
         class="inkModalAction clear"
-      >Clear</button>
+      >No Ink Combination</button>
 
       <button
         id="inkCancel"
@@ -1082,7 +1082,7 @@ function fileForPair(value) {
 }
 
 function renderInkSelection(player,filename) {
-  const chosen = inkByFile.has(filename) ? filename : "";
+  const chosen = filename === "none" ? "none" : inkByFile.has(filename) ? filename : "";
 
   selectedInks[player] = chosen;
 
@@ -1105,7 +1105,7 @@ function renderInkSelection(player,filename) {
     preview.appendChild(image);
     preview.appendChild(text);
   } else {
-    preview.textContent = "Tap to Choose Ink Colors";
+    preview.textContent = chosen === "none" ? "No Ink Combination" : "Tap to Choose Ink Colors";
   }
 
   if(activeInkPlayer === player) {
@@ -1145,13 +1145,13 @@ function openInkModal(player) {
 async function chooseInk(player,filename) {
   const option = inkByFile.get(filename);
 
-  if(filename && !option) return;
+  if(filename && filename !== "none" && !option) return;
 
   const changes = {};
 
   changes[player+"Ink"] = filename;
   changes[player+"Inks"] =
-    option ? option[2] : [];
+    filename === "none" ? ["none"] : option ? option[2] : [];
 
   try {
     await update(ref(db),changes);
@@ -1159,7 +1159,7 @@ async function chooseInk(player,filename) {
     setStatus(
       option
         ? option[1]+" saved"
-        : "Ink colors cleared"
+        : filename === "none" ? "Ink combination hidden" : "Ink colors cleared"
     );
   } catch(error) {
     setStatus("Could not save ink colors",true);
@@ -1186,7 +1186,10 @@ function setupInkGallery(player) {
   onValue(ref(db,player+"Inks"),snapshot => {
     const pair = snapshot.val();
 
-    if(validPair(pair)) {
+    if(Array.isArray(pair) && pair[0] === "none") {
+      latestInkPairs[player] = ["none"];
+      renderInkSelection(player,"none");
+    } else if(validPair(pair)) {
       latestInkPairs[player] = pair;
       renderInkSelection(player,fileForPair(pair));
     } else if(Array.isArray(pair)) {
@@ -1237,7 +1240,7 @@ $("inkClear").addEventListener("click",() => {
   const player = activeInkPlayer;
   closeInkModal();
 
-  if(player) chooseInk(player,"");
+  if(player) chooseInk(player,"none");
 });
 
 $("inkCancel").addEventListener(
