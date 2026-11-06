@@ -1030,7 +1030,17 @@ authForm.addEventListener("submit", async event => {
     error.textContent = "Sign-in failed. Check your credentials and try again.";
   }
 });
-onAuthStateChanged(auth, user => { authGate.style.display = user ? "none" : "flex"; });
+// Do not initialize live controller listeners or writes until the device has authenticated.
+await new Promise(resolve => {
+  let ready = false;
+  onAuthStateChanged(auth, user => {
+    authGate.style.display = user ? "none" : "flex";
+    if (user && !ready) { ready = true; resolve(); }
+  }, error => {
+    document.getElementById("firebase-auth-error").textContent = "Authentication could not initialize. Reload this page.";
+    console.error("Firebase authentication initialization failed", error);
+  });
+});
 
 
 const $ = id => document.getElementById(id);
