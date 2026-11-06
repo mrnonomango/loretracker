@@ -25,6 +25,11 @@
  radial-gradient(ellipse 24% 35% at 5% 53%,rgba(8,12,21,.76),transparent 95%),
  radial-gradient(ellipse 24% 35% at 95% 55%,rgba(8,12,21,.72),transparent 95%);
  pointer-events:none}
+/* Distinct mid-panel ink: Ruby on camera-left, Emerald on camera-right. */
+.inkMid{position:absolute;inset:0;pointer-events:none;filter:url(#interviewInkRipple);animation:midInkFlow 16s ease-in-out infinite alternate}
+.side.left .inkMid{background:radial-gradient(ellipse 22% 32% at 7% 50%,rgba(187,31,57,.92) 0%,rgba(123,19,40,.78) 43%,rgba(83,15,34,.23) 73%,transparent 96%)}
+.side.right .inkMid{background:radial-gradient(ellipse 22% 32% at 93% 50%,rgba(12,155,86,.90) 0%,rgba(12,113,68,.77) 43%,rgba(8,75,53,.24) 73%,transparent 96%);animation-delay:-8s}
+@keyframes midInkFlow{from{transform:translateY(-2%) scale(1.02)}to{transform:translateY(2%) scale(1.06)}}
 .inkFleck{position:absolute;width:var(--w);height:var(--h);left:var(--x);top:var(--y);border-radius:55% 45% 65% 35%;background:var(--ink);opacity:var(--a);transform:rotate(var(--rot));animation:fleckFloat var(--speed) ease-in-out infinite alternate;animation-delay:var(--delay)}
 @keyframes inkDrift{from{transform:translate(-1%,-.5%) scale(1.05)}to{transform:translate(1.2%,.9%) scale(1.06)}}
 @keyframes fleckFloat{to{transform:translate(5px,-8px) rotate(calc(var(--rot) + 20deg))}}
@@ -49,8 +54,8 @@
  50%{transform:translate(5%,6%) rotate(6deg) scale(1.09)}
  100%{transform:translate(-2%,-4%) rotate(-3deg) scale(1.03)}
 }
-.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;color:#f4cf6b;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.inkWash,.inkFleck,.nameplate::before{animation:none}.nameplate{transition:none}}
-</style></head><body><main class="stage"><svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true"><defs><filter id="interviewInkRipple" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".008 .019" numOctaves="2" seed="8" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg><div class="side left"><div class="inkWorld"><div class="inkWash"></div><div class="inkDepth"></div></div></div><div class="side right"><div class="inkWorld"><div class="inkWash"></div><div class="inkDepth"></div></div></div><div class="cameraOutline"></div><div class="tag">THE LORCANA COOKOUT</div><div class="nameplates" id="plates"><div class="nameplate" id="p1"><div class="name" id="n1">Person 1</div><div class="subtitle" id="s1"></div></div><div class="nameplate" id="p2"><div class="name" id="n2">Person 2</div><div class="subtitle" id="s2"></div></div></div></main>
+.nameplate.hidden{opacity:0;transform:translateY(120%);pointer-events:none;position:absolute;width:48.75%;bottom:0}.nameplate.hidden#p1{left:0}.nameplate.hidden#p2{right:0}.nameplates.solo{grid-template-columns:1fr}.nameplates.solo .nameplate:not(.hidden){width:48.75%;justify-self:center;animation:soloCenter .55s ease both}.name{font-size:36px;font-weight:900;color:#f4cf6b;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.subtitle{margin-top:6px;font-size:22px;color:#eaca83;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@keyframes soloCenter{from{opacity:.85;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes drift{to{transform:translateY(14%) rotate(9deg)}}@media(prefers-reduced-motion:reduce){.inkWash,.inkMid,.inkFleck,.nameplate::before{animation:none}.nameplate{transition:none}}
+</style></head><body><main class="stage"><svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true"><defs><filter id="interviewInkRipple" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".008 .019" numOctaves="2" seed="8" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg><div class="side left"><div class="inkWorld"><div class="inkWash"></div><div class="inkDepth"></div><div class="inkMid"></div></div></div><div class="side right"><div class="inkWorld"><div class="inkWash"></div><div class="inkDepth"></div><div class="inkMid"></div></div></div><div class="cameraOutline"></div><div class="tag">THE LORCANA COOKOUT</div><div class="nameplates" id="plates"><div class="nameplate" id="p1"><div class="name" id="n1">Person 1</div><div class="subtitle" id="s1"></div></div><div class="nameplate" id="p2"><div class="name" id="n2">Person 2</div><div class="subtitle" id="s2"></div></div></div></main>
 <script>
 /* Small true ink flecks rather than a pastel fog. Decorative, deterministic and lightweight. */
 (()=>{let seed=43792;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
@@ -59,7 +64,7 @@ for(const side of document.querySelectorAll(".side")){
  const world=side.querySelector(".inkWorld");
  for(let i=0;i<120;i++){
   const x=rnd()*100,y=rnd()*100,band=y<38?0:y>63?1:2;
-  let color=palette[band===0?(x<32?0:x<66?1:2):band===1?(x<32?3:x<66?4:5):(x<33?3:x>67?2:4)];
+  let color=palette[band===2?(side.classList.contains("left")?1:4):band===0?(x<32?0:x<66?1:2):(x<33?3:x<66?4:5)];
   const fleck=document.createElement("i");fleck.className="inkFleck";
   const props={"--x":x+"%","--y":y+"%","--w":(2+rnd()*9)+"px","--h":(1+rnd()*4)+"px","--ink":color,"--a":(.16+rnd()*.52).toFixed(2),"--rot":(rnd()*130-65)+"deg","--speed":(9+rnd()*11)+"s","--delay":(-rnd()*12)+"s"};
   for(const [k,v] of Object.entries(props))fleck.style.setProperty(k,v);
