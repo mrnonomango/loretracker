@@ -957,13 +957,18 @@ const validImages = new Set([
 ]);
 
 function showInk(player, filename) {
-  selectedVictoryInks[player] = String(filename || "");
+  selectedVictoryInks[player] = filename==="none" ? "" : String(filename || "");
   const image = $(player + "InkImage");
   const placeholder = $(player + "InkPlaceholder");
 
   if (!validImages.has(filename)) {
     image.removeAttribute("src");
     image.style.display = "none";
+
+    if (filename === "none") {
+      placeholder.style.display = "none";
+      return;
+    }
 
     placeholder.textContent = "Select inks";
     placeholder.style.display = "flex";
